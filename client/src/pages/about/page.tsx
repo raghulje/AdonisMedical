@@ -21,8 +21,25 @@ export default function AboutPage() {
 
   const heroImageUrl = content?.heroImage ? getImageUrl(content.heroImage) : getDefaultImageUrl('2024/10/image-1-1.jpg');
   const overviewImageUrl = content?.overviewImage ? getImageUrl(content.overviewImage) : getDefaultImageUrl('2024/09/Frame-97-3-1.jpg');
+  const backgroundImageUrl = content?.backgroundImage ? getImageUrl(content.backgroundImage) : null;
   const safetyImageUrl = content?.safetyImage ? getImageUrl(content.safetyImage) : getDefaultImageUrl('2024/10/Frame-32-3-1.jpg');
   const excellenceImageUrl = content?.excellenceImage ? getImageUrl(content.excellenceImage) : getDefaultImageUrl('2024/10/Frame-32-4-1.jpg');
+  
+  const highlights = content?.highlights || [];
+  const overviewParagraphs = content?.overviewParagraphs || [];
+  const beforeParagraphs = overviewParagraphs.filter(p => p.position === 'before' || !p.position).sort((a, b) => a.orderIndex - b.orderIndex);
+  const afterParagraphs = overviewParagraphs.filter(p => p.position === 'after').sort((a, b) => a.orderIndex - b.orderIndex);
+  const globalReachCards = content?.globalReachCards || [];
+  
+  // Debug: Log cards to check icon data
+  useEffect(() => {
+    if (globalReachCards.length > 0) {
+      console.log('Global Reach Cards:', globalReachCards);
+      globalReachCards.forEach((card, idx) => {
+        console.log(`Card ${idx}:`, { id: card.id, iconId: card.iconId, icon: card.icon, iconClass: card.iconClass });
+      });
+    }
+  }, [globalReachCards]);
 
   if (loading) {
     return (
@@ -44,10 +61,10 @@ export default function AboutPage() {
               backgroundImage: `url(${heroImageUrl})`,
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/30 to-black/35"></div>
           </div>
           <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6" style={{ color: '#7FBA00' }} data-aos="fade-down">
+            <h1 className="text-5xl md:text-6xl font-medium text-white mb-6" style={{ color: '#7FBA00' }} data-aos="fade-down">
               {content?.heroTitle || 'About Us'}
             </h1>
             {content?.heroSubtitle && (
@@ -58,77 +75,150 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Company Overview Section */}
-        {content?.overviewContent && (
-          <section className="py-16 px-6" style={{ backgroundColor: '#FAFAFA' }}>
-            <div className="max-w-7xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-8 items-start">
-                {/* Left Column - Image */}
-                <div className="order-2 md:order-1" data-aos="fade-right">
-                  <img
-                    src={overviewImageUrl}
-                    alt={content.overviewImage?.altText || 'Company Overview'}
-                    className="w-full h-auto rounded-lg hover:shadow-2xl transition-shadow duration-300"
-                  />
+        {/* Combined Overview and Safety Section with Rounded Top Corners */}
+        <section className="relative -mt-24 z-20 pb-0 px-0">
+          <div className="w-full max-w-[1920px] mx-auto">
+            <div
+              className="bg-white rounded-t-[3rem] md:rounded-t-[4rem] rounded-b-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-8 md:p-16 relative overflow-hidden"
+              style={backgroundImageUrl ? {
+                backgroundImage: `url(${backgroundImageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              } : {}}
+            >
+              {/* Background Overlay */}
+              {backgroundImageUrl && (
+                <div className="absolute inset-0 bg-white/20 z-0"></div>
+              )}
+
+              <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
+                {/* Intro Paragraph - First paragraph from overviewContent */}
+                {content?.overviewContent && (
+                  <div className="mb-12 text-gray-700 text-base leading-relaxed max-w-4xl" data-aos="fade-up">
+                    <div 
+                      dangerouslySetInnerHTML={{ 
+                        __html: content.overviewContent.split(/\n\n|\.\s+(?=[A-Z])/)[0] || content.overviewContent 
+                      }} 
+                    />
+                  </div>
+                )}
+
+                {/* Company Overview Row with Image and Bullet Points */}
+                <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start mb-16">
+                  {/* Left Column - Image with Overlay Text */}
+                  <div data-aos="fade-right" className="relative">
+                    {content?.overviewImageOverlayText && (
+                      <div className="absolute top-4 left-4 right-4 z-10 bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-lg mb-4">
+                        <p className="text-gray-800 text-sm leading-relaxed">
+                          {content.overviewImageOverlayText}
+                        </p>
+                      </div>
+                    )}
+                    <img
+                      src={overviewImageUrl}
+                      alt={content.overviewImage?.altText || 'Company Overview'}
+                      className="w-full h-auto rounded-lg hover:shadow-2xl transition-shadow duration-300"
+                    />
+                  </div>
+
+                  {/* Right Column - Heading, Paragraphs, Bullet Points, and Final Paragraph */}
+                  <div data-aos="fade-left" className="space-y-6">
+                    {content.overviewHeading && (
+                      <h2 className="text-3xl md:text-4xl font-medium" style={{ color: '#7FBA00' }}>
+                        {content.overviewHeading}
+                      </h2>
+                    )}
+                    
+                    {/* Paragraphs before highlights */}
+                    {beforeParagraphs.length > 0 && (
+                      <div className="space-y-4">
+                        {beforeParagraphs.map((paragraph) => (
+                          <div key={paragraph.id} className="text-gray-700 text-base leading-relaxed">
+                            <div dangerouslySetInnerHTML={{ __html: paragraph.content }} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Bullet Points with Icons */}
+                    {highlights.length > 0 && (
+                      <div className="space-y-4">
+                        {highlights.map((highlight, index) => (
+                          <div key={highlight.id} className="flex items-start gap-3" data-aos="fade-left" data-aos-delay={index * 100}>
+                            {highlight.icon ? (
+                              <img
+                                src={getImageUrl(highlight.icon)}
+                                alt={highlight.icon.altText || highlight.text}
+                                className="w-6 h-6 flex-shrink-0 mt-1"
+                              />
+                            ) : highlight.iconClass ? (
+                              <i className={`${highlight.iconClass} text-[#FF6B35] text-xl flex-shrink-0 mt-1`}></i>
+                            ) : (
+                              <i className="ri-checkbox-circle-line text-[#FF6B35] text-xl flex-shrink-0 mt-1"></i>
+                            )}
+                            <p className="text-gray-700 text-base font-semibold leading-relaxed">{highlight.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Paragraphs after highlights */}
+                    {afterParagraphs.length > 0 && (
+                      <div className="space-y-4">
+                        {afterParagraphs.map((paragraph) => (
+                          <div key={paragraph.id} className="text-gray-700 text-base leading-relaxed">
+                            <div dangerouslySetInnerHTML={{ __html: paragraph.content }} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* Right Column - Text */}
-                <div className="order-1 md:order-2" data-aos="fade-left">
-                  {content.overviewHeading && (
-                    <h2 className="text-3xl font-bold mb-6" style={{ color: '#7FBA00' }}>
-                      {content.overviewHeading}
-                    </h2>
-                  )}
-                  <div className="text-gray-700 text-base leading-relaxed space-y-4" dangerouslySetInnerHTML={{ __html: content.overviewContent || '' }} />
-                </div>
+                {/* Safety and Innovation Row */}
+                {content?.safetyContent && (
+                  <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+                    {/* Left Column - Text */}
+                    <div className="space-y-6" data-aos="fade-right">
+                      {content.safetyHeading && (
+                        <h2 className="text-3xl md:text-4xl font-medium" style={{ color: '#7FBA00' }}>
+                          {content.safetyHeading}
+                        </h2>
+                      )}
+                      <div className="text-gray-700 text-base leading-relaxed" dangerouslySetInnerHTML={{ __html: content.safetyContent || '' }} />
+                      <button 
+                        className="px-6 py-3 text-white font-medium rounded-md whitespace-nowrap cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105"
+                        style={{ backgroundColor: '#7FBA00' }}
+                        onClick={() => window.location.href = '/contact-us'}
+                        data-aos="zoom-in"
+                        data-aos-delay="200"
+                      >
+                        Know More
+                      </button>
+                    </div>
+
+                    {/* Right Column - Image */}
+                    <div className="rounded-lg overflow-hidden" data-aos="fade-left">
+                      <img 
+                        src={safetyImageUrl}
+                        alt={content.safetyImage?.altText || 'Safety and Innovation'} 
+                        className="w-full h-auto object-cover hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </section>
-        )}
-
-        {/* Safety and Innovation Section */}
-        {content?.safetyContent && (
-          <section className="py-16 px-6 bg-white">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                {/* Left Column - Text */}
-                <div className="space-y-6" data-aos="fade-right">
-                  {content.safetyHeading && (
-                    <h2 className="text-4xl font-bold" style={{ color: '#7FBA00' }}>
-                      {content.safetyHeading}
-                    </h2>
-                  )}
-                  <div className="text-gray-700 text-base leading-relaxed" dangerouslySetInnerHTML={{ __html: content.safetyContent || '' }} />
-                  <button 
-                    className="px-6 py-3 text-white font-medium rounded-md whitespace-nowrap cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105"
-                    style={{ backgroundColor: '#7FBA00' }}
-                    onClick={() => window.location.href = '/contact-us'}
-                    data-aos="zoom-in"
-                    data-aos-delay="200"
-                  >
-                    Know More
-                  </button>
-                </div>
-
-                {/* Right Column - Image */}
-                <div className="rounded-lg overflow-hidden" data-aos="fade-left">
-                  <img 
-                    src={safetyImageUrl}
-                    alt={content.safetyImage?.altText || 'Safety and Innovation'} 
-                    className="w-full h-auto object-cover hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Excellence Section */}
         {content?.excellenceContent && (
-          <section className="py-16 px-6" style={{ backgroundColor: '#F5F5DC' }}>
-            <div className="max-w-7xl mx-auto">
+          <section className="py-11 bg-white">
+            <div className="max-w-7xl mx-auto px-6 lg:px-12">
               {content.excellenceHeading && (
-                <h2 className="text-4xl font-bold text-center mb-12" style={{ color: '#7FBA00' }} data-aos="fade-up">
+                <h2 className="text-4xl font-medium text-center mb-12" style={{ color: '#7FBA00' }} data-aos="fade-up">
                   {content.excellenceHeading}
                 </h2>
               )}
@@ -159,51 +249,42 @@ export default function AboutPage() {
         )}
 
         {/* Global Reach Section */}
-        <section className="py-16 px-6 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12" style={{ color: '#7FBA00' }} data-aos="fade-up">
-              Global Reach and Vision
-            </h2>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Card 1 */}
-              <div className="text-center space-y-4 hover-lift cursor-pointer" data-aos="flip-up" data-aos-delay="100">
-                <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: '#FF6B35' }}>
-                    <i className="ri-global-line text-white text-3xl"></i>
-                  </div>
+        {(content?.globalReachHeading || globalReachCards.length > 0) && (
+          <section className="py-11 bg-white">
+            <div className="max-w-7xl mx-auto px-6 lg:px-12">
+              <h2 className="text-4xl font-medium text-center mb-12" style={{ color: '#7FBA00' }} data-aos="fade-up">
+                {content?.globalReachHeading || 'Global Reach and Vision'}
+              </h2>
+              
+              {globalReachCards.length > 0 && (
+                <div className="grid md:grid-cols-3 gap-8">
+                  {globalReachCards.map((card, index) => (
+                    <div key={card.id} className="text-center space-y-4 hover-lift cursor-pointer" data-aos="flip-up" data-aos-delay={(index + 1) * 100}>
+                      <div className="flex justify-center mb-4">
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 bg-white border-2 border-gray-200">
+                          {(card.icon && card.icon.filePath) ? (
+                            <img
+                              src={getImageUrl(card.icon)}
+                              alt={card.icon.altText || card.content}
+                              className="w-8 h-8 object-contain"
+                            />
+                          ) : card.iconClass ? (
+                            <i className={`${card.iconClass} text-gray-700 text-3xl`}></i>
+                          ) : (
+                            <i className="ri-global-line text-gray-700 text-3xl"></i>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-gray-700 text-base leading-relaxed">
+                        {card.content}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-gray-700 text-base leading-relaxed">
-                  Adonis Medical Systems is driven by the mission to provide state-of-the-art radiology products worldwide.
-                </p>
-              </div>
-
-              {/* Card 2 */}
-              <div className="text-center space-y-4 hover-lift cursor-pointer" data-aos="flip-up" data-aos-delay="200">
-                <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: '#FF6B35' }}>
-                    <i className="ri-hand-heart-line text-white text-3xl"></i>
-                  </div>
-                </div>
-                <p className="text-gray-700 text-base leading-relaxed">
-                  We empower medical practitioners with the tools and technologies they need to diagnose and treat patients quickly, effectively, and effortlessly.
-                </p>
-              </div>
-
-              {/* Card 3 */}
-              <div className="text-center space-y-4 hover-lift cursor-pointer" data-aos="flip-up" data-aos-delay="300">
-                <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: '#FF6B35' }}>
-                    <i className="ri-trophy-line text-white text-3xl"></i>
-                  </div>
-                </div>
-                <p className="text-gray-700 text-base leading-relaxed">
-                  Our commitment to quality and customer satisfaction continues to fuel our growth and strengthen our presence in the global healthcare market.
-                </p>
-              </div>
+              )}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Contact Section */}
         <ContactUsSection />

@@ -137,7 +137,7 @@ export default function OurPresencePageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Our Presence</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Our Presence</h2>
         <p className="text-sm text-gray-600 mt-1">Manage page content and office locations</p>
       </div>
 
@@ -146,17 +146,15 @@ export default function OurPresencePageManagement() {
           <div className="flex space-x-2">
             <button
               onClick={() => setActiveTab('content')}
-              className={`px-4 py-3 font-medium text-sm border-b-2 cursor-pointer ${
-                activeTab === 'content' ? 'text-blue-600 border-blue-600' : 'text-gray-600 border-transparent hover:text-blue-600'
-              }`}
+              className={`px-4 py-3 font-medium text-sm border-b-2 cursor-pointer ${activeTab === 'content' ? 'text-blue-600 border-blue-600' : 'text-gray-600 border-transparent hover:text-blue-600'
+                }`}
             >
               Page Content
             </button>
             <button
               onClick={() => setActiveTab('locations')}
-              className={`px-4 py-3 font-medium text-sm border-b-2 cursor-pointer ${
-                activeTab === 'locations' ? 'text-blue-600 border-blue-600' : 'text-gray-600 border-transparent hover:text-blue-600'
-              }`}
+              className={`px-4 py-3 font-medium text-sm border-b-2 cursor-pointer ${activeTab === 'locations' ? 'text-blue-600 border-blue-600' : 'text-gray-600 border-transparent hover:text-blue-600'
+                }`}
             >
               Office Locations
             </button>
@@ -188,7 +186,7 @@ export default function OurPresencePageManagement() {
                   <input type="text" value={pageContent.heroSubtitle || ''} onChange={(e) => setPageContent({ ...pageContent, heroSubtitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
                 </FormField>
                 <div className="md:col-span-2">
-                  <ImageSelector value={pageContent.heroImageId} onChange={(id) => setPageContent({ ...pageContent, heroImageId: id })} label="Hero Image" />
+                  <ImageSelector value={pageContent.heroImageId} onChange={(id) => setPageContent({ ...pageContent, heroImageId: Number(id) })} label="Hero Image" />
                 </div>
                 <div className="md:col-span-2">
                   <FormField label="Intro Text">
@@ -196,18 +194,20 @@ export default function OurPresencePageManagement() {
                   </FormField>
                 </div>
                 <div className="md:col-span-2">
-                  <ImageSelector value={pageContent.mapImageId} onChange={(id) => setPageContent({ ...pageContent, mapImageId: id })} label="Map Image" />
+                  <ImageSelector value={pageContent.mapImageId} onChange={(id) => setPageContent({ ...pageContent, mapImageId: Number(id) })} label="Map Image" />
                 </div>
                 <FormField label="Sales & Service Heading">
                   <input type="text" value={pageContent.salesServiceHeading || ''} onChange={(e) => setPageContent({ ...pageContent, salesServiceHeading: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
                 </FormField>
                 <div className="md:col-span-2">
-                  <FormField label="Sales & Service Content">
-                    <textarea value={pageContent.salesServiceContent || ''} onChange={(e) => setPageContent({ ...pageContent, salesServiceContent: e.target.value || null })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                  <FormField label="Sales & Service Content" hint="Separate paragraphs with a blank line (press Enter twice)">
+                    <textarea value={pageContent.salesServiceContent || ''} onChange={(e) => setPageContent({ ...pageContent, salesServiceContent: e.target.value || null })} rows={6} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="First paragraph here...
+
+Second paragraph here..." />
                   </FormField>
                 </div>
                 <div className="md:col-span-2">
-                  <ImageSelector value={pageContent.salesServiceImageId} onChange={(id) => setPageContent({ ...pageContent, salesServiceImageId: id })} label="Sales & Service Image" />
+                  <ImageSelector value={pageContent.salesServiceImageId} onChange={(id) => setPageContent({ ...pageContent, salesServiceImageId: Number(id) })} label="Sales & Service Image" />
                 </div>
               </div>
             </div>

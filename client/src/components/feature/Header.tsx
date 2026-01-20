@@ -50,7 +50,7 @@ const Header = () => {
     if (closeTimeouts.current[itemId]) {
       clearTimeout(closeTimeouts.current[itemId]);
     }
-    
+
     // Set a new timeout to close after delay
     closeTimeouts.current[itemId] = setTimeout(() => {
       setOpenDropdowns(prev => ({
@@ -93,9 +93,8 @@ const Header = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                   target={item.openInNewTab ? '_blank' : undefined}
                   rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-                  className={`flex-1 text-sm font-medium whitespace-nowrap transition-colors ${
-                    isItemActive ? 'text-[#7DC244]' : 'text-gray-800 hover:text-[#7DC244]'
-                  }`}
+                  className={`flex-1 text-sm font-medium whitespace-nowrap transition-colors ${isItemActive ? 'text-[#7DC244]' : 'text-gray-800 hover:text-[#7DC244]'
+                    }`}
                 >
                   {item.label}
                 </Link>
@@ -115,22 +114,24 @@ const Header = () => {
                 <i className={`ri-arrow-${isDropdownOpen ? 'up' : 'down'}-s-line`}></i>
               </button>
             )}
-            {isDropdownOpen && (
-              <div className="pl-4 space-y-2">
-                {item.children?.map((child) => (
-                  <Link
-                    key={child.id}
-                    to={child.url || '#'}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    target={child.openInNewTab ? '_blank' : undefined}
-                    rel={child.openInNewTab ? 'noopener noreferrer' : undefined}
-                    className="block text-sm text-gray-600 hover:text-[#7DC244] transition-colors whitespace-nowrap"
-                  >
-                    {child.label}
-                  </Link>
-                ))}
-              </div>
-            )}
+            <div className={`pl-4 space-y-2 overflow-hidden transition-all duration-300 ease-in-out ${
+              isDropdownOpen 
+                ? 'max-h-96 opacity-100' 
+                : 'max-h-0 opacity-0'
+            }`}>
+              {item.children?.map((child) => (
+                <Link
+                  key={child.id}
+                  to={child.url || '#'}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  target={child.openInNewTab ? '_blank' : undefined}
+                  rel={child.openInNewTab ? 'noopener noreferrer' : undefined}
+                  className="block text-sm text-gray-600 hover:text-[#7DC244] transition-colors whitespace-nowrap"
+                >
+                  {child.label}
+                </Link>
+              ))}
+            </div>
           </div>
         );
       } else {
@@ -141,9 +142,8 @@ const Header = () => {
             onClick={() => setIsMobileMenuOpen(false)}
             target={item.openInNewTab ? '_blank' : undefined}
             rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-            className={`text-sm font-medium whitespace-nowrap transition-colors ${
-              isItemActive ? 'text-[#7DC244]' : 'text-gray-800 hover:text-[#7DC244]'
-            }`}
+            className={`text-sm font-medium whitespace-nowrap transition-colors ${isItemActive ? 'text-[#7DC244]' : 'text-gray-800 hover:text-[#7DC244]'
+              }`}
           >
             {item.label}
           </Link>
@@ -165,54 +165,55 @@ const Header = () => {
               to={item.url}
               target={item.openInNewTab ? '_blank' : undefined}
               rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-              className={`flex items-center space-x-1 text-sm font-medium transition-colors whitespace-nowrap pb-1 ${
-                isItemActive || item.children?.some(child => isActive(child.url)) 
-                  ? 'text-[#7DC244]' 
-                  : 'text-gray-700 hover:text-[#7DC244]'
-              }`}
+              className={`flex items-center space-x-1 text-sm font-medium transition-colors whitespace-nowrap pb-1 ${isItemActive || item.children?.some(child => isActive(child.url))
+                ? 'text-[#7DC244]'
+                : 'text-gray-700 hover:text-[#7DC244]'
+                }`}
             >
               <span>{item.label}</span>
               <i className="ri-arrow-down-s-line text-base"></i>
             </Link>
           ) : (
             <button
-              className={`flex items-center space-x-1 text-sm font-medium transition-colors whitespace-nowrap pb-1 ${
-                isItemActive || item.children?.some(child => isActive(child.url)) 
-                  ? 'text-[#7DC244]' 
-                  : 'text-gray-700 hover:text-[#7DC244]'
-              }`}
+              className={`flex items-center space-x-1 text-sm font-medium transition-colors whitespace-nowrap pb-1 ${isItemActive || item.children?.some(child => isActive(child.url))
+                ? 'text-[#7DC244]'
+                : 'text-gray-700 hover:text-[#7DC244]'
+                }`}
             >
               <span>{item.label}</span>
               <i className="ri-arrow-down-s-line text-base"></i>
             </button>
           )}
           {(isItemActive || item.children?.some(child => isActive(child.url))) && (
-            <div 
+            <div
               className="absolute bottom-0 left-0 right-0 h-0.5"
               style={{
                 background: 'linear-gradient(151deg, rgba(40, 121, 182, 1) 0%, rgba(125, 194, 68, 1) 49%, rgba(238, 106, 49, 1) 100%)'
               }}
             ></div>
           )}
-          {isDropdownOpen && (
-            <div 
-              className="absolute top-full left-0 mt-3 w-56 bg-white shadow-xl rounded-md py-2 z-50 border border-gray-100"
-              onMouseEnter={() => cancelCloseDropdown(item.id)}
-              onMouseLeave={() => closeDropdown(item.id, 250)}
-            >
+          <div
+            className={`absolute top-full left-0 mt-3 min-w-72 bg-white shadow-xl rounded-md py-2 z-50 border border-gray-100 transition-all duration-300 ease-in-out ${
+              isDropdownOpen 
+                ? 'opacity-100 visible translate-y-0' 
+                : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+            }`}
+            onMouseEnter={() => cancelCloseDropdown(item.id)}
+            onMouseLeave={() => closeDropdown(item.id, 250)}
+          >
               {item.children?.map((child) => (
                 <Link
                   key={child.id}
                   to={child.url || '#'}
                   target={child.openInNewTab ? '_blank' : undefined}
                   rel={child.openInNewTab ? 'noopener noreferrer' : undefined}
-                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#7DC244] transition-colors whitespace-nowrap"
+                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#7DC244] transition-colors"
+                  title={child.label}
                 >
-                  {child.label}
+                  <span className="block break-words">{child.label}</span>
                 </Link>
               ))}
-            </div>
-          )}
+          </div>
         </div>
       );
     } else {
@@ -222,14 +223,13 @@ const Header = () => {
             to={item.url || '#'}
             target={item.openInNewTab ? '_blank' : undefined}
             rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-            className={`text-sm font-medium transition-colors whitespace-nowrap pb-1 block ${
-              isItemActive ? 'text-[#7DC244]' : 'text-gray-700 hover:text-[#7DC244]'
-            }`}
+            className={`text-sm font-medium transition-colors whitespace-nowrap pb-1 block ${isItemActive ? 'text-[#7DC244]' : 'text-gray-700 hover:text-[#7DC244]'
+              }`}
           >
             {item.label}
           </Link>
           {isItemActive && (
-            <div 
+            <div
               className="absolute bottom-0 left-0 right-0 h-0.5"
               style={{
                 background: 'linear-gradient(151deg, rgba(40, 121, 182, 1) 0%, rgba(125, 194, 68, 1) 49%, rgba(238, 106, 49, 1) 100%)'
@@ -245,7 +245,7 @@ const Header = () => {
     // Show basic header structure while loading
     return (
       <header className="fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-300">
-        <div className="w-full px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between py-4">
             <Link to="/" className="flex items-center">
               <img
@@ -265,11 +265,10 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md' : 'bg-white'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-white'
+        }`}
     >
-      <div className="w-full px-6 lg:px-12">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <div className="flex items-center space-x-3">
@@ -283,7 +282,7 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             {items.map((item) => renderNavItem(item, false))}
           </nav>
 
@@ -291,13 +290,13 @@ const Header = () => {
           <div className="hidden lg:flex items-center space-x-3">
             <Link
               to="/request-demo"
-              className="px-6 py-2.5 border-2 border-[#7DC244] text-[#7DC244] rounded-md hover:bg-[#7DC244] hover:text-white transition-all duration-300 text-sm font-semibold whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center justify-center py-[0.425rem] px-[0.5rem] bg-[#F7FFF2] border-2 border-[#7DC244] text-[#7DC244] rounded-lg hover:bg-[#7DC244]/10 transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
             >
               Request Demo
             </Link>
             <Link
               to="/contact-us"
-              className="px-6 py-2.5 bg-[#7DC244] text-white text-sm font-medium rounded-md hover:bg-[#6ab035] transition-colors whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center justify-center py-[0.425rem] px-[0.5rem] bg-[#7DC244] border-2 border-transparent text-white rounded-lg hover:bg-[#6BC04A] transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
             >
               Contact Us
             </Link>
@@ -320,14 +319,14 @@ const Header = () => {
               <div className="flex flex-col space-y-2 pt-4 border-t">
                 <Link
                   to="/request-demo"
-                  className="px-6 py-2.5 border-2 border-[#7DC244] text-[#7DC244] rounded-md hover:bg-[#7DC244] hover:text-white transition-all duration-300 text-sm font-semibold whitespace-nowrap cursor-pointer text-center"
+                  className="inline-flex items-center justify-center py-[0.425rem] px-[0.5rem] bg-[#F7FFF2] border-2 border-[#7DC244] text-[#7DC244] rounded-lg hover:bg-[#7DC244]/10 transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Request Demo
                 </Link>
                 <Link
                   to="/contact-us"
-                  className="px-6 py-2.5 bg-[#7DC244] text-white text-sm font-medium rounded-md hover:bg-[#6ab035] transition-colors text-center whitespace-nowrap cursor-pointer"
+                  className="inline-flex items-center justify-center py-[0.425rem] px-[0.5rem] bg-[#7DC244] border-2 border-transparent text-white rounded-lg hover:bg-[#6BC04A] transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Contact Us

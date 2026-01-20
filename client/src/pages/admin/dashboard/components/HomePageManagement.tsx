@@ -32,9 +32,14 @@ interface AboutSection {
   title: string | null;
   subtitle: string | null;
   introText: string | null;
+  backgroundImageId: number | null;
   mainImageId: number | null;
   ctaText: string | null;
   ctaUrl: string | null;
+  backgroundImage?: {
+    filePath: string;
+    altText: string;
+  };
   mainImage?: {
     filePath: string;
     altText: string;
@@ -145,6 +150,7 @@ export default function HomePageManagement() {
     title: null,
     subtitle: null,
     introText: null,
+    backgroundImageId: null,
     mainImageId: null,
     ctaText: null,
     ctaUrl: null
@@ -236,9 +242,11 @@ export default function HomePageManagement() {
               title: data.title || null,
               subtitle: data.subtitle || null,
               introText: data.introText || null,
+              backgroundImageId: data.backgroundImageId || null,
               mainImageId: data.mainImageId || null,
               ctaText: data.ctaText || null,
               ctaUrl: data.ctaUrl || null,
+              backgroundImage: data.backgroundImage,
               mainImage: data.mainImage
             });
             setAboutParagraphs(data.paragraphs || []);
@@ -248,6 +256,7 @@ export default function HomePageManagement() {
               title: null,
               subtitle: null,
               introText: null,
+              backgroundImageId: null,
               mainImageId: null,
               ctaText: null,
               ctaUrl: null
@@ -281,9 +290,17 @@ export default function HomePageManagement() {
           }
           break;
         case 'quality':
-          const qualityRes = await api.get<QualitySection>('/home-quality-section');
+          const qualityRes = await api.get<any>('/home-quality-section');
           if (qualityRes.success && qualityRes.data) {
-            setQualityData(qualityRes.data as QualitySection);
+            const data = qualityRes.data;
+            // Map backend fields to frontend interface
+            setQualityData({
+              id: data.id,
+              title: data.heading || data.title || '',
+              content: data.description || data.content || '',
+              imageId: data.backgroundImageId || data.imageId || null,
+              image: data.backgroundImage || data.image,
+            });
           }
           break;
         case 'specialties':
@@ -342,9 +359,11 @@ export default function HomePageManagement() {
             title: data.title || null,
             subtitle: data.subtitle || null,
             introText: data.introText || null,
+            backgroundImageId: data.backgroundImageId || null,
             mainImageId: data.mainImageId || null,
             ctaText: data.ctaText || null,
             ctaUrl: data.ctaUrl || null,
+            backgroundImage: data.backgroundImage,
             mainImage: data.mainImage
           });
           setAboutParagraphs(data.paragraphs || []);
@@ -463,9 +482,27 @@ export default function HomePageManagement() {
   const handleSaveQuality = async () => {
     setSaving(true);
     try {
-      const response = await api.put('/home-quality-section', qualityData);
+      // Map frontend fields to backend fields
+      const payload = {
+        heading: qualityData.title || null,
+        description: qualityData.content || null,
+        backgroundImageId: qualityData.imageId || null,
+      };
+      const response = await api.put('/home-quality-section', payload);
       if (response.success) {
         alert('Quality section saved successfully!');
+        // Refresh the data
+        const qualityRes = await api.get<QualitySection>('/home-quality-section');
+        if (qualityRes.success && qualityRes.data) {
+          const data = qualityRes.data as any;
+          setQualityData({
+            id: data.id,
+            title: data.heading || data.title || '',
+            content: data.description || data.content || '',
+            imageId: data.backgroundImageId || data.imageId || null,
+            image: data.backgroundImage || data.image,
+          });
+        }
       }
     } catch (error: any) {
       alert(error.message || 'Failed to save');
@@ -548,6 +585,20 @@ export default function HomePageManagement() {
       const response = await api.put('/home-specialties-section', specialtiesData);
       if (response.success) {
         alert('Specialties section saved successfully!');
+        // Refresh the data
+        const specialtiesRes = await api.get<any>('/home-specialties-section');
+        if (specialtiesRes.success && specialtiesRes.data) {
+          const data = specialtiesRes.data;
+          setSpecialtiesData({
+            id: data.id,
+            heading: data.heading || '',
+            description: data.description || '',
+            imageId: data.imageId || null,
+            image: data.image,
+            ctaText: data.ctaText || '',
+            ctaUrl: data.ctaUrl || '',
+          });
+        }
       }
     } catch (error: any) {
       alert(error.message || 'Failed to save');
@@ -594,7 +645,7 @@ export default function HomePageManagement() {
     <div className="space-y-6">
       {/* Page Title */}
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Home Page Management</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Home Page Management</h2>
         <p className="text-sm text-gray-600 mt-1">Manage all sections of your home page</p>
       </div>
 
@@ -811,13 +862,13 @@ function HeroSectionEditor({ data, onChange, onSave, saving, getImageUrl }: any)
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField label="Title" required>
+        <FormField label="Title">
           <input
             type="text"
             value={data.title ?? ''}
             onChange={(e) => onChange({ ...data, title: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter hero title"
+            placeholder="Enter hero title (optional)"
           />
         </FormField>
 
@@ -884,7 +935,7 @@ function HeroSectionEditor({ data, onChange, onSave, saving, getImageUrl }: any)
               }}
             >
               <div>
-                <h1 style={{ color: data.titleColor }} className="text-3xl font-bold mb-2">
+                <h1 style={{ color: data.titleColor }} className="text-3xl font-medium mb-2">
                   {data.title}
                 </h1>
                 <p style={{ color: data.subtitleColor }} className="text-lg">
@@ -964,6 +1015,17 @@ function AboutSectionEditor({
               placeholder="Enter intro text (used if no paragraphs are added)"
             />
           </FormField>
+        </div>
+
+        <div className="md:col-span-2">
+          <ImageSelector
+            value={safeData.backgroundImageId || null}
+            onChange={(id) => onChange({ ...safeData, backgroundImageId: id })}
+            label="Section Background Image (PNG)"
+          />
+          <p className="text-sm text-gray-500 mt-2">
+            Background image for the section with rounded top corners. Recommended: PNG format.
+          </p>
         </div>
 
         <div className="md:col-span-2">
@@ -1198,8 +1260,11 @@ function QualitySectionEditor({ data, onChange, onSave, saving, getImageUrl }: a
           <ImageSelector
             value={data.imageId}
             onChange={(id) => onChange({ ...data, imageId: id })}
-            label="Section Image"
+            label="Background Image"
           />
+          <p className="text-sm text-gray-500 mt-2">
+            Background image for the quality section.
+          </p>
         </div>
       </div>
     </div>
@@ -1391,8 +1456,11 @@ function SpecialtiesSectionEditor({ data, onChange, onSave, saving, getImageUrl 
           <ImageSelector
             value={data.imageId}
             onChange={(id) => onChange({ ...data, imageId: id })}
-            label="Section Image"
+            label="Section Image (Left Side)"
           />
+          <p className="text-sm text-gray-500 mt-2">
+            Large vertical image displayed on the left side of the specialties section.
+          </p>
         </div>
 
         <FormField label="CTA Text">

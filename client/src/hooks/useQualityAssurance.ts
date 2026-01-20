@@ -4,6 +4,7 @@ import { api } from '../utils/api';
 interface Certification {
   id: number;
   name: string;
+  abbreviation?: string | null;
   description: string | null;
   logoId: number | null;
   orderIndex: number;
@@ -20,8 +21,15 @@ interface QualityAssurancePageContent {
   heroSubtitle: string | null;
   heroImageId: number | null;
   introText: string | null;
+  backgroundImageId: number | null;
+  mainHeading: string | null;
+  mainContent: string | null;
   mainImageId: number | null;
   heroImage?: {
+    filePath: string;
+    altText: string;
+  };
+  backgroundImage?: {
     filePath: string;
     altText: string;
   };

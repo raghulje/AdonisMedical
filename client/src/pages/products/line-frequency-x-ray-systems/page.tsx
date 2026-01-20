@@ -1,18 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../components/feature/Header';
 import Footer from '../../../components/feature/Footer';
 import ContactUsSection from '../../../components/reusable/ContactUsSection';
+import TestimonialsSection from '../../home/components/TestimonialsSection';
+import ProductImageCarousel from '../../../components/product/ProductImageCarousel';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useProduct } from '../../../hooks';
+import { useProduct, useHomeProducts } from '../../../hooks';
 import { getProductApiSlug } from '../../../utils/productSlugs';
 import { getImageUrl, getDefaultImageUrl } from '../../../utils/imageUrl';
+import { Link } from 'react-router-dom';
 
 export default function LineFrequencyXRaySystemsPage() {
   const navigate = useNavigate();
   const { content, images, features, variants, loading, error } = useProduct(getProductApiSlug('line-frequency-x-ray-systems'));
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { cards: productCards } = useHomeProducts();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,7 +42,7 @@ export default function LineFrequencyXRaySystemsPage() {
   if (loading) {
     return (
       <div className="pt-20 min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7ED957]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7DC244]"></div>
       </div>
     );
   }
@@ -50,40 +53,22 @@ export default function LineFrequencyXRaySystemsPage() {
       
       {/* Product Details Section */}
       <section className="py-16 bg-[#fafafa]">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="mb-12 text-center" data-aos="fade-down">
-            <h1 className="text-5xl font-bold text-[#7ED957]">
+            <h1 className="text-5xl font-medium text-[#7DC244]">
               {content?.title || 'Line Frequency X-Ray Systems'}
             </h1>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div className="space-y-4" data-aos="fade-right">
-              <div className="bg-white rounded-lg shadow-lg p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
-                <img
-                  src={allImages[currentImageIndex] || mainImageUrl}
-                  alt={mainImage?.image?.altText || content?.title || 'Line Frequency X-Ray Systems'}
-                  className="w-full h-auto transition-transform duration-500 hover:scale-105"
-                />
-              </div>
-              {allImages.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto">
-                  {allImages.map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
-                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 hover:shadow-lg ${
-                        currentImageIndex === idx ? 'border-[#7ED957]' : 'border-gray-200'
-                      }`}
-                    >
-                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              )}
+              <ProductImageCarousel
+                images={allImages}
+                altText={mainImage?.image?.altText || content?.title || 'Line Frequency X-Ray Systems'}
+              />
               {content?.deploymentInfo && (
                 <div className="text-center">
-                  <span className="inline-block bg-[#0066CC] text-white px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                  <span className="inline-block bg-[#F2F9EC] text-[#7DC244] px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
                     {content.deploymentInfo}
                   </span>
                 </div>
@@ -105,7 +90,7 @@ export default function LineFrequencyXRaySystemsPage() {
                 <ul className="space-y-3 text-gray-700">
                   {features.map((feature, idx) => (
                     <li key={feature.id} className="flex items-start gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-up" data-aos-delay={idx * 50}>
-                      <span className="text-[#7ED957] mt-1 transition-transform duration-300 hover:scale-125">•</span>
+                      <span className="text-[#3e6da3] mt-1 text-xl font-black transition-transform duration-300 hover:scale-125">•</span>
                       <span>{feature.featureText}</span>
                     </li>
                   ))}
@@ -113,10 +98,10 @@ export default function LineFrequencyXRaySystemsPage() {
               )}
               {variants.length > 0 && (
                 <div className="pt-6" data-aos="fade-up">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Variants</h3>
+                  <h3 className="text-2xl font-medium text-gray-800 mb-4">Variants</h3>
                   <div className="flex flex-wrap gap-3">
                     {variants.map((variant) => (
-                      <span key={variant.id} className="px-6 py-2 bg-[#F5F5DC] text-gray-800 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer">
+                      <span key={variant.id} className="px-6 py-2 bg-[#F2F9EC] text-[#7DC244] rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer">
                         {variant.variantName}
                       </span>
                     ))}
@@ -126,7 +111,7 @@ export default function LineFrequencyXRaySystemsPage() {
               <div className="pt-6" data-aos="fade-up">
                 <button
                   onClick={() => navigate('/contact-us')}
-                  className="px-8 py-3 bg-[#0066CC] text-white font-semibold rounded-md hover:bg-[#0052A3] transition-all duration-300 whitespace-nowrap hover:scale-105 hover:shadow-lg cursor-pointer"
+                  className="px-8 py-3 bg-[#2879B6] text-white font-semibold rounded-md hover:bg-[#1f5f8f] transition-all duration-300 whitespace-nowrap hover:scale-105 hover:shadow-lg cursor-pointer"
                 >
                   Enquire Now
                 </button>
@@ -137,45 +122,93 @@ export default function LineFrequencyXRaySystemsPage() {
       </section>
 
       {/* Our Products Section */}
-      <section className="py-16 bg-gradient-to-b from-[#F5F5DC] to-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12 text-[#7ED957]" data-aos="fade-up">Our Products</h2>
+      <section className="py-11 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <h2 className="text-4xl font-medium text-center mb-12 text-[#7DC244]" data-aos="fade-up">Our Products</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {relatedProducts.map((product, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group cursor-pointer"
-                onClick={() => navigate(product.link)}
-                data-aos="zoom-in"
-                data-aos-delay={idx * 100}
-              >
-                <div className="relative h-64">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-6 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-                  <i className="ri-arrow-right-line text-2xl text-[#0066CC]"></i>
-                </div>
-              </div>
-            ))}
+            {productCards.length > 0 ? (
+              productCards
+                .filter(card => card.name !== 'Line Frequency X-Ray Systems')
+                .map((product, idx) => {
+                  const cardImageUrl = product.cardImage ? getImageUrl(product.cardImage) : '';
+                  const bgImageUrl = product.backgroundImage ? getImageUrl(product.backgroundImage) : '';
+                  const linkUrl = product.internalLink || '#';
+                  
+                  return (
+                    <Link
+                      key={product.id}
+                      to={linkUrl}
+                      className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer relative"
+                      data-aos="fade-up"
+                      data-aos-delay={idx * 100}
+                      style={bgImageUrl ? { backgroundImage: `url(${bgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+                    >
+                      <div className="relative h-64 overflow-hidden">
+                        {cardImageUrl ? (
+                          <img src={cardImageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <i className="ri-image-line text-4xl text-gray-400"></i>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-6 flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-500">{product.name}</h3>
+                        <div className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg cursor-pointer relative overflow-hidden">
+                          <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
+                          <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })
+            ) : (
+              relatedProducts.map((product, idx) => {
+                const cmsProduct = productCards.find(card => 
+                  card.name.toLowerCase() === product.name.toLowerCase() || 
+                  card.internalLink === product.link
+                );
+                
+                const cardImageUrl = cmsProduct?.cardImage ? getImageUrl(cmsProduct.cardImage) : product.image;
+                const bgImageUrl = cmsProduct?.backgroundImage ? getImageUrl(cmsProduct.backgroundImage) : '';
+                const linkUrl = cmsProduct?.internalLink || product.link;
+                
+                return (
+                  <Link
+                    key={idx}
+                    to={linkUrl}
+                    className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer relative"
+                    data-aos="fade-up"
+                    data-aos-delay={idx * 100}
+                    style={bgImageUrl ? { backgroundImage: `url(${bgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+                  >
+                    <div className="relative h-64 overflow-hidden">
+                      <img src={cardImageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                    </div>
+                    <div className="p-6 flex items-center justify-between">
+                      <h3 className="text-2xl font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-500">{product.name}</h3>
+                      <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-blue-600 group-hover:shadow-lg cursor-pointer relative overflow-hidden">
+                        <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
+                        <div className="absolute inset-0 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
 
       {/* Hospitals Served Section */}
       <section className="py-16 bg-[#F5F5DC]">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12 text-[#7ED957]" data-aos="fade-up">Hospitals Served</h2>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <h2 className="text-4xl font-medium text-center mb-12 text-[#7DC244]" data-aos="fade-up">Hospitals Served</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {[1, 2, 3, 4].map((item, idx) => (
               <div key={item} className="bg-white rounded-lg p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1" data-aos="fade-up" data-aos-delay={idx * 100}>
                 <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-125 hover:rotate-12">
+                  <div className="w-12 h-12 bg-[#7DC244] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-125 hover:rotate-12">
                     <i className="ri-hospital-line text-white text-2xl"></i>
                   </div>
                   <div>
@@ -193,12 +226,8 @@ export default function LineFrequencyXRaySystemsPage() {
       <ContactUsSection />
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-sm text-gray-600 mb-2 text-center" data-aos="fade-up">TESTIMONIAL</p>
-          <h2 className="text-4xl font-bold mb-12 text-gray-800 text-center" data-aos="fade-up">Client Stories & Experiences</h2>
-        </div>
-      </section>
+      <TestimonialsSection />
+
       <Footer />
     </div>
   );

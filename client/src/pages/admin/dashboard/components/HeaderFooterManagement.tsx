@@ -4,6 +4,7 @@ import Modal from '../../../../components/cms/Modal';
 import FormField from '../../../../components/cms/FormField';
 import DragDropList from '../../../../components/cms/DragDropList';
 import ImageSelector from '../../../../components/cms/ImageSelector';
+import { getImageUrl } from '../../../../utils/imageUrl';
 
 type SectionTab = 'header' | 'footer';
 
@@ -294,7 +295,7 @@ export default function HeaderFooterManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Header & Footer Management</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Header & Footer Management</h2>
         <p className="text-sm text-gray-600 mt-1">Manage navigation menu and footer content</p>
       </div>
 
@@ -450,7 +451,7 @@ export default function HeaderFooterManagement() {
                     <h4 className="text-md font-medium text-gray-700">Social Media Icons</h4>
                     <button 
                       onClick={() => {
-                        setEditingSocial({ id: 0, platform: '', url: '', iconClass: null, orderIndex: socialLinks.length, isActive: true });
+                        setEditingSocial({ id: 0, platform: '', url: null, iconClass: null, iconId: null, orderIndex: socialLinks.length, isActive: true });
                         setShowSocialModal(true);
                       }}
                       className="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 cursor-pointer"
@@ -465,10 +466,14 @@ export default function HeaderFooterManagement() {
                       {socialLinks.map((social) => (
                         <div key={social.id} className="flex items-center justify-between bg-gray-50 p-3 rounded">
                           <div className="flex items-center space-x-3">
-                            {social.iconClass && <i className={`${social.iconClass} text-xl text-[#FF6B35]`}></i>}
+                            {social.icon && social.icon.filePath ? (
+                              <img src={getImageUrl(social.icon)} alt={social.platform || 'Social'} className="w-6 h-6 object-contain" />
+                            ) : social.iconClass ? (
+                              <i className={`${social.iconClass} text-xl text-[#FF6B35]`}></i>
+                            ) : null}
                             <div>
                               <p className="font-medium">{social.platform}</p>
-                              <p className="text-sm text-gray-600">{social.url}</p>
+                              {social.url && <p className="text-sm text-gray-600">{social.url}</p>}
                             </div>
                           </div>
                           <button 
@@ -645,16 +650,23 @@ function SocialModal({ social, onSave, onClose, saving }: any) {
             placeholder="Facebook, Twitter, Instagram, LinkedIn"
           />
         </FormField>
-        <FormField label="URL" required>
+        <FormField label="URL">
           <input
             type="text"
-            value={formData.url}
-            onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+            value={formData.url || ''}
+            onChange={(e) => setFormData({ ...formData, url: e.target.value || null })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             placeholder="https://facebook.com/..."
           />
         </FormField>
-        <FormField label="Icon Class (Optional)">
+        <FormField label="Icon (SVG Upload)" hint="Upload SVG icon for this social link">
+          <ImageSelector
+            value={formData.iconId || null}
+            onChange={(id) => setFormData({ ...formData, iconId: id || null })}
+            label=""
+          />
+        </FormField>
+        <FormField label="Icon Class (Optional)" hint="RemixIcon class as fallback">
           <input
             type="text"
             value={formData.iconClass || ''}
@@ -665,7 +677,7 @@ function SocialModal({ social, onSave, onClose, saving }: any) {
         </FormField>
         <div className="flex justify-end space-x-3 pt-4 border-t">
           <button onClick={onClose} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
-          <button onClick={() => onSave(formData)} disabled={saving || !formData.platform || !formData.url} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer">{saving ? 'Saving...' : 'Save'}</button>
+          <button onClick={() => onSave(formData)} disabled={saving || !formData.platform} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer">{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </div>
     </Modal>

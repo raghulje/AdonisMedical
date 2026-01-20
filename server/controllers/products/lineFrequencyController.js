@@ -1,4 +1,4 @@
-const { LineFrequencyPageContent, LineFrequencyImage, LineFrequencyFeature, LineFrequencyVariant, Media } = require('../../models');
+const { LineFrequencyPageContent, LineFrequencyImage, LineFrequencyFeature, LineFrequencyVariant, LineFrequencyHospital, Media } = require('../../models');
 const status = require('../../helpers/response');
 
 const findSingle = async (include = []) => {
@@ -163,6 +163,61 @@ exports.deleteVariant = async (req, res) => {
     return status.successResponse(res, "Variant deleted");
   } catch (error) {
     console.error('Delete Line Frequency Variant Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+// Hospitals
+exports.getHospitals = async (req, res) => {
+  try {
+    const hospitals = await LineFrequencyHospital.findAll({
+      where: { isActive: true },
+      order: [['orderIndex', 'ASC']],
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.successResponse(res, "Retrieved", hospitals);
+  } catch (error) {
+    console.error('Get Line Frequency Hospitals Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.createHospital = async (req, res) => {
+  try {
+    const hospital = await LineFrequencyHospital.create(req.body);
+    const created = await LineFrequencyHospital.findByPk(hospital.id, {
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.createdResponse(res, "Hospital created", created);
+  } catch (error) {
+    console.error('Create Line Frequency Hospital Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.updateHospital = async (req, res) => {
+  try {
+    const hospital = await LineFrequencyHospital.findByPk(req.params.id);
+    if (!hospital) return status.notFoundResponse(res, "Hospital not found");
+    await hospital.update(req.body);
+    const updated = await LineFrequencyHospital.findByPk(req.params.id, {
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.successResponse(res, "Hospital updated", updated);
+  } catch (error) {
+    console.error('Update Line Frequency Hospital Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.deleteHospital = async (req, res) => {
+  try {
+    const hospital = await LineFrequencyHospital.findByPk(req.params.id);
+    if (!hospital) return status.notFoundResponse(res, "Hospital not found");
+    await hospital.destroy();
+    return status.successResponse(res, "Hospital deleted");
+  } catch (error) {
+    console.error('Delete Line Frequency Hospital Error:', error);
     return status.errorResponse(res, error.message);
   }
 };

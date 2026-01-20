@@ -33,6 +33,12 @@ export default function ContactUsPage() {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Track form submission
+    const { trackFormSubmit } = await import('../../utils/analytics');
+    trackFormSubmit('Contact Us Form', 'contact', {
+      source: 'contact-us',
+    });
+
     try {
       const response = await api.post('/contact-submissions', {
         name: formData.name,
@@ -68,8 +74,8 @@ export default function ContactUsPage() {
       <Header />
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-[#E8F5E9] to-white pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-4" style={{ color: '#7DC244' }} data-aos="fade-down">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <h1 className="text-5xl font-medium mb-4" style={{ color: '#7DC244' }} data-aos="fade-down">
             {content?.heroTitle || 'Contact Us'}
           </h1>
           {(content?.heroSubtitle || content?.introText) && (
@@ -81,7 +87,7 @@ export default function ContactUsPage() {
       </div>
 
       {/* Contact Section */}
-      <div className="max-w-7xl mx-auto px-4 pt-8 pb-16">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8 pb-16">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 hover:shadow-2xl" data-aos="zoom-in">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left Side - Company Info */}

@@ -7,7 +7,17 @@ interface ReusableContactSection {
   companyName: string | null;
   address: string | null;
   phone: string | null;
+  phoneIconId: number | null;
+  phoneIcon?: {
+    filePath: string;
+    altText: string;
+  };
   email: string | null;
+  emailIconId: number | null;
+  emailIcon?: {
+    filePath: string;
+    altText: string;
+  };
   imageId: number | null;
   image?: {
     filePath: string;

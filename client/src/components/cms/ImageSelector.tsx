@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../utils/api';
 import { getImageUrl, getDefaultImageUrl } from '../../utils/imageUrl';
 
@@ -29,6 +29,7 @@ export default function ImageSelector({
   const [loadingGallery, setLoadingGallery] = useState(false);
   const [galleryPage, setGalleryPage] = useState(1);
   const [selectedMedia, setSelectedMedia] = useState<any | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Determine if value is a mediaId (number) or URL (string)
   const isMediaId = typeof value === 'number';
@@ -115,9 +116,17 @@ export default function ImageSelector({
         setPreview(`${baseUrl}${data.imageUrl}`);
         setInputMode(null);
       }
+      // Reset file input so it can be used again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload image. Please try again.');
+      // Reset file input on error too
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } finally {
       setUploading(false);
     }
@@ -179,7 +188,7 @@ export default function ImageSelector({
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity rounded-lg flex items-center justify-center">
               <div className="opacity-0 group-hover:opacity-100 flex space-x-2">
                 <button
-                  onClick={() => setInputMode(null)}
+                  onClick={() => fileInputRef.current?.click()}
                   className="px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer"
                 >
                   <i className="ri-edit-line mr-2"></i>Change
@@ -209,7 +218,7 @@ export default function ImageSelector({
               <p className="text-sm text-gray-500 mb-4">Select image source:</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <button
-                  onClick={() => setInputMode('upload')}
+                  onClick={() => fileInputRef.current?.click()}
                   className="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer flex items-center justify-center"
                 >
                   <i className="ri-upload-2-line mr-2"></i>Upload
@@ -245,13 +254,12 @@ export default function ImageSelector({
                   <i className="ri-close-line"></i>
                 </button>
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                disabled={uploading}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
-              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer flex items-center justify-center"
+              >
+                <i className="ri-upload-2-line mr-2"></i>Choose File
+              </button>
               {uploading && (
                 <div className="text-sm text-blue-600">
                   <i className="ri-loader-4-line animate-spin mr-2"></i>Uploading...
@@ -352,13 +360,23 @@ export default function ImageSelector({
       ) : (
         <div className="text-center">
           <button
-            onClick={() => setInputMode(null)}
+            onClick={() => fileInputRef.current?.click()}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer"
           >
             <i className="ri-edit-line mr-2"></i>Change Image
           </button>
         </div>
       )}
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileUpload}
+        disabled={uploading}
+        className="hidden"
+      />
     </div>
   );
 }

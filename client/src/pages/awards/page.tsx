@@ -28,18 +28,18 @@ export default function AwardsPage() {
       <Header />
       {/* Hero Section */}
       <section 
-        className="relative bg-cover bg-center py-32 px-4"
+        className="relative h-[400px] flex items-center bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${
             pageContent?.heroImage 
               ? getImageUrl(pageContent.heroImage) 
               : getDefaultImageUrl('2024/10/image-1-1.jpg')
           })`
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40"></div>
-        <div className="relative max-w-7xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold text-[#9ACD32] mb-6" data-aos="fade-down">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-12 w-full">
+          <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-6" data-aos="fade-down">
             {pageContent?.heroTitle || 'Awards'}
           </h1>
           {pageContent?.heroSubtitle && (
@@ -51,11 +51,11 @@ export default function AwardsPage() {
       </section>
 
       {/* Awards Grid Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-11 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#9ACD32]"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7DC244]"></div>
             </div>
           ) : error ? (
             <div className="text-red-600 text-center p-8 bg-red-50 rounded-lg">

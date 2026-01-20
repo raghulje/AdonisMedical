@@ -71,7 +71,7 @@ export default function FaqsPage() {
         {/* Content */}
         <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
           <h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" 
+            className="text-4xl md:text-5xl lg:text-6xl font-medium mb-6 leading-tight" 
             style={{ color: titleColor }}
             data-aos="fade-in"
           >
@@ -99,7 +99,7 @@ export default function FaqsPage() {
           backgroundColor: page?.sectionBackgroundImage ? 'transparent' : '#F9FAFB'
         }}
       >
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Left Side - Image */}
             {faqsImage && (

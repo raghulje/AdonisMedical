@@ -2,13 +2,17 @@ import { useState, useEffect } from 'react';
 import { api } from '../../../../utils/api';
 import Modal from '../../../../components/cms/Modal';
 import FormField from '../../../../components/cms/FormField';
+import ImageSelector from '../../../../components/cms/ImageSelector';
 import DragDropList from '../../../../components/cms/DragDropList';
+import { getImageUrl } from '../../../../utils/imageUrl';
 
 interface SocialLink {
   id: number;
   platform: string;
-  url: string;
+  url: string | null;
   iconClass: string | null;
+  iconId: number | null;
+  icon?: { filePath: string; altText: string };
   orderIndex: number;
   isActive: boolean;
 }
@@ -94,10 +98,10 @@ export default function SocialLinksManagement() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Social Links</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Social Links</h2>
             <p className="text-sm text-gray-600 mt-1">Manage social media links</p>
           </div>
-          <button onClick={() => { setEditingLink({ id: 0, platform: '', url: '', iconClass: null, orderIndex: links.length, isActive: true }); setShowModal(true); }} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer">
+          <button onClick={() => { setEditingLink({ id: 0, platform: '', url: null, iconClass: null, iconId: null, orderIndex: links.length, isActive: true }); setShowModal(true); }} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer">
             <i className="ri-add-line mr-2"></i>Add Link
           </button>
         </div>
@@ -121,10 +125,14 @@ export default function SocialLinksManagement() {
             renderItem={(link: SocialLink) => (
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center space-x-4">
-                  {link.iconClass && <i className={`${link.iconClass} text-2xl text-blue-600`}></i>}
+                  {link.icon && link.icon.filePath ? (
+                    <img src={getImageUrl(link.icon)} alt={link.platform} className="w-8 h-8 object-contain" />
+                  ) : link.iconClass ? (
+                    <i className={`${link.iconClass} text-2xl text-blue-600`}></i>
+                  ) : null}
                   <div>
                     <h4 className="font-semibold text-gray-900">{link.platform}</h4>
-                    <p className="text-sm text-gray-600">{link.url}</p>
+                    {link.url && <p className="text-sm text-gray-600">{link.url}</p>}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -159,10 +167,17 @@ function LinkModal({ link, onSave, onClose, saving }: any) {
         <FormField label="Platform" required>
           <input type="text" value={formData.platform} onChange={(e) => setFormData({ ...formData, platform: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Facebook" />
         </FormField>
-        <FormField label="URL" required>
-          <input type="url" value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="https://facebook.com/..." />
+        <FormField label="URL">
+          <input type="url" value={formData.url || ''} onChange={(e) => setFormData({ ...formData, url: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="https://facebook.com/..." />
         </FormField>
-        <FormField label="Icon Class" hint="RemixIcon class">
+        <FormField label="Icon (SVG Upload)" hint="Upload SVG icon for this social link">
+          <ImageSelector
+            value={formData.iconId || null}
+            onChange={(id) => setFormData({ ...formData, iconId: id || null })}
+            label=""
+          />
+        </FormField>
+        <FormField label="Icon Class (Optional)" hint="RemixIcon class as fallback">
           <input type="text" value={formData.iconClass || ''} onChange={(e) => setFormData({ ...formData, iconClass: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="ri-facebook-line" />
           {formData.iconClass && <div className="mt-2 text-xs text-gray-500">Preview: <i className={formData.iconClass}></i></div>}
         </FormField>
@@ -174,7 +189,7 @@ function LinkModal({ link, onSave, onClose, saving }: any) {
         </FormField>
         <div className="flex justify-end space-x-3 pt-4 border-t">
           <button onClick={onClose} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
-          <button onClick={() => onSave(formData)} disabled={saving || !formData.platform || !formData.url} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer">{saving ? 'Saving...' : 'Save'}</button>
+          <button onClick={() => onSave(formData)} disabled={saving || !formData.platform} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer">{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </div>
     </Modal>

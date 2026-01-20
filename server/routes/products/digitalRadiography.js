@@ -15,6 +15,10 @@ router.get("/variants", controller.getVariants);
 router.post("/variants", controller.createVariant);
 router.put("/variants/:id", controller.updateVariant);
 router.delete("/variants/:id", controller.deleteVariant);
+router.get("/hospitals", controller.getHospitals);
+router.post("/hospitals", controller.createHospital);
+router.put("/hospitals/:id", controller.updateHospital);
+router.delete("/hospitals/:id", controller.deleteHospital);
 
 module.exports = router;
 

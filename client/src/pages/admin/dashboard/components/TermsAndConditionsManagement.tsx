@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../../../utils/api';
 import FormField from '../../../../components/cms/FormField';
-import RichTextEditor from '../../../../components/cms/RichTextEditor';
+import WordLikeEditor from '../../../../components/cms/WordLikeEditor';
 
 interface TermsParagraph {
   id: number;
@@ -65,7 +65,7 @@ export default function TermsAndConditionsManagement() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Terms and Conditions</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Terms and Conditions</h2>
             <p className="text-sm text-gray-600 mt-1">Manage the Terms and Conditions page content</p>
           </div>
           <button
@@ -110,17 +110,27 @@ export default function TermsAndConditionsManagement() {
 
             <div className="border-t pt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Content</h3>
-              <RichTextEditor
+              <WordLikeEditor
                 value={content.richTextContent ?? ''}
                 onChange={(value) => setContent({ ...content, richTextContent: value || null })}
                 label="Page Content"
-                placeholder="Enter the full Terms and Conditions content here. You can format text, add headings, lists, and more..."
+                placeholder="Enter the full Terms and Conditions content here. Format text just like in Microsoft Word..."
                 height="600px"
               />
-              <p className="text-sm text-gray-500 mt-2">
-                <i className="ri-information-line mr-1"></i>
-                Use the editor above to add and format your full Terms and Conditions content. All formatting, bold text, headings, and alignment will be preserved.
-              </p>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
+                <p className="text-sm text-green-800 mb-2">
+                  <i className="ri-checkbox-circle-line mr-1"></i>
+                  <strong>Word-like Editor Active!</strong>
+                </p>
+                <ul className="text-sm text-green-700 list-disc list-inside space-y-1">
+                  <li><strong>Just like Microsoft Word:</strong> Select text and use toolbar buttons or keyboard shortcuts</li>
+                  <li><strong>Bold:</strong> Select text → Click <strong>B</strong> button or press <kbd className="px-1 py-0.5 bg-white rounded text-xs border">Ctrl+B</kbd></li>
+                  <li><strong>Italic:</strong> Select text → Click <em>I</em> button or press <kbd className="px-1 py-0.5 bg-white rounded text-xs border">Ctrl+I</kbd></li>
+                  <li><strong>Underline:</strong> Select text → Click <u>U</u> button or press <kbd className="px-1 py-0.5 bg-white rounded text-xs border">Ctrl+U</kbd></li>
+                  <li><strong>Colors:</strong> Select text → Click the color buttons in the toolbar</li>
+                  <li><strong>Paste from Word:</strong> Copy from Word and paste - all formatting will be preserved!</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

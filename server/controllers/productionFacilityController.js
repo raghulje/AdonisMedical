@@ -9,7 +9,9 @@ exports.getPageContent = async (req, res) => {
   try {
     const content = await findSingle([
       { model: Media, as: 'heroImage' },
+      { model: Media, as: 'introBackgroundImage' },
       { model: Media, as: 'flexibilityImage' },
+      { model: Media, as: 'qualityBackgroundImage' },
       { model: Media, as: 'qualityImage' }
     ]);
     if (!content) {
@@ -31,7 +33,9 @@ exports.updatePageContent = async (req, res) => {
     await content.update(req.body);
     const updated = await findSingle([
       { model: Media, as: 'heroImage' },
+      { model: Media, as: 'introBackgroundImage' },
       { model: Media, as: 'flexibilityImage' },
+      { model: Media, as: 'qualityBackgroundImage' },
       { model: Media, as: 'qualityImage' }
     ]);
     return status.successResponse(res, "Production Facility page updated", updated);
@@ -45,7 +49,8 @@ exports.updatePageContent = async (req, res) => {
 exports.getFeatures = async (req, res) => {
   try {
     const features = await ProductionFacilityFeature.findAll({
-      order: [['orderIndex', 'ASC']]
+      order: [['orderIndex', 'ASC']],
+      include: [{ model: Media, as: 'icon' }]
     });
     return status.successResponse(res, "Retrieved", features);
   } catch (error) {
@@ -56,7 +61,10 @@ exports.getFeatures = async (req, res) => {
 
 exports.createFeature = async (req, res) => {
   try {
-    const feature = await ProductionFacilityFeature.create(req.body);
+    const newFeature = await ProductionFacilityFeature.create(req.body);
+    const feature = await ProductionFacilityFeature.findByPk(newFeature.id, {
+      include: [{ model: Media, as: 'icon' }]
+    });
     return status.createdResponse(res, "Feature created", feature);
   } catch (error) {
     console.error('Create Production Facility Feature Error:', error);
@@ -71,7 +79,10 @@ exports.updateFeature = async (req, res) => {
       return status.notFoundResponse(res, "Feature not found");
     }
     await feature.update(req.body);
-    return status.successResponse(res, "Feature updated", feature);
+    const updated = await ProductionFacilityFeature.findByPk(feature.id, {
+      include: [{ model: Media, as: 'icon' }]
+    });
+    return status.successResponse(res, "Feature updated", updated);
   } catch (error) {
     console.error('Update Production Facility Feature Error:', error);
     return status.errorResponse(res, error.message);

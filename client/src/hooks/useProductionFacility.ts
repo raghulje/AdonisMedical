@@ -3,7 +3,13 @@ import { api } from '../utils/api';
 
 interface ProductionFacilityFeature {
   id: number;
-  title: string;
+  iconId: number | null;
+  icon?: {
+    filePath: string;
+    altText: string;
+  };
+  iconClass: string | null;
+  heading: string | null;
   description: string | null;
   orderIndex: number;
 }
@@ -14,17 +20,29 @@ interface ProductionFacilityPageContent {
   heroSubtitle: string | null;
   heroImageId: number | null;
   introText: string | null;
-  flexibilityTitle: string | null;
+  introBackgroundImageId: number | null;
+  flexibilityHeading: string | null;
   flexibilityContent: string | null;
+  highlightedBoxText: string | null;
+  flexibilityAdditionalText: string | null;
   flexibilityImageId: number | null;
-  qualityTitle: string | null;
+  qualityHeading: string | null;
   qualityContent: string | null;
+  qualityBackgroundImageId: number | null;
   qualityImageId: number | null;
   heroImage?: {
     filePath: string;
     altText: string;
   };
+  introBackgroundImage?: {
+    filePath: string;
+    altText: string;
+  };
   flexibilityImage?: {
+    filePath: string;
+    altText: string;
+  };
+  qualityBackgroundImage?: {
     filePath: string;
     altText: string;
   };

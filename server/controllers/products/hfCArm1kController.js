@@ -1,4 +1,4 @@
-const { HfCArm1kPageContent, HfCArm1kImage, HfCArm1kFeature, HfCArm1kVariant, Media } = require('../../models');
+const { HfCArm1kPageContent, HfCArm1kImage, HfCArm1kFeature, HfCArm1kVariant, HfCArm1kHospital, Media } = require('../../models');
 const status = require('../../helpers/response');
 
 const findSingle = async (include = []) => {
@@ -163,6 +163,61 @@ exports.deleteVariant = async (req, res) => {
     return status.successResponse(res, "Variant deleted");
   } catch (error) {
     console.error('Delete 1K*1K High End HF C-ARM Variant Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+// Hospitals
+exports.getHospitals = async (req, res) => {
+  try {
+    const hospitals = await HfCArm1kHospital.findAll({
+      where: { isActive: true },
+      order: [['orderIndex', 'ASC']],
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.successResponse(res, "Retrieved", hospitals);
+  } catch (error) {
+    console.error('Get 1K*1K High End HF C-ARM Hospitals Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.createHospital = async (req, res) => {
+  try {
+    const hospital = await HfCArm1kHospital.create(req.body);
+    const created = await HfCArm1kHospital.findByPk(hospital.id, {
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.createdResponse(res, "Hospital created", created);
+  } catch (error) {
+    console.error('Create 1K*1K High End HF C-ARM Hospital Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.updateHospital = async (req, res) => {
+  try {
+    const hospital = await HfCArm1kHospital.findByPk(req.params.id);
+    if (!hospital) return status.notFoundResponse(res, "Hospital not found");
+    await hospital.update(req.body);
+    const updated = await HfCArm1kHospital.findByPk(req.params.id, {
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.successResponse(res, "Hospital updated", updated);
+  } catch (error) {
+    console.error('Update 1K*1K High End HF C-ARM Hospital Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.deleteHospital = async (req, res) => {
+  try {
+    const hospital = await HfCArm1kHospital.findByPk(req.params.id);
+    if (!hospital) return status.notFoundResponse(res, "Hospital not found");
+    await hospital.destroy();
+    return status.successResponse(res, "Hospital deleted");
+  } catch (error) {
+    console.error('Delete 1K*1K High End HF C-ARM Hospital Error:', error);
     return status.errorResponse(res, error.message);
   }
 };

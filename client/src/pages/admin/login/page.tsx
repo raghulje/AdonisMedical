@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
 
           {/* Title */}
           <div className="text-center mb-8" data-aos="fade-up" data-aos-delay="150">
-            <h1 className="text-3xl font-bold text-[#1F2937] mb-2">Admin Portal</h1>
+            <h1 className="text-3xl font-medium text-[#1F2937] mb-2">Admin Portal</h1>
             <p className="text-sm text-[#6B7280]">Sign in to access the content management system</p>
           </div>
 

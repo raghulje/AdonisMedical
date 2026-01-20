@@ -5,7 +5,7 @@ import FormField from '../../../../../components/cms/FormField';
 import DragDropList from '../../../../../components/cms/DragDropList';
 import ImageSelector from '../../../../../components/cms/ImageSelector';
 
-type TabType = 'content' | 'images' | 'features' | 'variants';
+type TabType = 'content' | 'images' | 'features' | 'variants' | 'hospitals';
 
 interface HfMobilePageContent {
   id?: number;
@@ -14,6 +14,24 @@ interface HfMobilePageContent {
   deploymentInfo: string | null;
   shortDescription: string | null;
   fullDescription: string | null;
+  productGalleryTitle: string | null;
+  ourProductsTitle: string | null;
+  hospitalsServedTitle: string | null;
+  enquireButtonText: string | null;
+}
+
+interface HfMobileHospital {
+  id: number;
+  hospitalName: string;
+  city: string | null;
+  state: string | null;
+  hospitalLogoId: number | null;
+  orderIndex: number;
+  isActive: boolean;
+  hospitalLogo?: {
+    filePath: string;
+    altText: string;
+  };
 }
 
 interface HfMobileImage {
@@ -50,19 +68,26 @@ export default function HfMobilePageManagement() {
     mainImageId: null,
     deploymentInfo: null,
     shortDescription: null,
-    fullDescription: null
+    fullDescription: null,
+    productGalleryTitle: null,
+    ourProductsTitle: null,
+    hospitalsServedTitle: null,
+    enquireButtonText: null
   });
 
   const [images, setImages] = useState<HfMobileImage[]>([]);
   const [features, setFeatures] = useState<HfMobileFeature[]>([]);
   const [variants, setVariants] = useState<HfMobileVariant[]>([]);
+  const [hospitals, setHospitals] = useState<HfMobileHospital[]>([]);
 
   const [showImageModal, setShowImageModal] = useState(false);
   const [showFeatureModal, setShowFeatureModal] = useState(false);
   const [showVariantModal, setShowVariantModal] = useState(false);
+  const [showHospitalModal, setShowHospitalModal] = useState(false);
   const [editingImage, setEditingImage] = useState<HfMobileImage | null>(null);
   const [editingFeature, setEditingFeature] = useState<HfMobileFeature | null>(null);
   const [editingVariant, setEditingVariant] = useState<HfMobileVariant | null>(null);
+  const [editingHospital, setEditingHospital] = useState<HfMobileHospital | null>(null);
 
   useEffect(() => {
     if (activeTab === 'content') {
@@ -71,8 +96,10 @@ export default function HfMobilePageManagement() {
       fetchImages();
     } else if (activeTab === 'features') {
       fetchFeatures();
-    } else {
+    } else if (activeTab === 'variants') {
       fetchVariants();
+    } else if (activeTab === 'hospitals') {
+      fetchHospitals();
     }
   }, [activeTab]);
 
@@ -297,6 +324,71 @@ export default function HfMobilePageManagement() {
     }
   };
 
+  const fetchHospitals = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get<HfMobileHospital[]>('/products/hf-mobile/hospitals');
+      if (response.success && response.data) {
+        setHospitals((response.data as HfMobileHospital[]).sort((a, b) => a.orderIndex - b.orderIndex));
+      }
+    } catch (error: any) {
+      alert(error.message || 'Failed to load');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReorderHospitals = async (reordered: HfMobileHospital[]) => {
+    setSaving(true);
+    try {
+      for (let i = 0; i < reordered.length; i++) {
+        await api.put(`/products/hf-mobile/hospitals/${reordered[i].id}`, {
+          ...reordered[i],
+          orderIndex: i
+        });
+      }
+      setHospitals(reordered);
+      alert('Hospitals order updated!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to update');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveHospital = async (hospital: HfMobileHospital) => {
+    setSaving(true);
+    try {
+      if (hospital.id && hospital.id > 0) {
+        await api.put(`/products/hf-mobile/hospitals/${hospital.id}`, hospital);
+      } else {
+        await api.post('/products/hf-mobile/hospitals', { ...hospital, orderIndex: hospitals.length });
+      }
+      setShowHospitalModal(false);
+      setEditingHospital(null);
+      fetchHospitals();
+      alert('Hospital saved!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to save');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteHospital = async (id: number) => {
+    if (!confirm('Delete this hospital?')) return;
+    setSaving(true);
+    try {
+      await api.delete(`/products/hf-mobile/hospitals/${id}`);
+      setHospitals(hospitals.filter(h => h.id !== id));
+      alert('Hospital deleted!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to delete');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getImageUrl = (image: any): string => {
     if (!image) return '';
     const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:3002';
@@ -306,7 +398,7 @@ export default function HfMobilePageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">HF Mobile Product Page</h2>
+        <h2 className="text-2xl font-medium text-gray-900">HF Mobile Product Page</h2>
         <p className="text-sm text-gray-600 mt-1">Manage product content, images, features, and variants</p>
       </div>
 
@@ -317,7 +409,8 @@ export default function HfMobilePageManagement() {
               { id: 'content' as TabType, label: 'Content', icon: 'ri-file-text-line' },
               { id: 'images' as TabType, label: 'Images', icon: 'ri-image-line' },
               { id: 'features' as TabType, label: 'Features', icon: 'ri-star-line' },
-              { id: 'variants' as TabType, label: 'Variants', icon: 'ri-list-check' }
+              { id: 'variants' as TabType, label: 'Variants', icon: 'ri-list-check' },
+              { id: 'hospitals' as TabType, label: 'Hospitals', icon: 'ri-hospital-line' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -352,6 +445,13 @@ export default function HfMobilePageManagement() {
                 <div className="md:col-span-2"><ImageSelector value={pageContent.mainImageId} onChange={(id) => setPageContent({ ...pageContent, mainImageId: id })} label="Main Product Image" /></div>
                 <div className="md:col-span-2"><FormField label="Short Description"><textarea value={pageContent.shortDescription || ''} onChange={(e) => setPageContent({ ...pageContent, shortDescription: e.target.value || null })} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField></div>
                 <div className="md:col-span-2"><FormField label="Full Description"><textarea value={pageContent.fullDescription || ''} onChange={(e) => setPageContent({ ...pageContent, fullDescription: e.target.value || null })} rows={6} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField></div>
+                <div className="md:col-span-2 border-t pt-4 mt-4">
+                  <h4 className="text-md font-semibold mb-4">Section Titles & Button Text</h4>
+                </div>
+                <FormField label="Product Gallery Title" hint="Title for the product gallery section"><input type="text" value={pageContent.productGalleryTitle || ''} onChange={(e) => setPageContent({ ...pageContent, productGalleryTitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Product Gallery" /></FormField>
+                <FormField label="Our Products Title" hint="Title for the 'Our Products' section"><input type="text" value={pageContent.ourProductsTitle || ''} onChange={(e) => setPageContent({ ...pageContent, ourProductsTitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Our Products" /></FormField>
+                <FormField label="Hospitals Served Title" hint="Title for the hospitals served section"><input type="text" value={pageContent.hospitalsServedTitle || ''} onChange={(e) => setPageContent({ ...pageContent, hospitalsServedTitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Hospitals Served" /></FormField>
+                <FormField label="Enquire Button Text" hint="Text for the enquiry button"><input type="text" value={pageContent.enquireButtonText || ''} onChange={(e) => setPageContent({ ...pageContent, enquireButtonText: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enquire Now" /></FormField>
               </div>
             </div>
           ) : activeTab === 'images' ? (

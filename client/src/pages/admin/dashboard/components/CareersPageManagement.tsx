@@ -145,7 +145,7 @@ export default function CareersPageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Careers Page Management</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Careers Page Management</h2>
         <p className="text-sm text-gray-600 mt-1">Manage careers page content and job listings</p>
       </div>
 
@@ -545,7 +545,7 @@ function JobViewModal({ job, onClose, onEdit }: any) {
     <Modal isOpen={true} onClose={onClose} title="Job Details" size="lg">
       <div className="space-y-6">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">{job.title}</h3>
+          <h3 className="text-2xl font-medium text-gray-900 mb-4">{job.title}</h3>
           <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
             {job.department && <span><i className="ri-building-line mr-1"></i>{job.department}</span>}
             {job.location && <span><i className="ri-map-pin-line mr-1"></i>{job.location}</span>}

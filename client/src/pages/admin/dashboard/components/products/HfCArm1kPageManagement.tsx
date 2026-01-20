@@ -207,7 +207,7 @@ export default function HfCArm1kPageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">1K*1K High End HF C-ARM Product Page</h2>
+        <h2 className="text-2xl font-medium text-gray-900">1K*1K High End HF C-ARM Product Page</h2>
         <p className="text-sm text-gray-600 mt-1">Manage product content, images, features, and variants</p>
       </div>
       <div className="bg-white rounded-lg shadow-sm">

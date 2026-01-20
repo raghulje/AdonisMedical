@@ -3,8 +3,10 @@ const status = require('../helpers/response');
 
 exports.getAll = async (req, res) => {
   try {
+    const { Media } = require('../models');
     const links = await SocialLink.findAll({
       where: { isActive: true },
+      include: [{ model: Media, as: 'icon', required: false }],
       order: [['orderIndex', 'ASC']]
     });
     // Convert to plain objects to ensure proper JSON serialization

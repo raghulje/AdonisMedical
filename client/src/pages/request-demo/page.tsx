@@ -47,6 +47,12 @@ const RequestDemoPage = () => {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Track form submission
+    const { trackFormSubmit } = await import('../../utils/analytics');
+    trackFormSubmit('Request Demo Form', 'demo_request', {
+      product: formData.product,
+    });
+
     try {
       const response = await api.post('/demo-requests', {
         name: formData.name,
@@ -95,10 +101,10 @@ const RequestDemoPage = () => {
           backgroundColor: content?.backgroundImage ? 'transparent' : '#F5F8F0'
         }}
       >
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           {/* Title */}
           <div className="mb-12" data-aos="fade-down">
-            <h1 className="text-5xl font-bold text-[#7DC244]">{content?.heroTitle || 'Request a Demo'}</h1>
+            <h1 className="text-5xl font-medium text-[#7DC244]">{content?.heroTitle || 'Request a Demo'}</h1>
             {content?.heroSubtitle && (
               <p className="text-gray-600 text-lg mt-4 max-w-2xl">
                 {content.heroSubtitle}

@@ -9,7 +9,17 @@ interface ReusableContactSection {
   companyName: string | null;
   address: string | null;
   phone: string | null;
+  phoneIconId: number | null;
+  phoneIcon?: {
+    filePath: string;
+    altText: string;
+  };
   email: string | null;
+  emailIconId: number | null;
+  emailIcon?: {
+    filePath: string;
+    altText: string;
+  };
   imageId: number | null;
   image?: {
     filePath: string;
@@ -30,7 +40,9 @@ export default function ReusableContactManagement() {
     companyName: null,
     address: null,
     phone: null,
+    phoneIconId: null,
     email: null,
+    emailIconId: null,
     imageId: null,
     backgroundImageId: null
   });
@@ -74,7 +86,7 @@ export default function ReusableContactManagement() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Reusable Contact Us Component</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Reusable Contact Us Component</h2>
             <p className="text-sm text-gray-600 mt-1">Manage the reusable contact section used across multiple pages</p>
           </div>
           <button
@@ -126,32 +138,54 @@ export default function ReusableContactManagement() {
             </FormField>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField label="Phone">
-                <input
-                  type="text"
-                  value={content.phone || ''}
-                  onChange={(e) => setContent({ ...content, phone: e.target.value || null })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="9872003273"
+              <div className="space-y-4">
+                <FormField label="Phone">
+                  <input
+                    type="text"
+                    value={content.phone || ''}
+                    onChange={(e) => setContent({ ...content, phone: e.target.value || null })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="9872003273"
+                  />
+                </FormField>
+                <ImageSelector
+                  value={content.phoneIconId}
+                  onChange={(id) => setContent({ ...content, phoneIconId: id as number })}
+                  label="Phone Icon"
+                  currentImage={content.phoneIcon ? {
+                    filePath: content.phoneIcon.filePath,
+                    fileName: content.phoneIcon.altText
+                  } : null}
                 />
-              </FormField>
+              </div>
 
-              <FormField label="Email">
-                <input
-                  type="email"
-                  value={content.email || ''}
-                  onChange={(e) => setContent({ ...content, email: e.target.value || null })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="support@adonismedical.com"
+              <div className="space-y-4">
+                <FormField label="Email">
+                  <input
+                    type="email"
+                    value={content.email || ''}
+                    onChange={(e) => setContent({ ...content, email: e.target.value || null })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="support@adonismedical.com"
+                  />
+                </FormField>
+                <ImageSelector
+                  value={content.emailIconId}
+                  onChange={(id) => setContent({ ...content, emailIconId: id as number })}
+                  label="Email Icon"
+                  currentImage={content.emailIcon ? {
+                    filePath: content.emailIcon.filePath,
+                    fileName: content.emailIcon.altText
+                  } : null}
                 />
-              </FormField>
+              </div>
             </div>
 
             <div className="border-t pt-6 space-y-6">
               <div>
                 <ImageSelector
                   value={content.backgroundImageId}
-                  onChange={(id) => setContent({ ...content, backgroundImageId: id })}
+                  onChange={(id) => setContent({ ...content, backgroundImageId: id as number })}
                   label="Background Image (PNG)"
                 />
                 <p className="text-sm text-gray-500 mt-2">
@@ -159,11 +193,11 @@ export default function ReusableContactManagement() {
                   Upload a PNG background image for the contact section.
                 </p>
               </div>
-              
+
               <div>
                 <ImageSelector
                   value={content.imageId}
-                  onChange={(id) => setContent({ ...content, imageId: id })}
+                  onChange={(id) => setContent({ ...content, imageId: id as number })}
                   label="Contact Section Image"
                 />
                 <p className="text-sm text-gray-500 mt-2">

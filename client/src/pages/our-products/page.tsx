@@ -25,7 +25,7 @@ export default function OurProductsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7ED957]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7DC244]"></div>
       </div>
     );
   }
@@ -41,9 +41,9 @@ export default function OurProductsPage() {
         className="relative h-[500px] flex items-center justify-center bg-cover bg-center" 
         style={{ backgroundImage: `url(${heroImageUrl})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/50"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/20 to-black/25"></div>
         <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4" data-aos="fade-down">
+          <h1 className="text-5xl md:text-6xl font-medium text-white mb-4" data-aos="fade-down">
             {content?.heroTitle || 'Our Products'}
           </h1>
           {content?.heroSubtitle && (
@@ -55,9 +55,9 @@ export default function OurProductsPage() {
       </section>
 
       {/* Our Products Section */}
-      <section className="py-16 bg-gradient-to-b from-[#F5F5DC] to-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-[#7ED957] text-center mb-12" data-aos="fade-up">Our Products</h2>
+      <section className="py-11 bg-gradient-to-b from-[#F5F5DC] to-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <h2 className="text-4xl font-medium text-[#7DC244] text-center mb-12" data-aos="fade-up">Our Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { name: 'HF Mobile', img: getDefaultImageUrl('2025/05/HF-Mobile-New.jpg'), link: '/products/hf-mobile' },
@@ -83,9 +83,10 @@ export default function OurProductsPage() {
                   />
                 </div>
                 <div className="p-6 flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-gray-800">{product.name}</h3>
-                  <div className="w-10 h-10 bg-[#0066CC] text-white rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-[#0052A3] group-hover:scale-125 group-hover:rotate-12">
-                    <i className="ri-arrow-right-line text-xl"></i>
+                  <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
+                  <div className="w-10 h-10 bg-[#2879B6] text-white rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg cursor-pointer relative overflow-hidden">
+                    <i className="ri-arrow-right-line text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
                   </div>
                 </div>
               </Link>

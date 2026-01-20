@@ -68,7 +68,7 @@ export default function AdminDashboardPage() {
     { id: 'management' as MainTab, label: 'Management', icon: 'ri-team-line' },
     { id: 'presence' as MainTab, label: 'Our Presence', icon: 'ri-map-2-line' },
     { id: 'production' as MainTab, label: 'Production', icon: 'ri-factory-line' },
-    { id: 'quality' as MainTab, label: 'Quality', icon: 'ri-shield-check-line' },
+    { id: 'quality' as MainTab, label: 'Quality Assurance', icon: 'ri-shield-check-line' },
     { id: 'demo' as MainTab, label: 'Request Demo', icon: 'ri-calendar-check-line' },
     { id: 'contact' as MainTab, label: 'Contact', icon: 'ri-mail-line' },
     { id: 'contact-info' as MainTab, label: 'Contact Info', icon: 'ri-contacts-line' },

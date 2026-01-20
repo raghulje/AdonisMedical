@@ -13,6 +13,11 @@ interface QualityAssurancePageContent {
   heroSubtitle: string | null;
   heroImageId: number | null;
   introText: string | null;
+  backgroundImageId: number | null;
+  backgroundImage?: {
+    filePath: string;
+    altText: string;
+  };
   mainHeading: string | null;
   mainContent: string | null;
   mainImageId: number | null;
@@ -42,6 +47,7 @@ export default function QualityAssurancePageManagement() {
     heroSubtitle: null,
     heroImageId: null,
     introText: null,
+    backgroundImageId: null,
     mainHeading: null,
     mainContent: null,
     mainImageId: null
@@ -159,7 +165,7 @@ export default function QualityAssurancePageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Quality Assurance</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Quality Assurance</h2>
         <p className="text-sm text-gray-600 mt-1">Manage page content and certifications</p>
       </div>
 
@@ -191,11 +197,23 @@ export default function QualityAssurancePageManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField label="Hero Title"><input type="text" value={pageContent.heroTitle || ''} onChange={(e) => setPageContent({ ...pageContent, heroTitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField>
                 <FormField label="Hero Subtitle"><input type="text" value={pageContent.heroSubtitle || ''} onChange={(e) => setPageContent({ ...pageContent, heroSubtitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField>
-                <div className="md:col-span-2"><ImageSelector value={pageContent.heroImageId} onChange={(id) => setPageContent({ ...pageContent, heroImageId: id })} label="Hero Image" /></div>
+                <div className="md:col-span-2"><ImageSelector value={pageContent.heroImageId} onChange={(id) => setPageContent({ ...pageContent, heroImageId: Number(id) })} label="Hero Image" /></div>
                 <div className="md:col-span-2"><FormField label="Intro Text"><textarea value={pageContent.introText || ''} onChange={(e) => setPageContent({ ...pageContent, introText: e.target.value || null })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField></div>
+                <div className="md:col-span-2">
+                  <ImageSelector
+                    value={pageContent.backgroundImageId}
+                    onChange={(id) => setPageContent({ ...pageContent, backgroundImageId: Number(id) })}
+                    label="Section Background Image"
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    <i className="ri-information-line mr-1"></i>
+                    Upload an image for the rounded card background (optional).
+                  </p>
+                </div>
+
                 <FormField label="Main Heading"><input type="text" value={pageContent.mainHeading || ''} onChange={(e) => setPageContent({ ...pageContent, mainHeading: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField>
                 <div className="md:col-span-2"><FormField label="Main Content"><textarea value={pageContent.mainContent || ''} onChange={(e) => setPageContent({ ...pageContent, mainContent: e.target.value || null })} rows={6} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField></div>
-                <div className="md:col-span-2"><ImageSelector value={pageContent.mainImageId} onChange={(id) => setPageContent({ ...pageContent, mainImageId: id })} label="Main Image" /></div>
+                <div className="md:col-span-2"><ImageSelector value={pageContent.mainImageId} onChange={(id) => setPageContent({ ...pageContent, mainImageId: Number(id) })} label="Main Image" /></div>
               </div>
             </div>
           ) : (
@@ -272,7 +290,7 @@ function CertModal({ cert, onSave, onClose, saving }: any) {
         <FormField label="Description">
           <textarea value={formData.description || ''} onChange={(e) => setFormData({ ...formData, description: e.target.value || null })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
         </FormField>
-        <ImageSelector value={formData.logoId} onChange={(id) => setFormData({ ...formData, logoId: id })} label="Certification Logo" aspectRatio="1/1" />
+        <ImageSelector value={formData.logoId} onChange={(id) => setFormData({ ...formData, logoId: Number(id) })} label="Certification Logo" aspectRatio="1/1" />
         <FormField label="Status">
           <select value={formData.isActive ? 'active' : 'inactive'} onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'active' })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
             <option value="active">Active</option>

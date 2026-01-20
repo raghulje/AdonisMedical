@@ -256,7 +256,7 @@ export default function SpecialtiesPageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Specialties Page Management</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Specialties Page Management</h2>
         <p className="text-sm text-gray-600 mt-1">Manage specialties page content and cards</p>
       </div>
 
@@ -803,7 +803,7 @@ function SpecialtyViewModal({ specialty, onClose, onEdit, getImageUrl }: any) {
             />
           )}
           <div>
-            <h3 className="text-2xl font-bold text-gray-900">{specialty.name}</h3>
+            <h3 className="text-2xl font-medium text-gray-900">{specialty.name}</h3>
             <p className="text-sm text-gray-500">Slug: {specialty.slug}</p>
           </div>
         </div>

@@ -148,7 +148,7 @@ export default function InvestorRelationsPageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Investor Relations</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Investor Relations</h2>
         <p className="text-sm text-gray-600 mt-1">Manage page content and investor documents</p>
       </div>
 

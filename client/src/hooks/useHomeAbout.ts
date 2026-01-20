@@ -12,9 +12,14 @@ interface HomeAboutSection {
   title: string | null;
   subtitle: string | null;
   introText: string | null;
+  backgroundImageId: number | null;
   mainImageId: number | null;
   ctaText: string | null;
   ctaUrl: string | null;
+  backgroundImage?: {
+    filePath: string;
+    altText: string;
+  };
   mainImage?: {
     filePath: string;
     altText: string;

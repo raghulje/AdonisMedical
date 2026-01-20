@@ -3,9 +3,16 @@ import { api } from '../utils/api';
 
 interface HomeQualitySection {
   id?: number;
-  title: string | null;
-  content: string | null;
-  imageId: number | null;
+  heading: string | null;
+  description: string | null;
+  backgroundImageId: number | null;
+  backgroundImage?: {
+    filePath: string;
+    altText: string;
+  };
+  // For compatibility with frontend component
+  title?: string | null;
+  content?: string | null;
   image?: {
     filePath: string;
     altText: string;
@@ -23,7 +30,15 @@ export const useHomeQuality = () => {
         setLoading(true);
         const response = await api.get<HomeQualitySection>('/home-quality-section');
         if (response.success && response.data) {
-          setQuality(response.data);
+          const data = response.data;
+          // Map backend fields to component expectations
+          setQuality({
+            ...data,
+            title: data.heading || data.title || null,
+            content: data.description || data.content || null,
+            image: data.backgroundImage || data.image || undefined,
+            imageId: data.backgroundImageId || data.imageId || null,
+          });
         }
       } catch (err: any) {
         setError(err.message || 'Failed to fetch quality section');

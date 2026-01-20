@@ -151,7 +151,7 @@ export default function FaqsManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-6">FAQs Page Management</h2>
+        <h2 className="text-2xl font-medium mb-6">FAQs Page Management</h2>
 
         {/* Hero Section */}
         <div className="border-b pb-6 mb-6">

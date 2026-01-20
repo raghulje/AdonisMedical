@@ -5,7 +5,7 @@ const HeroSection = () => {
   const { hero, loading, error } = useHomeHero();
 
   const getOverlayOpacity = (opacity: number | null): number => {
-    return opacity !== null ? opacity / 100 : 0.4;
+    return opacity !== null ? opacity / 100 : 0.2;
   };
 
   if (loading) {
@@ -26,10 +26,10 @@ const HeroSection = () => {
             backgroundImage: `url(${getDefaultImageUrl('2024/09/hospital-hallway-with-people-walking-down-it-1-1.jpg')})`,
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
         </div>
         <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight" data-aos="fade-in">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium text-white mb-6 leading-tight" data-aos="fade-in">
             Adonis Medical Systems
           </h1>
           <p className="text-xl md:text-2xl text-white mb-8" data-aos="fade-in" data-aos-delay="100">
@@ -57,7 +57,7 @@ const HeroSection = () => {
         }}
       >
         <div 
-          className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40"
+          className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"
           style={{
             backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})`
           }}
@@ -67,7 +67,7 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
         <h1 
-          className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight" 
+          className="text-5xl md:text-6xl lg:text-7xl font-medium mb-6 leading-tight" 
           style={{ color: titleColor }}
           data-aos="fade-in"
         >

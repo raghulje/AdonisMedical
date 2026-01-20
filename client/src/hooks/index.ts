@@ -6,6 +6,7 @@ export { useHomeQuality } from './useHomeQuality';
 export { useHomeProducts } from './useHomeProducts';
 export { useSpecialties } from './useSpecialties';
 export { useSpecialtiesPage } from './useSpecialtiesPage';
+export { useHomeSpecialties } from './useHomeSpecialties';
 export { useProduct } from './useProduct';
 export { useAwards } from './useAwards';
 export { useAwardsPage } from './useAwardsPage';

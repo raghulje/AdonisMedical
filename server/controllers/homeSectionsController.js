@@ -55,7 +55,8 @@ exports.updateHeroSection = async (req, res) => {
 exports.getAboutSection = async (req, res) => {
   try {
     const section = await findSingle(HomeAboutSection, [
-      { model: Media, as: 'mainImage' }
+      { model: Media, as: 'backgroundImage', required: false },
+      { model: Media, as: 'mainImage', required: false }
     ]);
     if (!section) {
       return status.notFoundResponse(res, "About Section not found");
@@ -81,7 +82,8 @@ exports.updateAboutSection = async (req, res) => {
     }
     await section.update(req.body);
     const updated = await findSingle(HomeAboutSection, [
-      { model: Media, as: 'mainImage' }
+      { model: Media, as: 'backgroundImage', required: false },
+      { model: Media, as: 'mainImage', required: false }
     ]);
     const paragraphs = await HomeAboutParagraph.findAll({ 
       order: [['orderIndex', 'ASC']] 

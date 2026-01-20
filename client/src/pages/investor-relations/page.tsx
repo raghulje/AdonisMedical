@@ -35,7 +35,7 @@ export default function InvestorRelationsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9ACD32]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7DC244]"></div>
       </div>
     );
   }
@@ -52,9 +52,9 @@ export default function InvestorRelationsPage() {
           backgroundImage: `url(${heroImageUrl})`
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40"></div>
-        <div className="relative max-w-7xl mx-auto px-4">
-          <h1 className="text-5xl md:text-6xl font-bold text-[#9ACD32] mb-4" data-aos="fade-down">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+          <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-4" data-aos="fade-down">
             {content?.heroTitle || 'Investor Relations'}
           </h1>
           {content?.heroSubtitle && (
@@ -65,8 +65,8 @@ export default function InvestorRelationsPage() {
 
       {/* Intro Text */}
       {content?.introText && (
-        <section className="py-12 bg-white">
-          <div className="max-w-7xl mx-auto px-4">
+        <section className="py-8 bg-white">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center max-w-3xl mx-auto">
               <div className="text-gray-700 text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: content.introText }} />
             </div>
@@ -75,8 +75,8 @@ export default function InvestorRelationsPage() {
       )}
 
       {/* Documents Section */}
-      <section className="py-16 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-11 bg-[#F5F5F5]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {documents.length > 0 ? (
             documents.map((doc, idx) => (
               <div 
@@ -93,7 +93,7 @@ export default function InvestorRelationsPage() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg md:text-xl font-semibold text-gray-800 transition-colors duration-300 hover:text-[#9ACD32]">
+                      <h3 className="text-lg md:text-xl font-semibold text-gray-800 transition-colors duration-300 hover:text-[#7DC244]">
                         {doc.title}
                       </h3>
                       {doc.description && (
@@ -107,7 +107,7 @@ export default function InvestorRelationsPage() {
                         href={getFileUrl(doc.file)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-8 py-3 bg-[#0073AA] text-white font-medium rounded hover:bg-[#005A87] transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap cursor-pointer"
+                        className="inline-flex items-center px-8 py-3 bg-[#2879B6] text-white font-medium rounded hover:bg-[#1f5f8f] transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap cursor-pointer"
                       >
                         Preview
                         <i className="ri-external-link-line ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>

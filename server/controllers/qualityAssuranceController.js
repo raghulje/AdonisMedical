@@ -9,6 +9,7 @@ exports.getPageContent = async (req, res) => {
   try {
     const content = await findSingle([
       { model: Media, as: 'heroImage' },
+      { model: Media, as: 'backgroundImage' },
       { model: Media, as: 'mainImage' }
     ]);
     if (!content) {
@@ -30,6 +31,7 @@ exports.updatePageContent = async (req, res) => {
     await content.update(req.body);
     const updated = await findSingle([
       { model: Media, as: 'heroImage' },
+      { model: Media, as: 'backgroundImage' },
       { model: Media, as: 'mainImage' }
     ]);
     return status.successResponse(res, "Quality Assurance page updated", updated);

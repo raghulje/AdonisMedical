@@ -7,7 +7,7 @@ import ProductsSection from './components/ProductsSection';
 import QualitySection from './components/QualitySection';
 import SpecialtiesSection from './components/SpecialtiesSection';
 import TestimonialsSection from './components/TestimonialsSection';
-import ContactSection from './components/ContactSection';
+import ContactUsSection from '../../components/reusable/ContactUsSection';
 
 const HomePage = () => {
   useEffect(() => {
@@ -24,7 +24,7 @@ const HomePage = () => {
         <QualitySection />
         <SpecialtiesSection />
         <TestimonialsSection />
-        <ContactSection />
+        <ContactUsSection />
       </main>
       <Footer />
     </div>

@@ -29,17 +29,17 @@ export default function ManagementPage() {
       <section className="relative min-h-[400px] flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(${getDefaultImageUrl('2024/09/image-53-1.jpg')})` }}>
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/50"></div>
         <div className="relative z-10 text-center px-6 py-20">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4" data-aos="fade-down">Management</h1>
+          <h1 className="text-5xl md:text-6xl font-medium text-white mb-4" data-aos="fade-down">Management</h1>
           <p className="text-xl md:text-2xl text-white/90" data-aos="fade-up" data-aos-delay="200">Our Leaders</p>
         </div>
       </section>
 
       {/* Management Team Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-[1200px] mx-auto px-6">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7CB342]"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7DC244]"></div>
             </div>
           ) : error ? (
             <div className="text-red-600 text-center p-8 bg-red-50 rounded-lg">
@@ -65,17 +65,17 @@ export default function ManagementPage() {
                       </div>
                     </div>
                     <div className="flex-1 flex flex-col justify-center" data-aos="fade-left" data-aos-delay="200">
-                      <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                      <h2 className="text-3xl md:text-4xl font-medium text-gray-900 mb-2">
                         {leader.fullName.toUpperCase()}
                       </h2>
                       <p className="text-lg text-gray-700 font-medium mb-1">{leader.position}</p>
                       {leader.department && (
-                        <p className="text-base text-[#7CB342] font-medium">{leader.department}</p>
+                        <p className="text-base text-[#7DC244] font-medium">{leader.department}</p>
                       )}
                       {leader.email && (
                         <p className="text-sm text-gray-600 mt-2">
                           <i className="ri-mail-line mr-2"></i>
-                          <a href={`mailto:${leader.email}`} className="hover:text-[#7CB342] transition-colors">
+                          <a href={`mailto:${leader.email}`} className="hover:text-[#7DC244] transition-colors">
                             {leader.email}
                           </a>
                         </p>
@@ -87,7 +87,7 @@ export default function ManagementPage() {
                             href={leader.linkedinUrl} 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="hover:text-[#7CB342] transition-colors"
+                            className="hover:text-[#7DC244] transition-colors"
                           >
                             LinkedIn Profile
                           </a>

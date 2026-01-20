@@ -111,7 +111,7 @@ export default function ManagementPageManagement() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Management Team</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Management Team</h2>
             <p className="text-sm text-gray-600 mt-1">Manage leadership team members</p>
           </div>
           <button
@@ -396,7 +396,7 @@ function LeaderViewModal({ leader, onClose, onEdit, getImageUrl }: any) {
         )}
 
         <div className="text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">{leader.fullName}</h3>
+          <h3 className="text-2xl font-medium text-gray-900 mb-2">{leader.fullName}</h3>
           <p className="text-lg text-gray-700 mb-1">{leader.position}</p>
           {leader.department && (
             <p className="text-blue-600 font-medium">{leader.department}</p>

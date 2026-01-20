@@ -111,7 +111,7 @@ export default function VersionHistoryPage() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Version History</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Version History</h2>
             <p className="text-sm text-gray-600 mt-1">View and restore previous versions of your content</p>
           </div>
           <div className="flex items-center space-x-3">
@@ -275,7 +275,7 @@ export default function VersionHistoryPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Versions</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{versions.length}</p>
+              <p className="text-2xl font-medium text-gray-900 mt-1">{versions.length}</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <i className="ri-git-branch-line text-2xl text-blue-600"></i>
@@ -287,7 +287,7 @@ export default function VersionHistoryPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Pages Tracked</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-2xl font-medium text-gray-900 mt-1">
                 {new Set(versions.map(v => v.page)).size}
               </p>
             </div>

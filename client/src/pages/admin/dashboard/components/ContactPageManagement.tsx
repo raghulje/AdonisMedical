@@ -57,7 +57,7 @@ export default function ContactPageManagement() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Contact Us Page</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Contact Us Page</h2>
             <p className="text-sm text-gray-600 mt-1">Manage contact page content</p>
           </div>
           <button

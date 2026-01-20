@@ -27,7 +27,7 @@ export default function CareersPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9ACD32]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7DC244]"></div>
       </div>
     );
   }
@@ -39,9 +39,9 @@ export default function CareersPage() {
       </div>
       {/* Hero Section */}
       <section className="relative h-[400px] flex items-center justify-start bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/50"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-          <h1 className="text-5xl md:text-6xl font-bold text-[#9ACD32] mb-4" data-aos="fade-down">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/20 to-black/25"></div>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
+          <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-4" data-aos="fade-down">
             {content?.heroTitle || 'Careers'}
           </h1>
           {content?.heroSubtitle && (
@@ -51,8 +51,8 @@ export default function CareersPage() {
       </section>
 
       {/* Main Content Section */}
-      <section className="py-20 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-14 bg-[#F5F5F5]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="w-full h-[400px]" data-aos="fade-right">
               <img 
@@ -79,15 +79,15 @@ export default function CareersPage() {
 
       {/* Job Openings Section */}
       {jobs.length > 0 && (
-        <section id="openings" className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-4xl md:text-5xl font-bold text-center text-[#9ACD32] mb-12" data-aos="fade-down">Current Openings</h2>
+        <section id="openings" className="py-14 bg-white">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <h2 className="text-4xl md:text-5xl font-medium text-center text-[#7DC244] mb-12" data-aos="fade-down">Current Openings</h2>
             <div className="space-y-6">
               {jobs.map((job, idx) => (
                 <div key={job.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300" data-aos="fade-up" data-aos-delay={idx * 100}>
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h3>
+                      <h3 className="text-2xl font-medium text-gray-900 mb-2">{job.title}</h3>
                       <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                         {job.department && <span className="flex items-center gap-2"><i className="ri-building-line"></i> {job.department}</span>}
                         {job.location && <span className="flex items-center gap-2"><i className="ri-map-pin-line"></i> {job.location}</span>}
@@ -117,7 +117,7 @@ export default function CareersPage() {
       {/* Life at Adonis Medical Section */}
       {content?.lifeAtAdonisTitle && (
         <section 
-          className="py-20 relative"
+          className="py-14 relative"
           style={{
             backgroundImage: lifeAtAdonisBackgroundImageUrl ? `url(${lifeAtAdonisBackgroundImageUrl})` : undefined,
             backgroundColor: lifeAtAdonisBackgroundImageUrl ? undefined : '#F5F5F5',
@@ -129,8 +129,8 @@ export default function CareersPage() {
           {lifeAtAdonisBackgroundImageUrl && (
             <div className="absolute inset-0 bg-black/20"></div>
           )}
-          <div className="max-w-7xl mx-auto px-6 relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold text-center text-[#9ACD32] mb-12" data-aos="fade-down">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+            <h2 className="text-4xl md:text-5xl font-medium text-center text-[#7DC244] mb-12" data-aos="fade-down">
               {content.lifeAtAdonisTitle}
             </h2>
             {content.lifeAtAdonisContent && (
@@ -158,7 +158,7 @@ export default function CareersPage() {
           <a href="/request-demo" className="py-4 text-center bg-white hover:bg-gray-50 transition-all duration-300 active:scale-95 cursor-pointer">
             <span className="text-gray-800 font-medium whitespace-nowrap">Request Demo</span>
           </a>
-          <a href="/contact-us" className="py-4 text-center bg-[#9ACD32] hover:bg-[#8BC020] transition-all duration-300 active:scale-95 cursor-pointer">
+          <a href="/contact-us" className="py-4 text-center bg-[#7DC244] hover:bg-[#6BC04A] transition-all duration-300 active:scale-95 cursor-pointer">
             <span className="text-white font-medium whitespace-nowrap">Contact Us</span>
           </a>
         </div>

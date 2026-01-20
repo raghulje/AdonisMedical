@@ -1,2 +1,0 @@
-import{r as s,a as c}from"./index-BuDEgKCk.js";const u=()=>{const[a,o]=s.useState([]),[r,e]=s.useState(!0),[i,n]=s.useState(null);return s.useEffect(()=>{(async()=>{try{e(!0);const t=await c.get("/testimonials");t.success&&t.data&&o(t.data)}catch(t){n(t.message||"Failed to fetch testimonials"),console.error("Error fetching testimonials:",t)}finally{e(!1)}})()},[]),{testimonials:a,loading:r,error:i}};export{u};
-//# sourceMappingURL=useTestimonials-C8oD8r0X.js.map

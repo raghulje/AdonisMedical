@@ -1,6 +1,37 @@
 import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 
+interface AboutPageHighlight {
+  id: number;
+  text: string;
+  iconClass: string | null;
+  iconId: number | null;
+  icon?: {
+    filePath: string;
+    altText: string;
+  };
+  orderIndex: number;
+}
+
+interface AboutPageOverviewParagraph {
+  id: number;
+  content: string;
+  orderIndex: number;
+  position: string | null; // 'before' or 'after' highlights
+}
+
+interface AboutPageGlobalReachCard {
+  id: number;
+  iconClass: string | null;
+  iconId: number | null;
+  icon?: {
+    filePath: string;
+    altText: string;
+  };
+  content: string;
+  orderIndex: number;
+}
+
 interface AboutPageContent {
   id?: number;
   heroTitle: string | null;
@@ -9,17 +40,24 @@ interface AboutPageContent {
   overviewHeading: string | null;
   overviewContent: string | null;
   overviewImageId: number | null;
+  overviewImageOverlayText: string | null;
+  backgroundImageId: number | null;
   safetyHeading: string | null;
   safetyContent: string | null;
   safetyImageId: number | null;
   excellenceHeading: string | null;
   excellenceContent: string | null;
   excellenceImageId: number | null;
+  globalReachHeading: string | null;
   heroImage?: {
     filePath: string;
     altText: string;
   };
   overviewImage?: {
+    filePath: string;
+    altText: string;
+  };
+  backgroundImage?: {
     filePath: string;
     altText: string;
   };
@@ -31,6 +69,9 @@ interface AboutPageContent {
     filePath: string;
     altText: string;
   };
+  highlights?: AboutPageHighlight[];
+  overviewParagraphs?: AboutPageOverviewParagraph[];
+  globalReachCards?: AboutPageGlobalReachCard[];
 }
 
 export const useAbout = () => {

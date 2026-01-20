@@ -9,34 +9,31 @@ const AboutSection = () => {
   const loading = statsLoading || aboutLoading;
   const error = statsError || aboutError;
 
-  // Background gradient image
-  const backgroundImageUrl = 'https://www.adonismedical.com/wp-content/uploads/2024/09/Group-4.jpg';
+  // Get background image from CMS
+  const backgroundImageUrl = about?.backgroundImage ? getImageUrl(about.backgroundImage) : null;
 
   return (
-    <section 
-      className="py-20 relative"
-      style={{
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      {/* Overlay for better text readability if needed */}
-      <div className="absolute inset-0 bg-gradient-to-b from-green-50/30 via-transparent to-beige-50/30"></div>
-      
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-        {/* About Section Container with rounded top corners and gradient background */}
-        <div 
-          className="rounded-t-3xl p-8 lg:p-12"
-          style={{
-            background: 'linear-gradient(to right, rgba(240, 253, 244, 0.9), rgba(255, 247, 237, 0.9))'
-          }}
+    <section className="relative -mt-24 z-20 pb-0 px-0">
+      <div className="w-full max-w-[1920px] mx-auto">
+        <div
+          className="bg-white rounded-t-[3rem] md:rounded-t-[4rem] rounded-b-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-8 md:p-16 relative overflow-hidden min-h-[500px]"
+          style={backgroundImageUrl ? {
+            backgroundImage: `url(${backgroundImageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          } : {}}
         >
+          {/* Background Overlay */}
+          {backgroundImageUrl && (
+            <div className="absolute inset-0 bg-white/20 z-0"></div>
+          )}
+
+          <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
           {/* Title and Subtitle */}
           {about?.title && (
             <div className="mb-4" data-aos="fade-in" data-aos-delay="50">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{about.title}</h2>
+              <h2 className="text-3xl md:text-4xl font-medium text-gray-900">{about.title}</h2>
             </div>
           )}
           {about?.subtitle && (
@@ -112,7 +109,7 @@ const AboutSection = () => {
                           </div>
                           {/* Number and Label - Stacked vertically */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-1">{stat.number}</h3>
+                            <h3 className="text-3xl md:text-4xl font-medium text-gray-900 leading-tight mb-1">{stat.number}</h3>
                             <p className="text-base text-gray-800 font-normal leading-tight">{stat.label}</p>
                           </div>
                         </div>
@@ -143,6 +140,7 @@ const AboutSection = () => {
               More About Us
               <i className="ri-arrow-right-up-line ml-2 text-base"></i>
             </Link>
+          </div>
           </div>
         </div>
       </div>

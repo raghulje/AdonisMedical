@@ -1,4 +1,4 @@
-const { DigitalRadiographyPageContent, DigitalRadiographyImage, DigitalRadiographyFeature, DigitalRadiographyVariant, Media } = require('../../models');
+const { DigitalRadiographyPageContent, DigitalRadiographyImage, DigitalRadiographyFeature, DigitalRadiographyVariant, DigitalRadiographyHospital, Media } = require('../../models');
 const status = require('../../helpers/response');
 
 const findSingle = async (include = []) => {
@@ -163,6 +163,61 @@ exports.deleteVariant = async (req, res) => {
     return status.successResponse(res, "Variant deleted");
   } catch (error) {
     console.error('Delete Digital Radiography Variant Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+// Hospitals
+exports.getHospitals = async (req, res) => {
+  try {
+    const hospitals = await DigitalRadiographyHospital.findAll({
+      where: { isActive: true },
+      order: [['orderIndex', 'ASC']],
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.successResponse(res, "Retrieved", hospitals);
+  } catch (error) {
+    console.error('Get Digital Radiography Hospitals Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.createHospital = async (req, res) => {
+  try {
+    const hospital = await DigitalRadiographyHospital.create(req.body);
+    const created = await DigitalRadiographyHospital.findByPk(hospital.id, {
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.createdResponse(res, "Hospital created", created);
+  } catch (error) {
+    console.error('Create Digital Radiography Hospital Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.updateHospital = async (req, res) => {
+  try {
+    const hospital = await DigitalRadiographyHospital.findByPk(req.params.id);
+    if (!hospital) return status.notFoundResponse(res, "Hospital not found");
+    await hospital.update(req.body);
+    const updated = await DigitalRadiographyHospital.findByPk(req.params.id, {
+      include: [{ model: Media, as: 'hospitalLogo', required: false }]
+    });
+    return status.successResponse(res, "Hospital updated", updated);
+  } catch (error) {
+    console.error('Update Digital Radiography Hospital Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.deleteHospital = async (req, res) => {
+  try {
+    const hospital = await DigitalRadiographyHospital.findByPk(req.params.id);
+    if (!hospital) return status.notFoundResponse(res, "Hospital not found");
+    await hospital.destroy();
+    return status.successResponse(res, "Hospital deleted");
+  } catch (error) {
+    console.error('Delete Digital Radiography Hospital Error:', error);
     return status.errorResponse(res, error.message);
   }
 };

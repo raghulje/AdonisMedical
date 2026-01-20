@@ -24,7 +24,7 @@ export default function SpecialtiesPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9ACD32]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7DC244]"></div>
       </div>
     );
   }
@@ -39,9 +39,9 @@ export default function SpecialtiesPage() {
         className="relative h-[500px] flex items-center justify-start bg-cover bg-center" 
         style={{ backgroundImage: `url(${heroImageUrl})` }}
       >
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-          <h1 className="text-5xl md:text-6xl font-bold text-[#9ACD32] mb-4" data-aos="fade-down">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
+          <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-4" data-aos="fade-down">
             {content?.heroTitle || 'Our Specialties'}
           </h1>
           {content?.heroSubtitle && (
@@ -54,8 +54,8 @@ export default function SpecialtiesPage() {
 
       {/* Specialties Grid Section */}
       {cards.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="py-14 bg-white">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {cards.slice(0, 3).map((card, index) => {
                 const cardImageUrl = card.cardImage ? getImageUrl(card.cardImage) : '';
@@ -80,12 +80,13 @@ export default function SpecialtiesPage() {
                       )}
                     </div>
                     <div className="p-6 flex items-center justify-between">
-                      <h3 className="text-2xl font-semibold text-gray-800 transition-colors duration-300 hover:text-blue-500">{card.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 hover:text-blue-500">{card.name}</h3>
                       <a 
                         href={linkUrl} 
-                        className="w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-125 hover:rotate-12 cursor-pointer"
+                        className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-[#1f5f8f] hover:shadow-lg cursor-pointer relative overflow-hidden"
                       >
-                        <i className="ri-arrow-right-line text-white text-xl"></i>
+                        <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 hover:translate-x-1"></i>
+                        <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                       </a>
                     </div>
                   </div>
@@ -95,16 +96,19 @@ export default function SpecialtiesPage() {
 
             {/* Second Row - Centered */}
             {cards.length > 3 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 max-w-4xl mx-auto">
-                {cards.slice(3, 5).map((card, index) => {
+              <div className="flex flex-wrap justify-center gap-8 mt-8">
+                {cards.slice(3).map((card, index) => {
                   const cardImageUrl = card.cardImage ? getImageUrl(card.cardImage) : '';
                   const bgImageUrl = card.backgroundImage ? getImageUrl(card.backgroundImage) : '';
                   const linkUrl = card.internalLink || '/products';
                   
+                  // Calculate width to match grid columns: same as first row cards
+                  const cardWidth = 'w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.334rem)]';
+                  
                   return (
                     <div 
                       key={card.id}
-                      className="bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                      className={`${cardWidth} bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2`}
                       data-aos="fade-up"
                       data-aos-delay={(index + 4) * 100}
                       style={bgImageUrl ? { backgroundImage: `url(${bgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
@@ -119,12 +123,13 @@ export default function SpecialtiesPage() {
                         )}
                       </div>
                       <div className="p-6 flex items-center justify-between">
-                        <h3 className="text-2xl font-semibold text-gray-800 transition-colors duration-300 hover:text-blue-500">{card.name}</h3>
+                        <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 hover:text-[#2879B6]">{card.name}</h3>
                         <a 
                           href={linkUrl} 
-                          className="w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-125 hover:rotate-12 cursor-pointer"
+                          className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-[#1f5f8f] hover:shadow-lg cursor-pointer relative overflow-hidden"
                         >
-                          <i className="ri-arrow-right-line text-white text-xl"></i>
+                          <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 hover:translate-x-1"></i>
+                          <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                         </a>
                       </div>
                     </div>
@@ -145,7 +150,7 @@ export default function SpecialtiesPage() {
           <a href="/request-demo" className="py-4 text-center bg-white hover:bg-gray-50 transition-all duration-300 active:scale-95 cursor-pointer">
             <span className="text-gray-800 font-medium whitespace-nowrap">Request Demo</span>
           </a>
-          <a href="/contact-us" className="py-4 text-center bg-[#8bc34a] hover:bg-[#7cb342] transition-all duration-300 active:scale-95 cursor-pointer">
+          <a href="/contact-us" className="py-4 text-center bg-[#7DC244] hover:bg-[#6BC04A] transition-all duration-300 active:scale-95 cursor-pointer">
             <span className="text-white font-medium whitespace-nowrap">Contact Us</span>
           </a>
         </div>

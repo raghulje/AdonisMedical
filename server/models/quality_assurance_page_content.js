@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       heroSubtitle: { type: DataTypes.TEXT, allowNull: true },
       heroImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
       introText: { type: DataTypes.TEXT, allowNull: true },
+      backgroundImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
       mainHeading: { type: DataTypes.STRING(255), allowNull: true },
       mainContent: { type: DataTypes.TEXT, allowNull: true },
       mainImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
@@ -21,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
 
   QualityAssurancePageContent.associate = function (models) {
     QualityAssurancePageContent.belongsTo(models.Media, { foreignKey: 'heroImageId', as: 'heroImage' });
+    QualityAssurancePageContent.belongsTo(models.Media, { foreignKey: 'backgroundImageId', as: 'backgroundImage' });
     QualityAssurancePageContent.belongsTo(models.Media, { foreignKey: 'mainImageId', as: 'mainImage' });
   };
 

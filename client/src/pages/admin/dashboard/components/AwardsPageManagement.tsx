@@ -184,7 +184,7 @@ export default function AwardsPageManagement() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Awards Management</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Awards Management</h2>
             <p className="text-sm text-gray-600 mt-1">Manage awards page content and awards list</p>
           </div>
         </div>

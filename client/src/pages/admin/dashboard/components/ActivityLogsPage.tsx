@@ -157,7 +157,7 @@ export default function ActivityLogsPage() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Activity Logs</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Activity Logs</h2>
             <p className="text-sm text-gray-600 mt-1">Track all user actions and changes</p>
           </div>
           <button
@@ -316,7 +316,7 @@ export default function ActivityLogsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Actions</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{logs.length}</p>
+              <p className="text-2xl font-medium text-gray-900 mt-1">{logs.length}</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <i className="ri-bar-chart-line text-2xl text-blue-600"></i>
@@ -328,7 +328,7 @@ export default function ActivityLogsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Updates</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-2xl font-medium text-gray-900 mt-1">
                 {logs.filter(l => l.action === 'update').length}
               </p>
             </div>
@@ -342,7 +342,7 @@ export default function ActivityLogsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Deletions</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-2xl font-medium text-gray-900 mt-1">
                 {logs.filter(l => l.action === 'delete').length}
               </p>
             </div>
@@ -356,7 +356,7 @@ export default function ActivityLogsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Logins</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-2xl font-medium text-gray-900 mt-1">
                 {logs.filter(l => l.action === 'login').length}
               </p>
             </div>

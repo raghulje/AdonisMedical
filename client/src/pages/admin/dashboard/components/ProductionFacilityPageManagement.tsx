@@ -13,17 +13,33 @@ interface ProductionFacilityPageContent {
   heroSubtitle: string | null;
   heroImageId: number | null;
   introText: string | null;
+  introBackgroundImageId: number | null;
+  introBackgroundImage?: {
+    filePath: string;
+    altText: string;
+  };
   flexibilityHeading: string | null;
   flexibilityContent: string | null;
+  highlightedBoxText: string | null;
+  flexibilityAdditionalText: string | null;
   flexibilityImageId: number | null;
   qualityHeading: string | null;
   qualityContent: string | null;
+  qualityBackgroundImageId: number | null;
+  qualityBackgroundImage?: {
+    filePath: string;
+    altText: string;
+  };
   qualityImageId: number | null;
 }
 
 interface ProductionFacilityFeature {
   id: number;
-  iconClass: string | null;
+  iconId: number | null;
+  icon?: {
+    filePath: string;
+    altText: string;
+  };
   heading: string | null;
   description: string | null;
   orderIndex: number;
@@ -39,11 +55,15 @@ export default function ProductionFacilityPageManagement() {
     heroSubtitle: null,
     heroImageId: null,
     introText: null,
+    introBackgroundImageId: null,
     flexibilityHeading: null,
     flexibilityContent: null,
+    highlightedBoxText: null,
+    flexibilityAdditionalText: null,
     flexibilityImageId: null,
     qualityHeading: null,
     qualityContent: null,
+    qualityBackgroundImageId: null,
     qualityImageId: null
   });
 
@@ -153,7 +173,7 @@ export default function ProductionFacilityPageManagement() {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Production Facility</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Production Facility</h2>
         <p className="text-sm text-gray-600 mt-1">Manage page content and facility features</p>
       </div>
 
@@ -185,21 +205,51 @@ export default function ProductionFacilityPageManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField label="Hero Title"><input type="text" value={pageContent.heroTitle || ''} onChange={(e) => setPageContent({ ...pageContent, heroTitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField>
                 <FormField label="Hero Subtitle"><input type="text" value={pageContent.heroSubtitle || ''} onChange={(e) => setPageContent({ ...pageContent, heroSubtitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField>
-                <div className="md:col-span-2"><ImageSelector value={pageContent.heroImageId} onChange={(id) => setPageContent({ ...pageContent, heroImageId: id })} label="Hero Image" /></div>
+                <div className="md:col-span-2"><ImageSelector value={pageContent.heroImageId} onChange={(id) => setPageContent({ ...pageContent, heroImageId: Number(id) })} label="Hero Image" /></div>
                 <div className="md:col-span-2"><FormField label="Intro Text"><textarea value={pageContent.introText || ''} onChange={(e) => setPageContent({ ...pageContent, introText: e.target.value || null })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField></div>
+                <div className="md:col-span-2">
+                  <ImageSelector
+                    value={pageContent.introBackgroundImageId}
+                    onChange={(id) => setPageContent({ ...pageContent, introBackgroundImageId: Number(id) })}
+                    label="Introduction Section Background Image"
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    <i className="ri-information-line mr-1"></i>
+                    Upload a background image for the introduction section with rounded top corners.
+                  </p>
+                </div>
                 <FormField label="Flexibility Heading"><input type="text" value={pageContent.flexibilityHeading || ''} onChange={(e) => setPageContent({ ...pageContent, flexibilityHeading: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField>
-                <div className="md:col-span-2"><FormField label="Flexibility Content"><textarea value={pageContent.flexibilityContent || ''} onChange={(e) => setPageContent({ ...pageContent, flexibilityContent: e.target.value || null })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField></div>
-                <div className="md:col-span-2"><ImageSelector value={pageContent.flexibilityImageId} onChange={(id) => setPageContent({ ...pageContent, flexibilityImageId: id })} label="Flexibility Image" /></div>
+                <div className="md:col-span-2"><FormField label="Flexibility Content (First Paragraph)"><textarea value={pageContent.flexibilityContent || ''} onChange={(e) => setPageContent({ ...pageContent, flexibilityContent: e.target.value || null })} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="First paragraph about adaptability" /></FormField></div>
+                <div className="md:col-span-2"><FormField label="Highlighted Box Text"><textarea value={pageContent.highlightedBoxText || ''} onChange={(e) => setPageContent({ ...pageContent, highlightedBoxText: e.target.value || null })} rows={2} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Text for the box with gradient underline" /></FormField></div>
+                <div className="md:col-span-2"><FormField label="Flexibility Additional Text (Third Paragraph)"><textarea value={pageContent.flexibilityAdditionalText || ''} onChange={(e) => setPageContent({ ...pageContent, flexibilityAdditionalText: e.target.value || null })} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Third paragraph about agile approach" /></FormField></div>
+                <div className="md:col-span-2"><ImageSelector value={pageContent.flexibilityImageId} onChange={(id) => setPageContent({ ...pageContent, flexibilityImageId: Number(id) })} label="Flexibility Image" /></div>
                 <FormField label="Quality Heading"><input type="text" value={pageContent.qualityHeading || ''} onChange={(e) => setPageContent({ ...pageContent, qualityHeading: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField>
                 <div className="md:col-span-2"><FormField label="Quality Content"><textarea value={pageContent.qualityContent || ''} onChange={(e) => setPageContent({ ...pageContent, qualityContent: e.target.value || null })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" /></FormField></div>
-                <div className="md:col-span-2"><ImageSelector value={pageContent.qualityImageId} onChange={(id) => setPageContent({ ...pageContent, qualityImageId: id })} label="Quality Image" /></div>
+                <div className="md:col-span-2">
+                  <ImageSelector
+                    value={pageContent.qualityBackgroundImageId}
+                    onChange={(id) => setPageContent({ ...pageContent, qualityBackgroundImageId: Number(id) })}
+                    label="Quality Section Background Image"
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    <i className="ri-information-line mr-1"></i>
+                    Upload a background image for the quality section with rounded top corners.
+                  </p>
+                </div>
+                <div className="md:col-span-2"><ImageSelector value={pageContent.qualityImageId} onChange={(id) => setPageContent({ ...pageContent, qualityImageId: Number(id) })} label="Quality Image" /></div>
               </div>
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="flex justify-between">
-                <h3 className="text-lg font-semibold">Facility Features</h3>
-                <button onClick={() => { setEditingFeature({ id: 0, iconClass: null, heading: null, description: null, orderIndex: features.length }); setShowFeatureModal(true); }} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-semibold">Facility Features</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    <i className="ri-information-line mr-1"></i>
+                    First 3 features appear in the Introduction section. Features 4-6 appear in the Quality section as Process Overview.
+                  </p>
+                </div>
+                <button onClick={() => { setEditingFeature({ id: 0, iconId: null, heading: null, description: null, orderIndex: features.length }); setShowFeatureModal(true); }} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer">
                   <i className="ri-add-line mr-2"></i>Add Feature
                 </button>
               </div>
@@ -216,7 +266,11 @@ export default function ProductionFacilityPageManagement() {
                   renderItem={(feature: ProductionFacilityFeature) => (
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center space-x-4">
-                        {feature.iconClass && <i className={`${feature.iconClass} text-2xl text-blue-600`}></i>}
+                        {feature.icon ? (
+                          <img src={`/uploads/${feature.icon.filePath}`} alt={feature.icon.altText || ''} className="w-10 h-10 object-contain p-1 border rounded" />
+                        ) : (
+                          <i className="ri-image-line text-2xl text-gray-400"></i>
+                        )}
                         <div>
                           <h4 className="font-semibold text-gray-900">{feature.heading}</h4>
                           {feature.description && <p className="text-sm text-gray-600 line-clamp-1">{feature.description}</p>}
@@ -257,12 +311,15 @@ function FeatureModal({ feature, onSave, onClose, saving }: any) {
   return (
     <Modal isOpen={true} onClose={onClose} title={feature.id > 0 ? 'Edit Feature' : 'Add Feature'} size="md">
       <div className="space-y-6">
-        <FormField label="Icon Class" hint="RemixIcon class">
-          <input type="text" value={formData.iconClass || ''} onChange={(e) => setFormData({ ...formData, iconClass: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="ri-settings-3-line" />
-          {formData.iconClass && <div className="mt-2 text-xs text-gray-500">Preview: <i className={formData.iconClass}></i></div>}
-        </FormField>
-        <FormField label="Heading">
-          <input type="text" value={formData.heading || ''} onChange={(e) => setFormData({ ...formData, heading: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+        <div>
+          <ImageSelector
+            value={formData.iconId}
+            onChange={(id) => setFormData({ ...formData, iconId: Number(id) })}
+            label="Feature Icon"
+          />
+        </div>
+        <FormField label="Heading" hint="Feature title (e.g., 'Full vertical integration', 'Streamlined processes')">
+          <input type="text" value={formData.heading || ''} onChange={(e) => setFormData({ ...formData, heading: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Full vertical integration" />
         </FormField>
         <FormField label="Description">
           <textarea value={formData.description || ''} onChange={(e) => setFormData({ ...formData, description: e.target.value || null })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />

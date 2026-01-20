@@ -31,15 +31,15 @@ export default function ClientsPage() {
       <div 
         className="relative h-[500px] bg-cover bg-center flex items-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${
             pageContent?.heroImage 
               ? getImageUrl(pageContent.heroImage) 
               : getDefaultImageUrl('2024/10/image-51-2-1.jpg')
           })`,
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 w-full">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4" style={{ color: '#7DC244' }} data-aos="fade-down">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
+          <h1 className="text-5xl md:text-6xl font-medium text-white mb-4" style={{ color: '#7DC244' }} data-aos="fade-down">
             {pageContent?.heroTitle || 'Clients'}
           </h1>
           {pageContent?.heroSubtitle && (
@@ -51,8 +51,8 @@ export default function ClientsPage() {
       </div>
 
       {/* Clients Grid Section */}
-      <div className="py-16 px-4" style={{ backgroundColor: '#cccccc' }}>
-        <div className="max-w-full mx-auto px-8">
+      <div className="py-11" style={{ backgroundColor: '#cccccc' }}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7DC244]"></div>
@@ -75,7 +75,7 @@ export default function ClientsPage() {
                 return (
                   <div
                     key={client.id}
-                    className="bg-white border border-gray-300 p-8 flex items-center justify-center hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:scale-105 aspect-[3/2]"
+                    className="bg-white border border-gray-300 p-0 flex items-center justify-center hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:scale-105 aspect-[3/2]"
                     data-aos="zoom-in"
                     data-aos-delay={index * 30}
                     title={client.name}

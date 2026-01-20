@@ -74,7 +74,7 @@ export default function GlobalSettingsManagement() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Global Settings</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Global Settings</h2>
             <p className="text-sm text-gray-600 mt-1">Manage site-wide settings</p>
           </div>
           <button onClick={() => { setEditingSetting({ id: 0, settingKey: '', settingValue: null, settingType: 'text', description: null }); setShowModal(true); }} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer">

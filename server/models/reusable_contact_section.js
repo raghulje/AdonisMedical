@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       email: { type: DataTypes.STRING(255), allowNull: true },
       imageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
       backgroundImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
+      phoneIconId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
+      emailIconId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
     },
     {
       tableName: "reusable_contact_section",
@@ -22,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   ReusableContactSection.associate = function (models) {
     ReusableContactSection.belongsTo(models.Media, { foreignKey: 'imageId', as: 'image' });
     ReusableContactSection.belongsTo(models.Media, { foreignKey: 'backgroundImageId', as: 'backgroundImage' });
+    ReusableContactSection.belongsTo(models.Media, { foreignKey: 'phoneIconId', as: 'phoneIcon' });
+    ReusableContactSection.belongsTo(models.Media, { foreignKey: 'emailIconId', as: 'emailIcon' });
   };
 
   return ReusableContactSection;

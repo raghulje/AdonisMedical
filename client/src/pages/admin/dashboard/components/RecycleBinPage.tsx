@@ -163,7 +163,7 @@ export default function RecycleBinPage() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Recycle Bin</h2>
+            <h2 className="text-2xl font-medium text-gray-900">Recycle Bin</h2>
             <p className="text-sm text-gray-600 mt-1">
               {deletedItems.length} deleted item(s) • Items are kept for 30 days
             </p>
