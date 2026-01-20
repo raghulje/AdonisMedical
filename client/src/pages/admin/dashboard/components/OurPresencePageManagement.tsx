@@ -14,6 +14,7 @@ interface OurPresencePageContent {
   heroImageId: number | null;
   introText: string | null;
   mapImageId: number | null;
+  mapBackgroundImageId: number | null;
   salesServiceHeading: string | null;
   salesServiceContent: string | null;
   salesServiceImageId: number | null;
@@ -44,6 +45,7 @@ export default function OurPresencePageManagement() {
     heroImageId: null,
     introText: null,
     mapImageId: null,
+    mapBackgroundImageId: null,
     salesServiceHeading: null,
     salesServiceContent: null,
     salesServiceImageId: null
@@ -195,6 +197,9 @@ export default function OurPresencePageManagement() {
                 </div>
                 <div className="md:col-span-2">
                   <ImageSelector value={pageContent.mapImageId} onChange={(id) => setPageContent({ ...pageContent, mapImageId: Number(id) })} label="Map Image" />
+                </div>
+                <div className="md:col-span-2">
+                  <ImageSelector value={pageContent.mapBackgroundImageId} onChange={(id) => setPageContent({ ...pageContent, mapBackgroundImageId: Number(id) })} label="Map Background Image (PNG)" />
                 </div>
                 <FormField label="Sales & Service Heading">
                   <input type="text" value={pageContent.salesServiceHeading || ''} onChange={(e) => setPageContent({ ...pageContent, salesServiceHeading: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />

@@ -135,7 +135,7 @@ const AboutSection = () => {
           <div className="text-center" data-aos="fade-up" data-aos-delay="500">
             <Link
               to="/about"
-              className="inline-flex items-center justify-center px-8 py-3 bg-[#0066CC] text-white text-sm font-medium rounded-md hover:bg-[#0052A3] transition-all duration-300 hover:shadow-lg"
+              className="inline-flex items-center justify-center px-8 py-3 bg-[#2879B6] text-white text-sm font-medium rounded-md hover:bg-[#1f5f8f] transition-all duration-300 hover:shadow-lg"
             >
               More About Us
               <i className="ri-arrow-right-up-line ml-2 text-base"></i>

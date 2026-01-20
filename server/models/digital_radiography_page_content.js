@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       productGalleryTitle: { type: DataTypes.STRING(255), allowNull: true, defaultValue: 'Product Gallery' },
       ourProductsTitle: { type: DataTypes.STRING(255), allowNull: true, defaultValue: 'Our Products' },
       hospitalsServedTitle: { type: DataTypes.STRING(255), allowNull: true, defaultValue: 'Hospitals Served' },
+      hospitalsBackgroundImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
       enquireButtonText: { type: DataTypes.STRING(100), allowNull: true, defaultValue: 'Enquire Now' },
     },
     {
@@ -23,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 
   DigitalRadiographyPageContent.associate = function (models) {
     DigitalRadiographyPageContent.belongsTo(models.Media, { foreignKey: 'mainImageId', as: 'mainImage' });
+    DigitalRadiographyPageContent.belongsTo(models.Media, { foreignKey: 'hospitalsBackgroundImageId', as: 'hospitalsBackgroundImage' });
   };
 
   return DigitalRadiographyPageContent;

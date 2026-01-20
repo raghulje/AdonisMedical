@@ -23,6 +23,7 @@ interface OurPresencePageContent {
   heroImageId: number | null;
   introText: string | null;
   mapImageId: number | null;
+  mapBackgroundImageId: number | null;
   salesServiceHeading: string | null;
   salesServiceContent: string | null;
   salesServiceImageId: number | null;
@@ -31,6 +32,10 @@ interface OurPresencePageContent {
     altText: string;
   };
   mapImage?: {
+    filePath: string;
+    altText: string;
+  };
+  mapBackgroundImage?: {
     filePath: string;
     altText: string;
   };

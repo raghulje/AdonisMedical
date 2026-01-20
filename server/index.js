@@ -74,6 +74,7 @@ app.use("/api/v1/quality-assurance", require("./routes/qualityAssurance"));
 app.use("/api/v1/contact-us", require("./routes/contactUs"));
 app.use("/api/v1/reusable-contact-section", require("./routes/reusableContact"));
 app.use("/api/v1/request-demo", require("./routes/requestDemo"));
+app.use("/api/v1/email-settings", require("./routes/emailSettings"));
 app.use("/api/v1/terms-privacy", require("./routes/termsAndPrivacy"));
 app.use("/api/v1/faqs", require("./routes/faqs"));
 

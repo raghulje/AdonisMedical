@@ -199,12 +199,12 @@ export default function ProductionFacilityPage() {
         </div>
       </section>
 
-      {/* Quality Assurance Section with Rounded Top Corners */}
+      {/* Quality Assurance Section - Normal Styled (No Rounded Corners) */}
       {content?.qualityHeading && (
-        <section className="relative -mt-20 z-20 pb-0 px-0">
+        <section className="relative -mt-8 z-20 pb-0 px-0">
           <div className="w-full max-w-[1920px] mx-auto">
             <div
-              className="bg-white rounded-t-[3rem] md:rounded-t-[4rem] rounded-b-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-8 md:p-16 relative overflow-hidden min-h-[500px]"
+              className="bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-8 md:p-16 relative overflow-hidden min-h-[500px]"
               style={qualityBackgroundImageUrl ? {
                 backgroundImage: `url(${qualityBackgroundImageUrl})`,
                 backgroundSize: 'cover',

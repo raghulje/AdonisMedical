@@ -71,22 +71,22 @@ export default function OurProductsPage() {
               <Link
                 key={idx}
                 to={product.link}
-                className="bg-white rounded-lg shadow-lg overflow-hidden group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 cursor-pointer block"
-                data-aos="zoom-in"
+                className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer relative"
+                data-aos="fade-up"
                 data-aos-delay={idx * 100}
               >
                 <div className="relative h-64 overflow-hidden">
                   <img 
                     alt={product.name} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     src={product.img}
                   />
                 </div>
                 <div className="p-6 flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
-                  <div className="w-10 h-10 bg-[#2879B6] text-white rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg cursor-pointer relative overflow-hidden">
-                    <i className="ri-arrow-right-line text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
-                    <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+                  <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-500">{product.name}</h3>
+                  <div className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg cursor-pointer relative overflow-hidden">
+                    <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                   </div>
                 </div>
               </Link>

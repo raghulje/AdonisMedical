@@ -1,4 +1,4 @@
-const { DigitalRadiographyPageContent, DigitalRadiographyImage, DigitalRadiographyFeature, DigitalRadiographyVariant, DigitalRadiographyHospital, Media } = require('../../models');
+const { DigitalRadiographyPageContent, DigitalRadiographyImage, DigitalRadiographyFeature, DigitalRadiographyVariant, DigitalRadiographyHospital, DigitalRadiographyHighlight, Media } = require('../../models');
 const status = require('../../helpers/response');
 
 const findSingle = async (include = []) => {
@@ -218,6 +218,51 @@ exports.deleteHospital = async (req, res) => {
     return status.successResponse(res, "Hospital deleted");
   } catch (error) {
     console.error('Delete Digital Radiography Hospital Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+// Highlights
+exports.getHighlights = async (req, res) => {
+  try {
+    const highlights = await DigitalRadiographyHighlight.findAll({ order: [['orderIndex', 'ASC']] });
+    return status.successResponse(res, "Retrieved", highlights);
+  } catch (error) {
+    console.error('Get Digital Radiography Highlights Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.createHighlight = async (req, res) => {
+  try {
+    const highlight = await DigitalRadiographyHighlight.create(req.body);
+    return status.createdResponse(res, "Highlight created", highlight);
+  } catch (error) {
+    console.error('Create Digital Radiography Highlight Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.updateHighlight = async (req, res) => {
+  try {
+    const highlight = await DigitalRadiographyHighlight.findByPk(req.params.id);
+    if (!highlight) return status.notFoundResponse(res, "Highlight not found");
+    await highlight.update(req.body);
+    return status.successResponse(res, "Highlight updated", highlight);
+  } catch (error) {
+    console.error('Update Digital Radiography Highlight Error:', error);
+    return status.errorResponse(res, error.message);
+  }
+};
+
+exports.deleteHighlight = async (req, res) => {
+  try {
+    const highlight = await DigitalRadiographyHighlight.findByPk(req.params.id);
+    if (!highlight) return status.notFoundResponse(res, "Highlight not found");
+    await highlight.destroy();
+    return status.successResponse(res, "Highlight deleted");
+  } catch (error) {
+    console.error('Delete Digital Radiography Highlight Error:', error);
     return status.errorResponse(res, error.message);
   }
 };

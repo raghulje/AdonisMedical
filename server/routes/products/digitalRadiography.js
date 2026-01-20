@@ -19,6 +19,10 @@ router.get("/hospitals", controller.getHospitals);
 router.post("/hospitals", controller.createHospital);
 router.put("/hospitals/:id", controller.updateHospital);
 router.delete("/hospitals/:id", controller.deleteHospital);
+router.get("/highlights", controller.getHighlights);
+router.post("/highlights", controller.createHighlight);
+router.put("/highlights/:id", controller.updateHighlight);
+router.delete("/highlights/:id", controller.deleteHighlight);
 
 module.exports = router;
 

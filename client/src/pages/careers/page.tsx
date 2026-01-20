@@ -67,7 +67,7 @@ export default function CareersPage() {
               )}
               <a 
                 href="#openings" 
-                className="inline-flex items-center gap-2 bg-[#0066CC] text-white px-6 py-3 rounded hover:bg-[#0052A3] transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[#2879B6] text-white px-6 py-3 rounded hover:bg-[#1f5f8f] transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap cursor-pointer"
               >
                 <span>View All Openings</span>
                 <i className="ri-arrow-right-line transition-transform duration-300 group-hover:translate-x-1"></i>

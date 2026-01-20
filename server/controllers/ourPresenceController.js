@@ -10,6 +10,7 @@ exports.getPageContent = async (req, res) => {
     const content = await findSingle([
       { model: Media, as: 'heroImage' },
       { model: Media, as: 'mapImage' },
+      { model: Media, as: 'mapBackgroundImage' },
       { model: Media, as: 'salesServiceImage' }
     ]);
     if (!content) {

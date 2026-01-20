@@ -117,7 +117,7 @@ export default function ProductImageCarousel({ images, altText = 'Product image'
         </div>
         
         {/* Previous/Next Navigation Arrows */}
-        {hasMultipleImages && (
+        {safeImages.length > 0 && (
           <>
             <button
               onClick={goToPrevious}
@@ -144,7 +144,7 @@ export default function ProductImageCarousel({ images, altText = 'Product image'
       </div>
 
       {/* Thumbnail Carousel */}
-      {hasMultipleImages && (
+      {safeImages.length > 0 && (
         <div className="relative">
           {/* Left Arrow for Thumbnails */}
           {showLeftArrow && (
@@ -161,7 +161,7 @@ export default function ProductImageCarousel({ images, altText = 'Product image'
           {/* Thumbnail Container */}
           <div
             ref={thumbnailContainerRef}
-            className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide px-8 md:px-10 py-2"
+            className={`flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide py-2 ${safeImages.length === 1 ? 'justify-center px-0' : 'px-8 md:px-10'}`}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {safeImages.map((img, idx) => (

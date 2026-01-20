@@ -15,6 +15,7 @@ interface ProductImage {
 interface ProductFeature {
   id: number;
   featureText: string;
+  subtitle: string | null;
   orderIndex: number;
 }
 

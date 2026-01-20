@@ -27,6 +27,14 @@ export default function TermsAndConditionsPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <style>{`
+        body {
+          font-family: 'Montserrat', sans-serif !important;
+        }
+        * {
+          font-family: 'Montserrat', sans-serif !important;
+        }
+      `}</style>
       <div className="pt-20">
         <Header />
       </div>
@@ -35,18 +43,18 @@ export default function TermsAndConditionsPage() {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           {/* Page Title */}
-          <h1 className="text-4xl md:text-5xl font-medium text-gray-900 mb-6 text-center" data-aos="fade-down">
+          <h1 className="text-4xl md:text-5xl font-medium text-gray-900 mb-8 text-center font-['Montserrat',sans-serif]" data-aos="fade-down">
             {content?.title || 'Terms and Conditions'}
           </h1>
           {content?.subtitle && (
-            <p className="text-xl text-gray-600 mb-8 text-center" data-aos="fade-up" data-aos-delay="100">
+            <p className="text-xl text-gray-600 mb-12 text-center font-['Montserrat',sans-serif]" data-aos="fade-up" data-aos-delay="100">
               {content.subtitle}
             </p>
           )}
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none mt-8">
             {content?.richTextContent ? (
               <div 
-                className="rich-text-content text-gray-700 leading-relaxed"
+                className="rich-text-content text-gray-700 leading-relaxed font-['Montserrat',sans-serif]"
                 dangerouslySetInnerHTML={{ __html: content.richTextContent }}
                 data-aos="fade-up"
                 style={{
@@ -55,7 +63,7 @@ export default function TermsAndConditionsPage() {
                 }}
               />
             ) : (
-              <div className="space-y-6 text-gray-700">
+              <div className="space-y-6 text-gray-700 font-['Montserrat',sans-serif]">
                 <p className="text-base leading-relaxed text-gray-500 italic">
                   Content will be managed through the CMS. Please add content using the admin dashboard.
                 </p>
@@ -64,9 +72,13 @@ export default function TermsAndConditionsPage() {
           </div>
           
           <style>{`
+            body {
+              font-family: 'Montserrat', sans-serif !important;
+            }
             .rich-text-content {
               line-height: 1.8;
               color: #374151;
+              font-family: 'Montserrat', sans-serif !important;
             }
             .rich-text-content h1,
             .rich-text-content h2,
@@ -75,31 +87,46 @@ export default function TermsAndConditionsPage() {
             .rich-text-content h5,
             .rich-text-content h6 {
               font-weight: bold;
-              margin-top: 1.5em;
-              margin-bottom: 0.75em;
+              margin-top: 2em;
+              margin-bottom: 1em;
               color: #1f2937;
-              line-height: 1.3;
+              line-height: 1.4;
+              page-break-after: avoid;
+              font-family: 'Montserrat', sans-serif;
+            }
+            .rich-text-content > h1:first-child,
+            .rich-text-content > h2:first-child,
+            .rich-text-content > h3:first-child,
+            .rich-text-content > h4:first-child,
+            .rich-text-content > h5:first-child,
+            .rich-text-content > h6:first-child {
+              margin-top: 0;
             }
             .rich-text-content h1 { 
               font-size: 2em; 
               font-weight: 700;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content h2 { 
               font-size: 1.75em; 
               font-weight: 700;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content h3 { 
               font-size: 1.5em; 
               font-weight: 700;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content h4 { 
               font-size: 1.25em; 
               font-weight: 700;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content p {
               margin-bottom: 1em;
               line-height: 1.8;
               color: #374151;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content p:last-child {
               margin-bottom: 0;
@@ -108,10 +135,12 @@ export default function TermsAndConditionsPage() {
             .rich-text-content b {
               font-weight: 700;
               color: #1f2937;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content em,
             .rich-text-content i {
               font-style: italic;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content ul,
             .rich-text-content ol {
@@ -122,6 +151,7 @@ export default function TermsAndConditionsPage() {
             .rich-text-content li {
               margin-bottom: 0.5em;
               line-height: 1.8;
+              font-family: 'Montserrat', sans-serif;
             }
             .rich-text-content br {
               line-height: 1.8;

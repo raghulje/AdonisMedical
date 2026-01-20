@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       heroImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
       introText: { type: DataTypes.TEXT, allowNull: true },
       mapImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
+      mapBackgroundImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
       salesServiceHeading: { type: DataTypes.STRING(255), allowNull: true },
       salesServiceContent: { type: DataTypes.TEXT, allowNull: true },
       salesServiceImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
@@ -23,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   OurPresencePageContent.associate = function (models) {
     OurPresencePageContent.belongsTo(models.Media, { foreignKey: 'heroImageId', as: 'heroImage' });
     OurPresencePageContent.belongsTo(models.Media, { foreignKey: 'mapImageId', as: 'mapImage' });
+    OurPresencePageContent.belongsTo(models.Media, { foreignKey: 'mapBackgroundImageId', as: 'mapBackgroundImage' });
     OurPresencePageContent.belongsTo(models.Media, { foreignKey: 'salesServiceImageId', as: 'salesServiceImage' });
   };
 

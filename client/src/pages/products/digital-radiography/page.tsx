@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../components/feature/Header';
 import Footer from '../../../components/feature/Footer';
@@ -11,11 +11,20 @@ import { useProduct, useHomeProducts } from '../../../hooks';
 import { getProductApiSlug } from '../../../utils/productSlugs';
 import { getImageUrl, getDefaultImageUrl } from '../../../utils/imageUrl';
 import { Link } from 'react-router-dom';
+import { api } from '../../../utils/api';
+
+interface Highlight {
+  id: number;
+  subtitle: string;
+  description: string;
+  orderIndex: number;
+}
 
 export default function DigitalRadiographyPage() {
   const navigate = useNavigate();
   const { content, images, features, variants, loading, error } = useProduct(getProductApiSlug('digital-radiography'));
   const { cards: productCards } = useHomeProducts();
+  const [highlights, setHighlights] = useState<Highlight[]>([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -24,6 +33,20 @@ export default function DigitalRadiographyPage() {
       once: true,
       easing: 'ease-out'
     });
+  }, []);
+
+  useEffect(() => {
+    const fetchHighlights = async () => {
+      try {
+        const response = await api.get<Highlight[]>('/products/digital-radiography/highlights');
+        if (response.success && response.data) {
+          setHighlights((response.data as Highlight[]).sort((a, b) => a.orderIndex - b.orderIndex));
+        }
+      } catch (err) {
+        console.error('Error fetching highlights:', err);
+      }
+    };
+    fetchHighlights();
   }, []);
 
   const mainImage = images.find(img => img.isPrimary) || images[0];
@@ -61,7 +84,7 @@ export default function DigitalRadiographyPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <div className="space-y-4" data-aos="fade-right">
+            <div className="space-y-6" data-aos="fade-right">
               <ProductImageCarousel
                 images={allImages}
                 altText={mainImage?.image?.altText || content?.title || 'Digital Radiography'}
@@ -71,6 +94,21 @@ export default function DigitalRadiographyPage() {
                   <span className="inline-block bg-[#F2F9EC] text-[#7DC244] px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
                     {content.deploymentInfo}
                   </span>
+                </div>
+              )}
+              
+              {/* Featured Highlights */}
+              {highlights.length > 0 && (
+                <div className="space-y-4 mt-6">
+                  {highlights.map((highlight, idx) => (
+                    <div key={highlight.id} className="flex items-start gap-3" data-aos="fade-up" data-aos-delay={idx * 100}>
+                      <span className="text-[#3e6da3] text-xl font-black transition-transform duration-300 hover:scale-125 flex-shrink-0 leading-tight">•</span>
+                      <div className="flex-1 space-y-2">
+                        <h4 className="text-lg font-bold text-gray-800">{highlight.subtitle}</h4>
+                        <p className="text-gray-700 text-sm leading-relaxed">{highlight.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -91,8 +129,13 @@ export default function DigitalRadiographyPage() {
                 <ul className="space-y-3 text-gray-700">
                   {features.map((feature, idx) => (
                     <li key={feature.id} className="flex items-start gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-up" data-aos-delay={idx * 50}>
-                      <span className="text-[#3e6da3] mt-1 text-xl font-black transition-transform duration-300 hover:scale-125">•</span>
-                      <span>{feature.featureText}</span>
+                      <span className="text-[#3e6da3] text-xl font-black transition-transform duration-300 hover:scale-125 flex-shrink-0 leading-tight">•</span>
+                      <div className="flex-1">
+                        {feature.subtitle && (
+                          <span className="font-bold text-gray-800 block mb-1">{feature.subtitle}</span>
+                        )}
+                        <span className="leading-relaxed block">{feature.featureText}</span>
+                      </div>
                     </li>
                   ))}
                 </ul>

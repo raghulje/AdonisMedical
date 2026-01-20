@@ -21,6 +21,7 @@ export default function OurPresencePage() {
 
   const heroImageUrl = content?.heroImage ? getImageUrl(content.heroImage) : getDefaultImageUrl('2024/09/image-48-1.jpg');
   const mapImageUrl = content?.mapImage ? getImageUrl(content.mapImage) : getDefaultImageUrl('2024/09/Group-9-884x1024.png');
+  const mapBackgroundImageUrl = content?.mapBackgroundImage ? getImageUrl(content.mapBackgroundImage) : null;
   const salesServiceImageUrl = content?.salesServiceImage ? getImageUrl(content.salesServiceImage) : getDefaultImageUrl('2024/09/Frame-32-2-1.jpg');
 
   if (loading) {
@@ -37,7 +38,7 @@ export default function OurPresencePage() {
         <Header />
       </div>
       {/* Hero Section */}
-      <section className="relative h-[400px] flex items-center justify-start bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
+      <section className="relative min-h-[75vh] pt-32 flex items-center justify-start bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
         <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/20 to-black/25"></div>
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
           <h1 className="text-5xl font-medium mb-3 text-white">
@@ -53,7 +54,15 @@ export default function OurPresencePage() {
       {/* Map Section with Rounded Top Corners */}
       <section className="relative -mt-16 pb-0">
         <div className="w-full">
-          <div className="bg-white rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] px-0 pt-8 md:pt-12 lg:pt-16 pb-0">
+          <div 
+            className="bg-white rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] px-0 pt-8 md:pt-12 lg:pt-16 pb-0"
+            style={mapBackgroundImageUrl ? {
+              backgroundImage: `url(${mapBackgroundImageUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            } : {}}
+          >
             <div className="max-w-7xl mx-auto px-6 lg:px-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pb-8 md:pb-12 lg:pb-16">
                 <div className="flex items-center">

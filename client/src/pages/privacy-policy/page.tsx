@@ -35,15 +35,15 @@ export default function PrivacyPolicyPage() {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           {/* Page Title */}
-          <h1 className="text-4xl md:text-5xl font-medium text-gray-900 mb-6 text-center" data-aos="fade-down">
+          <h1 className="text-4xl md:text-5xl font-medium text-gray-900 mb-8 text-center" data-aos="fade-down">
             {content?.title || 'Privacy Policy'}
           </h1>
           {content?.subtitle && (
-            <p className="text-xl text-gray-600 mb-8 text-center" data-aos="fade-up" data-aos-delay="100">
+            <p className="text-xl text-gray-600 mb-12 text-center" data-aos="fade-up" data-aos-delay="100">
               {content.subtitle}
             </p>
           )}
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none mt-12">
             {content?.richTextContent ? (
               <div 
                 className="rich-text-content text-gray-700 leading-relaxed"
@@ -51,7 +51,8 @@ export default function PrivacyPolicyPage() {
                 data-aos="fade-up"
                 style={{
                   whiteSpace: 'pre-wrap',
-                  wordWrap: 'break-word'
+                  wordWrap: 'break-word',
+                  marginTop: '2rem'
                 }}
               />
             ) : (
@@ -75,10 +76,19 @@ export default function PrivacyPolicyPage() {
             .rich-text-content h5,
             .rich-text-content h6 {
               font-weight: bold;
-              margin-top: 1.5em;
-              margin-bottom: 0.75em;
+              margin-top: 2.5em;
+              margin-bottom: 1.5em;
               color: #1f2937;
-              line-height: 1.3;
+              line-height: 1.4;
+              page-break-after: avoid;
+            }
+            .rich-text-content > h1:first-child,
+            .rich-text-content > h2:first-child,
+            .rich-text-content > h3:first-child,
+            .rich-text-content > h4:first-child,
+            .rich-text-content > h5:first-child,
+            .rich-text-content > h6:first-child {
+              margin-top: 1em;
             }
             .rich-text-content h1 { 
               font-size: 2em; 
@@ -97,7 +107,8 @@ export default function PrivacyPolicyPage() {
               font-weight: 700;
             }
             .rich-text-content p {
-              margin-bottom: 1em;
+              margin-bottom: 1.5em;
+              margin-top: 0.5em;
               line-height: 1.8;
               color: #374151;
             }

@@ -36,7 +36,7 @@ const QualitySection = () => {
           <div data-aos="fade-in" data-aos-delay="200">
             <a
               href="/quality-assurance"
-              className="inline-block px-8 py-3 bg-[#0066CC] text-white text-sm font-medium rounded-md hover:bg-[#0052A3] transition-all duration-300 hover:shadow-lg whitespace-nowrap"
+              className="inline-block px-8 py-3 bg-[#2879B6] text-white text-sm font-medium rounded-md hover:bg-[#1f5f8f] transition-all duration-300 hover:shadow-lg whitespace-nowrap"
             >
               Explore our quality assurance solutions
             </a>

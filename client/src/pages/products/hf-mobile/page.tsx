@@ -79,9 +79,9 @@ export default function HFMobilePage() {
               {features.length > 0 && (
                 <ul className="space-y-3 text-gray-700">
                   {features.map((feature, idx) => (
-                    <li key={feature.id} className="flex items-start gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-up" data-aos-delay={idx * 50}>
-                      <span className="text-[#3e6da3] mt-1 text-xl font-black transition-transform duration-300 hover:scale-125">•</span>
-                      <span>{feature.featureText}</span>
+                    <li key={feature.id} className="flex gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-up" data-aos-delay={idx * 50}>
+                      <span className="text-[#3e6da3] text-xl font-black transition-transform duration-300 hover:scale-125 flex-shrink-0 leading-tight">•</span>
+                      <span className="leading-relaxed">{feature.featureText}</span>
                     </li>
                   ))}
                 </ul>

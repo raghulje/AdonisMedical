@@ -5,7 +5,7 @@ import FormField from '../../../../../components/cms/FormField';
 import DragDropList from '../../../../../components/cms/DragDropList';
 import ImageSelector from '../../../../../components/cms/ImageSelector';
 
-type TabType = 'content' | 'images' | 'features' | 'variants';
+type TabType = 'content' | 'images' | 'features' | 'variants' | 'highlights' | 'hospitals';
 
 interface DigitalRadiographyPageContent {
   id?: number;
@@ -27,6 +27,7 @@ interface DigitalRadiographyImage {
 interface DigitalRadiographyFeature {
   id: number;
   featureText: string;
+  subtitle: string | null;
   orderIndex: number;
 }
 
@@ -37,6 +38,27 @@ interface DigitalRadiographyVariant {
   isActive: boolean;
 }
 
+interface DigitalRadiographyHighlight {
+  id: number;
+  subtitle: string;
+  description: string;
+  orderIndex: number;
+}
+
+interface DigitalRadiographyHospital {
+  id: number;
+  hospitalName: string;
+  city: string | null;
+  state: string | null;
+  hospitalLogoId: number | null;
+  orderIndex: number;
+  isActive: boolean;
+  hospitalLogo?: {
+    filePath: string;
+    altText: string;
+  };
+}
+
 export default function DigitalRadiographyPageManagement() {
   const [activeTab, setActiveTab] = useState<TabType>('content');
   const [loading, setLoading] = useState(false);
@@ -45,18 +67,26 @@ export default function DigitalRadiographyPageManagement() {
   const [images, setImages] = useState<DigitalRadiographyImage[]>([]);
   const [features, setFeatures] = useState<DigitalRadiographyFeature[]>([]);
   const [variants, setVariants] = useState<DigitalRadiographyVariant[]>([]);
+  const [highlights, setHighlights] = useState<DigitalRadiographyHighlight[]>([]);
+  const [hospitals, setHospitals] = useState<DigitalRadiographyHospital[]>([]);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showFeatureModal, setShowFeatureModal] = useState(false);
   const [showVariantModal, setShowVariantModal] = useState(false);
+  const [showHighlightModal, setShowHighlightModal] = useState(false);
+  const [showHospitalModal, setShowHospitalModal] = useState(false);
   const [editingImage, setEditingImage] = useState<DigitalRadiographyImage | null>(null);
   const [editingFeature, setEditingFeature] = useState<DigitalRadiographyFeature | null>(null);
   const [editingVariant, setEditingVariant] = useState<DigitalRadiographyVariant | null>(null);
+  const [editingHighlight, setEditingHighlight] = useState<DigitalRadiographyHighlight | null>(null);
+  const [editingHospital, setEditingHospital] = useState<DigitalRadiographyHospital | null>(null);
 
   useEffect(() => {
     if (activeTab === 'content') fetchPageContent();
     else if (activeTab === 'images') fetchImages();
     else if (activeTab === 'features') fetchFeatures();
-    else fetchVariants();
+    else if (activeTab === 'variants') fetchVariants();
+    else if (activeTab === 'highlights') fetchHighlights();
+    else if (activeTab === 'hospitals') fetchHospitals();
   }, [activeTab]);
 
   const fetchPageContent = async () => {
@@ -88,6 +118,22 @@ export default function DigitalRadiographyPageManagement() {
     try {
       const response = await api.get<DigitalRadiographyVariant[]>('/products/digital-radiography/variants');
       if (response.success && response.data) setVariants((response.data as DigitalRadiographyVariant[]).sort((a, b) => a.orderIndex - b.orderIndex));
+    } catch (error: any) { alert(error.message || 'Failed to load'); } finally { setLoading(false); }
+  };
+
+  const fetchHighlights = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get<DigitalRadiographyHighlight[]>('/products/digital-radiography/highlights');
+      if (response.success && response.data) setHighlights((response.data as DigitalRadiographyHighlight[]).sort((a, b) => a.orderIndex - b.orderIndex));
+    } catch (error: any) { alert(error.message || 'Failed to load'); } finally { setLoading(false); }
+  };
+
+  const fetchHospitals = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get<DigitalRadiographyHospital[]>('/products/digital-radiography/hospitals');
+      if (response.success && response.data) setHospitals((response.data as DigitalRadiographyHospital[]).sort((a, b) => a.orderIndex - b.orderIndex));
     } catch (error: any) { alert(error.message || 'Failed to load'); } finally { setLoading(false); }
   };
 
@@ -198,6 +244,72 @@ export default function DigitalRadiographyPageManagement() {
     } catch (error: any) { alert(error.message || 'Failed to delete'); } finally { setSaving(false); }
   };
 
+  const handleReorderHighlights = async (reordered: DigitalRadiographyHighlight[]) => {
+    setSaving(true);
+    try {
+      for (let i = 0; i < reordered.length; i++) {
+        await api.put(`/products/digital-radiography/highlights/${reordered[i].id}`, { ...reordered[i], orderIndex: i });
+      }
+      setHighlights(reordered);
+      alert('Highlights order updated!');
+    } catch (error: any) { alert(error.message || 'Failed to update'); } finally { setSaving(false); }
+  };
+
+  const handleSaveHighlight = async (highlight: DigitalRadiographyHighlight) => {
+    setSaving(true);
+    try {
+      if (highlight.id && highlight.id > 0) await api.put(`/products/digital-radiography/highlights/${highlight.id}`, highlight);
+      else await api.post('/products/digital-radiography/highlights', { ...highlight, orderIndex: highlights.length });
+      setShowHighlightModal(false);
+      setEditingHighlight(null);
+      fetchHighlights();
+      alert('Highlight saved!');
+    } catch (error: any) { alert(error.message || 'Failed to save'); } finally { setSaving(false); }
+  };
+
+  const handleDeleteHighlight = async (id: number) => {
+    if (!confirm('Delete this highlight?')) return;
+    setSaving(true);
+    try {
+      await api.delete(`/products/digital-radiography/highlights/${id}`);
+      setHighlights(highlights.filter(h => h.id !== id));
+      alert('Highlight deleted!');
+    } catch (error: any) { alert(error.message || 'Failed to delete'); } finally { setSaving(false); }
+  };
+
+  const handleReorderHospitals = async (reordered: DigitalRadiographyHospital[]) => {
+    setSaving(true);
+    try {
+      for (let i = 0; i < reordered.length; i++) {
+        await api.put(`/products/digital-radiography/hospitals/${reordered[i].id}`, { ...reordered[i], orderIndex: i });
+      }
+      setHospitals(reordered);
+      alert('Hospitals order updated!');
+    } catch (error: any) { alert(error.message || 'Failed to update'); } finally { setSaving(false); }
+  };
+
+  const handleSaveHospital = async (hospital: DigitalRadiographyHospital) => {
+    setSaving(true);
+    try {
+      if (hospital.id && hospital.id > 0) await api.put(`/products/digital-radiography/hospitals/${hospital.id}`, hospital);
+      else await api.post('/products/digital-radiography/hospitals', { ...hospital, orderIndex: hospitals.length });
+      setShowHospitalModal(false);
+      setEditingHospital(null);
+      fetchHospitals();
+      alert('Hospital saved!');
+    } catch (error: any) { alert(error.message || 'Failed to save'); } finally { setSaving(false); }
+  };
+
+  const handleDeleteHospital = async (id: number) => {
+    if (!confirm('Delete this hospital?')) return;
+    setSaving(true);
+    try {
+      await api.delete(`/products/digital-radiography/hospitals/${id}`);
+      setHospitals(hospitals.filter(h => h.id !== id));
+      alert('Hospital deleted!');
+    } catch (error: any) { alert(error.message || 'Failed to delete'); } finally { setSaving(false); }
+  };
+
   const getImageUrl = (image: any): string => {
     if (!image) return '';
     const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:3002';
@@ -213,7 +325,7 @@ export default function DigitalRadiographyPageManagement() {
       <div className="bg-white rounded-lg shadow-sm">
         <div className="border-b border-gray-200 px-6">
           <div className="flex space-x-2">
-            {[{ id: 'content' as TabType, label: 'Content', icon: 'ri-file-text-line' }, { id: 'images' as TabType, label: 'Images', icon: 'ri-image-line' }, { id: 'features' as TabType, label: 'Features', icon: 'ri-star-line' }, { id: 'variants' as TabType, label: 'Variants', icon: 'ri-list-check' }].map((tab) => (
+            {[{ id: 'content' as TabType, label: 'Content', icon: 'ri-file-text-line' }, { id: 'images' as TabType, label: 'Images', icon: 'ri-image-line' }, { id: 'features' as TabType, label: 'Features', icon: 'ri-star-line' }, { id: 'variants' as TabType, label: 'Variants', icon: 'ri-list-check' }, { id: 'highlights' as TabType, label: 'Highlights', icon: 'ri-lightbulb-line' }].map((tab) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-4 py-3 font-medium text-sm border-b-2 cursor-pointer flex items-center space-x-2 ${activeTab === tab.id ? 'text-blue-600 border-blue-600' : 'text-gray-600 border-transparent hover:text-blue-600'}`}>
                 <i className={tab.icon}></i>
                 <span>{tab.label}</span>
@@ -287,7 +399,7 @@ export default function DigitalRadiographyPageManagement() {
                 )} />
               )}
             </div>
-          ) : (
+          ) : activeTab === 'variants' ? (
             <div className="space-y-6">
               <div className="flex justify-between">
                 <h3 className="text-lg font-semibold">Product Variants</h3>
@@ -311,12 +423,67 @@ export default function DigitalRadiographyPageManagement() {
                 )} />
               )}
             </div>
+          ) : activeTab === 'highlights' ? (
+            <div className="space-y-6">
+              <div className="flex justify-between">
+                <h3 className="text-lg font-semibold">Featured Highlights</h3>
+                <button onClick={() => { setEditingHighlight({ id: 0, subtitle: '', description: '', orderIndex: highlights.length }); setShowHighlightModal(true); }} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer"><i className="ri-add-line mr-2"></i>Add Highlight</button>
+              </div>
+              {highlights.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                  <i className="ri-lightbulb-line text-4xl text-gray-400 mb-2"></i>
+                  <p className="text-gray-500">No highlights yet</p>
+                </div>
+              ) : (
+                <DragDropList items={highlights} onReorder={handleReorderHighlights} keyExtractor={(h) => h.id} renderItem={(highlight: DigitalRadiographyHighlight) => (
+                  <div className="flex items-start justify-between w-full">
+                    <div className="flex-1">
+                      <h4 className="font-bold text-gray-900 mb-1">{highlight.subtitle}</h4>
+                      <p className="text-gray-600 text-sm">{highlight.description}</p>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <button onClick={() => { setEditingHighlight(highlight); setShowHighlightModal(true); }} className="p-2 text-green-600 hover:bg-green-50 rounded-lg cursor-pointer"><i className="ri-edit-line"></i></button>
+                      <button onClick={() => handleDeleteHighlight(highlight.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"><i className="ri-delete-bin-line"></i></button>
+                    </div>
+                  </div>
+                )} />
+              )}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex justify-between">
+                <h3 className="text-lg font-semibold">Hospitals Served</h3>
+                <button onClick={() => { setEditingHospital({ id: 0, hospitalName: '', city: null, state: null, hospitalLogoId: null, orderIndex: hospitals.length, isActive: true }); setShowHospitalModal(true); }} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer"><i className="ri-add-line mr-2"></i>Add Hospital</button>
+              </div>
+              {hospitals.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                  <i className="ri-hospital-line text-4xl text-gray-400 mb-2"></i>
+                  <p className="text-gray-500">No hospitals yet</p>
+                </div>
+              ) : (
+                <DragDropList items={hospitals} onReorder={handleReorderHospitals} keyExtractor={(h) => h.id} renderItem={(hospital: DigitalRadiographyHospital) => (
+                  <div className="flex items-start justify-between w-full">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 mb-1">{hospital.hospitalName}</h4>
+                      <p className="text-gray-600 text-sm">{hospital.city}{hospital.city && hospital.state ? ', ' : ''}{hospital.state}</p>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <span className={`px-2 py-1 text-xs rounded-full ${hospital.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>{hospital.isActive ? 'Active' : 'Inactive'}</span>
+                      <button onClick={() => { setEditingHospital(hospital); setShowHospitalModal(true); }} className="p-2 text-green-600 hover:bg-green-50 rounded-lg cursor-pointer"><i className="ri-edit-line"></i></button>
+                      <button onClick={() => handleDeleteHospital(hospital.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"><i className="ri-delete-bin-line"></i></button>
+                    </div>
+                  </div>
+                )} />
+              )}
+            </div>
           )}
         </div>
       </div>
       {showImageModal && editingImage && <ImageModal image={editingImage} onSave={handleSaveImage} onClose={() => { setShowImageModal(false); setEditingImage(null); }} saving={saving} />}
       {showFeatureModal && editingFeature && <FeatureModal feature={editingFeature} onSave={handleSaveFeature} onClose={() => { setShowFeatureModal(false); setEditingFeature(null); }} saving={saving} />}
       {showVariantModal && editingVariant && <VariantModal variant={editingVariant} onSave={handleSaveVariant} onClose={() => { setShowVariantModal(false); setEditingVariant(null); }} saving={saving} />}
+      {showHighlightModal && editingHighlight && <HighlightModal highlight={editingHighlight} onSave={handleSaveHighlight} onClose={() => { setShowHighlightModal(false); setEditingHighlight(null); }} saving={saving} />}
+      {showHospitalModal && editingHospital && <HospitalModal hospital={editingHospital} onSave={handleSaveHospital} onClose={() => { setShowHospitalModal(false); setEditingHospital(null); }} saving={saving} />}
     </div>
   );
 }
@@ -347,8 +514,11 @@ function FeatureModal({ feature, onSave, onClose, saving }: any) {
   return (
     <Modal isOpen={true} onClose={onClose} title={feature.id > 0 ? 'Edit Feature' : 'Add Feature'} size="md">
       <div className="space-y-6">
+        <FormField label="Subtitle (Optional - Bold text like 'Dual Battery:', 'ACCESS POINT MODE:')">
+          <input type="text" value={formData.subtitle || ''} onChange={(e) => setFormData({ ...formData, subtitle: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., Dual Battery:" />
+        </FormField>
         <FormField label="Feature Text" required>
-          <textarea value={formData.featureText} onChange={(e) => setFormData({ ...formData, featureText: e.target.value })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+          <textarea value={formData.featureText} onChange={(e) => setFormData({ ...formData, featureText: e.target.value })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Feature description (will appear on new line after subtitle)" />
         </FormField>
         <div className="flex justify-end space-x-3 pt-4 border-t">
           <button onClick={onClose} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
@@ -376,6 +546,58 @@ function VariantModal({ variant, onSave, onClose, saving }: any) {
         <div className="flex justify-end space-x-3 pt-4 border-t">
           <button onClick={onClose} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
           <button onClick={() => onSave(formData)} disabled={saving || !formData.variantName} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer">{saving ? 'Saving...' : 'Save'}</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function HighlightModal({ highlight, onSave, onClose, saving }: any) {
+  const [formData, setFormData] = useState(highlight);
+  return (
+    <Modal isOpen={true} onClose={onClose} title={highlight.id > 0 ? 'Edit Highlight' : 'Add Highlight'} size="md">
+      <div className="space-y-6">
+        <FormField label="Subtitle (Bold Title)" required>
+          <input type="text" value={formData.subtitle} onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., TRANSFER IN A FLASH" />
+        </FormField>
+        <FormField label="Description" required>
+          <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Description text..." />
+        </FormField>
+        <div className="flex justify-end space-x-3 pt-4 border-t">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
+          <button onClick={() => onSave(formData)} disabled={saving || !formData.subtitle || !formData.description} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer">{saving ? 'Saving...' : 'Save'}</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function HospitalModal({ hospital, onSave, onClose, saving }: any) {
+  const [formData, setFormData] = useState(hospital);
+  return (
+    <Modal isOpen={true} onClose={onClose} title={hospital.id > 0 ? 'Edit Hospital' : 'Add Hospital'} size="md">
+      <div className="space-y-6">
+        <FormField label="Hospital Name" required>
+          <input type="text" value={formData.hospitalName || ''} onChange={(e) => setFormData({ ...formData, hospitalName: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+        </FormField>
+        <div className="grid grid-cols-2 gap-4">
+          <FormField label="City">
+            <input type="text" value={formData.city || ''} onChange={(e) => setFormData({ ...formData, city: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+          </FormField>
+          <FormField label="State">
+            <input type="text" value={formData.state || ''} onChange={(e) => setFormData({ ...formData, state: e.target.value || null })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+          </FormField>
+        </div>
+        <ImageSelector value={formData.hospitalLogoId} onChange={(id) => setFormData({ ...formData, hospitalLogoId: Number(id) || null })} label="Hospital Logo (Optional)" />
+        <FormField label="Status">
+          <select value={formData.isActive ? 'active' : 'inactive'} onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'active' })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </FormField>
+        <div className="flex justify-end space-x-3 pt-4 border-t">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
+          <button onClick={() => onSave(formData)} disabled={saving || !formData.hospitalName} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer">{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </div>
     </Modal>

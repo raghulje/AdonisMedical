@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     "DigitalRadiographyFeature",
     {
       featureText: { type: DataTypes.TEXT, allowNull: false },
+      subtitle: { type: DataTypes.STRING(255), allowNull: true },
       orderIndex: { type: DataTypes.INTEGER, defaultValue: 0 },
     },
     {
