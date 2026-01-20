@@ -230,6 +230,42 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   lastModified: true
 }));
 
+// Serve React frontend build in production (single server setup)
+const clientBuildPath = path.join(__dirname, "..", "client", "out");
+
+if (fs.existsSync(clientBuildPath)) {
+  console.log("Serving frontend from:", clientBuildPath);
+
+  // Serve static assets
+  app.use(
+    express.static(clientBuildPath, {
+      maxAge: "1d",
+      etag: true,
+      lastModified: true,
+    })
+  );
+
+  // For any non-API route, return index.html (React router handles the rest)
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api/")) {
+      return next();
+    }
+
+    const indexPath = path.join(clientBuildPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+
+    return res.status(500).send("Frontend build not found. Please run 'npm run build' in the client folder.");
+  });
+} else {
+  console.warn(
+    "Client build folder not found at",
+    clientBuildPath,
+    "- API will work but frontend will not be served. Run 'npm run build' in the client folder for production."
+  );
+}
+
 // Health check
 app.get("/api/v1/health", (req, res) => {
   res.json({
