@@ -9,7 +9,7 @@ import { getDefaultImageUrl, getImageUrl } from '../../utils/imageUrl';
 import { useOurProductsPage } from '../../hooks';
 
 export default function OurProductsPage() {
-  const { content, loading } = useOurProductsPage();
+  const { content, items, loading } = useOurProductsPage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -55,42 +55,99 @@ export default function OurProductsPage() {
       </section>
 
       {/* Our Products Section */}
-      <section className="py-11 bg-gradient-to-b from-[#F5F5DC] to-white">
+      <section 
+        className="py-11"
+        style={{
+          backgroundImage: content?.sectionBackgroundImage ? `url(${getImageUrl(content.sectionBackgroundImage)})` : 'linear-gradient(to bottom, #F5F5DC, white)',
+          backgroundSize: content?.sectionBackgroundImage ? 'cover' : 'auto',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <h2 className="text-4xl font-medium text-[#7DC244] text-center mb-12" data-aos="fade-up">Our Products</h2>
+          {content?.sectionIntro && (
+            <p className="text-lg text-gray-700 max-w-5xl mx-auto mb-10 text-center" data-aos="fade-up" data-aos-delay="50">
+              {content.sectionIntro}
+            </p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { name: 'HF Mobile', img: getDefaultImageUrl('2025/05/HF-Mobile-New.jpg'), link: '/products/hf-mobile' },
-              { name: 'HF Fixed', img: getDefaultImageUrl('2025/03/04.jpg'), link: '/products/hf-fixed' },
-              { name: '0.5K High End HF C-ARM', img: getDefaultImageUrl('2025/02/02-1.jpg'), link: '/products/1k1k-high-end-hf-c-arm' },
-              { name: 'Line Frequency X-Ray Systems', img: getDefaultImageUrl('2025/05/Line-Frequency-New.jpg'), link: '/products/line-frequency-x-ray-systems' },
-              { name: 'Digital Radiography', img: getDefaultImageUrl('2025/05/Digital-Radiography-New.jpg'), link: '/products/digital-radiography' },
-              { name: 'Dream Series-Ceiling Suspended', img: getDefaultImageUrl('2025/03/Dream_series.jpg'), link: '/products/dream-series-ceiling-suspended' },
-              { name: 'FPD-C-Arm', img: getDefaultImageUrl('2025/02/ADN0321-copy-2.jpg'), link: '/products/fpd-c-arm' }
-            ].map((product, idx) => (
-              <Link
-                key={idx}
-                to={product.link}
-                className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer relative"
-                data-aos="fade-up"
-                data-aos-delay={idx * 100}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img 
-                    alt={product.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                    src={product.img}
-                  />
-                </div>
-                <div className="p-6 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-500">{product.name}</h3>
-                  <div className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg cursor-pointer relative overflow-hidden">
-                    <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
-                    <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            {items.length > 0 ? (
+              items.map((product, idx) => {
+                const cardImageUrl = product.productImage
+                  ? getImageUrl(product.productImage)
+                  : '';
+                const backgroundImageUrl = product.backgroundImage
+                  ? getImageUrl(product.backgroundImage)
+                  : '';
+
+                return (
+                  <Link
+                    key={product.id}
+                    to={product.internalLink || '#'}
+                    className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer relative"
+                    data-aos="fade-up"
+                    data-aos-delay={idx * 100}
+                    style={backgroundImageUrl ? { backgroundImage: `url(${backgroundImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+                  >
+                    <div className="relative h-64 overflow-hidden">
+                      {cardImageUrl ? (
+                        <img 
+                          alt={product.productImage.altText || product.name} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          src={cardImageUrl}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <i className="ri-image-line text-4xl text-gray-400"></i>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-500">{product.name}</h3>
+                      <div className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg cursor-pointer relative overflow-hidden">
+                        <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
+                        <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
+            ) : (
+              // Fallback to default products if no CMS data
+              [
+                { name: 'HF Mobile', img: getDefaultImageUrl('2025/05/HF-Mobile-New.jpg'), link: '/products/hf-mobile' },
+                { name: 'HF Fixed', img: getDefaultImageUrl('2025/03/04.jpg'), link: '/products/hf-fixed' },
+                { name: '0.5K High End HF C-ARM', img: getDefaultImageUrl('2025/02/02-1.jpg'), link: '/products/1k1k-high-end-hf-c-arm' },
+                { name: 'Line Frequency X-Ray Systems', img: getDefaultImageUrl('2025/05/Line-Frequency-New.jpg'), link: '/products/line-frequency-x-ray-systems' },
+                { name: 'Digital Radiography', img: getDefaultImageUrl('2025/05/Digital-Radiography-New.jpg'), link: '/products/digital-radiography' },
+                { name: 'Dream Series-Ceiling Suspended', img: getDefaultImageUrl('2025/03/Dream_series.jpg'), link: '/products/dream-series-ceiling-suspended' },
+                { name: 'FPD-C-Arm', img: getDefaultImageUrl('2025/02/ADN0321-copy-2.jpg'), link: '/products/fpd-c-arm' }
+              ].map((product, idx) => (
+                <Link
+                  key={idx}
+                  to={product.link}
+                  className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer relative"
+                  data-aos="fade-up"
+                  data-aos-delay={idx * 100}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img 
+                      alt={product.name} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                      src={product.img}
+                    />
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="p-6 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-500">{product.name}</h3>
+                    <div className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg cursor-pointer relative overflow-hidden">
+                      <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 group-hover:translate-x-1"></i>
+                      <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>

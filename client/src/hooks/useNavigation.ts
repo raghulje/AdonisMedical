@@ -24,15 +24,18 @@ export const useNavigation = () => {
       try {
         const response = await api.get<NavigationItem[]>('/navigation');
         if (response.success && response.data) {
-          // Filter to only top-level items (no parentId) and sort by orderIndex
+          // Filter out privacy policy and terms & conditions pages
+          const excludedUrls = ['/privacy-policy', '/terms-and-conditions'];
+          
+          // Filter to only top-level items (no parentId) and sort by orderIndex, excluding privacy/terms
           const topLevelItems = (response.data as NavigationItem[])
-            .filter(item => !item.parentId && item.isActive)
+            .filter(item => !item.parentId && item.isActive && !excludedUrls.includes(item.url || ''))
             .sort((a, b) => a.orderIndex - b.orderIndex);
           
-          // Build hierarchy with children
+          // Build hierarchy with children, also filtering out privacy/terms from children
           const itemsWithChildren = topLevelItems.map(item => {
             const children = (response.data as NavigationItem[])
-              .filter(child => child.parentId === item.id && child.isActive)
+              .filter(child => child.parentId === item.id && child.isActive && !excludedUrls.includes(child.url || ''))
               .sort((a, b) => a.orderIndex - b.orderIndex);
             return { ...item, children: children.length > 0 ? children : undefined };
           });

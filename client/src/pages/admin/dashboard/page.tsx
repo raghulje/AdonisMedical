@@ -22,8 +22,6 @@ import ProductionFacilityPageManagement from './components/ProductionFacilityPag
 import QualityAssurancePageManagement from './components/QualityAssurancePageManagement';
 import RequestDemoPageManagement from './components/RequestDemoPageManagement';
 import OurProductsPageManagement from './components/OurProductsPageManagement';
-import TermsAndConditionsManagement from './components/TermsAndConditionsManagement';
-import PrivacyPolicyManagement from './components/PrivacyPolicyManagement';
 import FaqsManagement from './components/FaqsManagement';
 import ContactInfoManagement from './components/ContactInfoManagement';
 import GlobalSettingsManagement from './components/GlobalSettingsManagement';
@@ -34,7 +32,7 @@ import ActivityLogsPage from './components/ActivityLogsPage';
 import RecycleBinPage from './components/RecycleBinPage';
 import VersionHistoryPage from './components/VersionHistoryPage';
 
-type MainTab = 'home' | 'header-footer' | 'about' | 'products' | 'our-products' | 'awards' | 'careers' | 'specialties' | 'investors' | 'clients' | 'management' | 'presence' | 'production' | 'quality' | 'demo' | 'contact' | 'contact-info' | 'reusable-contact' | 'terms' | 'privacy' | 'faqs' | 'global-settings' | 'social-links' | 'testimonials' | 'users' | 'smtp' | 'logs' | 'bin' | 'versions';
+type MainTab = 'home' | 'header-footer' | 'about' | 'products' | 'our-products' | 'awards' | 'careers' | 'specialties' | 'investors' | 'clients' | 'management' | 'presence' | 'production' | 'quality' | 'demo' | 'contact' | 'contact-info' | 'reusable-contact' | 'faqs' | 'global-settings' | 'social-links' | 'testimonials' | 'users' | 'smtp' | 'logs' | 'bin' | 'versions';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -73,8 +71,6 @@ export default function AdminDashboardPage() {
     { id: 'contact' as MainTab, label: 'Contact', icon: 'ri-mail-line' },
     { id: 'contact-info' as MainTab, label: 'Contact Info', icon: 'ri-contacts-line' },
     { id: 'reusable-contact' as MainTab, label: 'Reusable Contact', icon: 'ri-mail-send-line' },
-    { id: 'terms' as MainTab, label: 'Terms & Conditions', icon: 'ri-file-text-line' },
-    { id: 'privacy' as MainTab, label: 'Privacy Policy', icon: 'ri-shield-check-line' },
     { id: 'faqs' as MainTab, label: 'FAQs', icon: 'ri-question-line' },
     { id: 'global-settings' as MainTab, label: 'Global Settings', icon: 'ri-settings-3-line' },
     { id: 'social-links' as MainTab, label: 'Social Links', icon: 'ri-share-line' },
@@ -162,8 +158,6 @@ export default function AdminDashboardPage() {
         {activeMainTab === 'contact' && <ContactPageManagement />}
         {activeMainTab === 'contact-info' && <ContactInfoManagement />}
         {activeMainTab === 'reusable-contact' && <ReusableContactManagement />}
-        {activeMainTab === 'terms' && <TermsAndConditionsManagement />}
-        {activeMainTab === 'privacy' && <PrivacyPolicyManagement />}
         {activeMainTab === 'faqs' && <FaqsManagement />}
         {activeMainTab === 'global-settings' && <GlobalSettingsManagement />}
         {activeMainTab === 'social-links' && <SocialLinksManagement />}

@@ -12,10 +12,12 @@
   body {
     @apply font-sans antialiased;
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    overflow-x: hidden;
   }
 
   html {
     @apply scroll-smooth;
+    overflow-x: hidden;
   }
 }
 

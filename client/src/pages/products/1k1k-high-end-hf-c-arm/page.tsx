@@ -4,12 +4,14 @@ import Footer from '../../../components/feature/Footer';
 import ContactUsSection from '../../../components/reusable/ContactUsSection';
 import TestimonialsSection from '../../home/components/TestimonialsSection';
 import ProductImageCarousel from '../../../components/product/ProductImageCarousel';
+import HospitalsServedSection from '../../../components/product/HospitalsServedSection';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useProduct } from '../../../hooks';
 import { getProductApiSlug } from '../../../utils/productSlugs';
 import { getImageUrl, getDefaultImageUrl } from '../../../utils/imageUrl';
 import { useHomeProducts } from '../../../hooks/useHomeProducts';
+import { Link } from 'react-router-dom';
 
 export default function HighEndHFCArm() {
   const { content, images, features, variants, loading, error } = useProduct(getProductApiSlug('1k1k-high-end-hf-c-arm'));
@@ -113,7 +115,7 @@ export default function HighEndHFCArm() {
       </section>
 
       {/* Our Products Section */}
-      <section className="py-11 bg-white">
+      <section className="py-11 bg-[#FAFAFA]">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <h2 className="text-4xl font-medium text-[#7DC244] text-center mb-12" data-aos="fade-up">Our Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -160,6 +162,9 @@ export default function HighEndHFCArm() {
           </div>
         </div>
       </section>
+
+      {/* Hospitals Served Section */}
+      <HospitalsServedSection />
 
       {/* Contact Section */}
       <ContactUsSection />

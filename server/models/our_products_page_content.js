@@ -6,7 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       heroTitle: { type: DataTypes.STRING(255), allowNull: true },
       heroSubtitle: { type: DataTypes.TEXT, allowNull: true },
+      sectionIntro: { type: DataTypes.TEXT, allowNull: true },
       heroImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
+      sectionBackgroundImageId: { type: DataTypes.INTEGER, references: { model: 'media', key: 'id' } },
     },
     {
       tableName: "our_products_page_content",
@@ -17,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
 
   OurProductsPageContent.associate = function (models) {
     OurProductsPageContent.belongsTo(models.Media, { foreignKey: 'heroImageId', as: 'heroImage' });
+    OurProductsPageContent.belongsTo(models.Media, { foreignKey: 'sectionBackgroundImageId', as: 'sectionBackgroundImage' });
   };
 
   return OurProductsPageContent;

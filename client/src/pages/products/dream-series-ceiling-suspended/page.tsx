@@ -5,6 +5,7 @@ import Footer from '../../../components/feature/Footer';
 import ContactUsSection from '../../../components/reusable/ContactUsSection';
 import TestimonialsSection from '../../home/components/TestimonialsSection';
 import ProductImageCarousel from '../../../components/product/ProductImageCarousel';
+import HospitalsServedSection from '../../../components/product/HospitalsServedSection';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useProduct, useHomeProducts } from '../../../hooks';
@@ -122,7 +123,7 @@ export default function DreamSeriesCeilingSuspendedPage() {
       </section>
 
       {/* Our Products Section */}
-      <section className="py-11 bg-white">
+      <section className="py-11 bg-[#FAFAFA]">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <h2 className="text-4xl font-medium text-center mb-12 text-[#7DC244]" data-aos="fade-up">Our Products</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -201,26 +202,7 @@ export default function DreamSeriesCeilingSuspendedPage() {
       </section>
 
       {/* Hospitals Served Section */}
-      <section className="py-16 bg-[#F5F5DC]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <h2 className="text-4xl font-medium text-center mb-12 text-[#7DC244]" data-aos="fade-up">Hospitals Served</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {[1, 2, 3, 4].map((item, idx) => (
-              <div key={item} className="bg-white rounded-lg p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1" data-aos="fade-up" data-aos-delay={idx * 100}>
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 bg-[#7DC244] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-125 hover:rotate-12">
-                    <i className="ri-hospital-line text-white text-2xl"></i>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800 mb-1">Hospital Name</h3>
-                    <p className="text-sm text-gray-600">City name, State name</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HospitalsServedSection />
 
       {/* Contact Section */}
       <ContactUsSection />

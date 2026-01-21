@@ -67,6 +67,7 @@ app.use("/api/v1/global-settings", require("./routes/globalSettings"));
 app.use("/api/v1/social-links", require("./routes/socialLinks"));
 app.use("/api/v1/careers", require("./routes/careers"));
 app.use("/api/v1/investor-relations", require("./routes/investorRelations"));
+app.use("/api/v1/hospitals-served", require("./routes/hospitalsServed"));
 app.use("/api/v1/our-presence", require("./routes/ourPresence"));
 app.use("/api/v1/our-products", require("./routes/ourProducts"));
 app.use("/api/v1/production-facility", require("./routes/productionFacility"));

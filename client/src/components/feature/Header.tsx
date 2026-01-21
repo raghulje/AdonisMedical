@@ -85,38 +85,40 @@ const Header = () => {
     if (isMobile) {
       if (hasChildren) {
         return (
-          <div key={item.id} className="space-y-2">
+          <div key={item.id} className="space-y-1">
             {item.url ? (
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between py-2">
                 <Link
                   to={item.url}
                   onClick={() => setIsMobileMenuOpen(false)}
                   target={item.openInNewTab ? '_blank' : undefined}
                   rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-                  className={`flex-1 text-sm font-medium whitespace-nowrap transition-colors ${isItemActive ? 'text-[#7DC244]' : 'text-gray-800 hover:text-[#7DC244]'
+                  className={`flex-1 text-base font-medium transition-colors py-2 ${isItemActive ? 'text-[#7DC244]' : 'text-gray-800 active:text-[#7DC244]'
                     }`}
                 >
                   {item.label}
                 </Link>
                 <button
                   onClick={() => toggleDropdown(item.id)}
-                  className="ml-2 text-gray-600 hover:text-[#7DC244] transition-colors"
+                  className="ml-3 flex items-center justify-center w-8 h-8 text-gray-600 hover:text-[#7DC244] active:text-[#7DC244] transition-colors rounded-md focus:outline-none"
+                  aria-label={isDropdownOpen ? 'Collapse submenu' : 'Expand submenu'}
                 >
-                  <i className={`ri-arrow-${isDropdownOpen ? 'up' : 'down'}-s-line`}></i>
+                  <i className={`ri-arrow-${isDropdownOpen ? 'up' : 'down'}-s-line text-lg`}></i>
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => toggleDropdown(item.id)}
-                className="flex items-center justify-between w-full text-sm font-medium text-gray-800 hover:text-[#7DC244] transition-colors whitespace-nowrap"
+                className="flex items-center justify-between w-full text-base font-medium text-gray-800 active:text-[#7DC244] transition-colors py-2 focus:outline-none"
+                aria-label={isDropdownOpen ? 'Collapse submenu' : 'Expand submenu'}
               >
                 <span>{item.label}</span>
-                <i className={`ri-arrow-${isDropdownOpen ? 'up' : 'down'}-s-line`}></i>
+                <i className={`ri-arrow-${isDropdownOpen ? 'up' : 'down'}-s-line text-lg`}></i>
               </button>
             )}
-            <div className={`pl-4 space-y-2 overflow-hidden transition-all duration-300 ease-in-out ${
+            <div className={`pl-3 space-y-1 overflow-hidden transition-all duration-300 ease-in-out border-l-2 border-gray-100 ${
               isDropdownOpen 
-                ? 'max-h-96 opacity-100' 
+                ? 'max-h-96 opacity-100 mt-2' 
                 : 'max-h-0 opacity-0'
             }`}>
               {item.children?.map((child) => (
@@ -126,7 +128,7 @@ const Header = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                   target={child.openInNewTab ? '_blank' : undefined}
                   rel={child.openInNewTab ? 'noopener noreferrer' : undefined}
-                  className="block text-sm text-gray-600 hover:text-[#7DC244] transition-colors whitespace-nowrap"
+                  className="block text-sm text-gray-600 active:text-[#7DC244] transition-colors py-2 pl-3"
                 >
                   {child.label}
                 </Link>
@@ -142,7 +144,7 @@ const Header = () => {
             onClick={() => setIsMobileMenuOpen(false)}
             target={item.openInNewTab ? '_blank' : undefined}
             rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-            className={`text-sm font-medium whitespace-nowrap transition-colors ${isItemActive ? 'text-[#7DC244]' : 'text-gray-800 hover:text-[#7DC244]'
+            className={`block text-base font-medium transition-colors py-2 ${isItemActive ? 'text-[#7DC244]' : 'text-gray-800 active:text-[#7DC244]'
               }`}
           >
             {item.label}
@@ -244,19 +246,20 @@ const Header = () => {
   if (loading) {
     // Show basic header structure while loading
     return (
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between py-4">
-            <Link to="/" className="flex items-center">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-300 overflow-x-hidden overflow-y-hidden">
+        <div className="w-full lg:max-w-7xl lg:mx-auto px-3 sm:px-4 md:px-6 lg:px-12">
+        <div className="flex items-center justify-between py-2.5 sm:py-3 md:py-4 min-w-0">
+            <Link to="/" className="flex items-center flex-shrink-0">
               <img
                 src={getDefaultImageUrl('2024/09/logo_adonis_4x-1.svg')}
                 alt="Adonis Medical Systems"
-                className="h-12 w-auto"
+                className="h-9 sm:h-10 md:h-12 w-auto max-w-[140px] sm:max-w-none"
               />
             </Link>
-            <div className="hidden lg:flex items-center space-x-3">
+            <div className="hidden lg:flex items-center space-x-3 flex-shrink-0">
               <div className="w-20 h-4 bg-gray-200 animate-pulse rounded"></div>
             </div>
+            <div className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0 ml-2"></div>
           </div>
         </div>
       </header>
@@ -268,26 +271,26 @@ const Header = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-white'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="flex items-center justify-between py-4">
+      <div className="w-full lg:max-w-7xl lg:mx-auto px-3 sm:px-4 md:px-6 lg:px-12">
+        <div className="flex items-center justify-between py-2.5 sm:py-3 md:py-4 min-w-0">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <Link to="/" className="flex items-center">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 flex-shrink-0 min-w-0">
+            <Link to="/" className="flex items-center flex-shrink-0">
               <img
                 src={getDefaultImageUrl('2024/09/logo_adonis_4x-1.svg')}
                 alt="Adonis Medical Systems"
-                className="h-12 w-auto"
+                className="h-9 sm:h-10 md:h-12 w-auto max-w-[140px] sm:max-w-none"
               />
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6 flex-shrink-0" style={{ position: 'relative', zIndex: 50 }}>
             {items.map((item) => renderNavItem(item, false))}
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center space-x-3">
+          <div className="hidden lg:flex items-center space-x-3 flex-shrink-0">
             <Link
               to="/request-demo"
               className="inline-flex items-center justify-center py-[0.425rem] px-[0.5rem] bg-[#F7FFF2] border-2 border-[#7DC244] text-[#7DC244] rounded-lg hover:bg-[#7DC244]/10 transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
@@ -304,8 +307,9 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-2xl text-gray-800 cursor-pointer"
+            className="lg:hidden flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 text-xl sm:text-2xl text-gray-800 hover:text-[#7DC244] active:text-[#7DC244] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:ring-offset-1 rounded-md flex-shrink-0 ml-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
             <i className={isMobileMenuOpen ? 'ri-close-line' : 'ri-menu-line'}></i>
           </button>
@@ -313,20 +317,20 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-white shadow-lg rounded-lg mt-2 py-4 px-6 mb-4">
-            <nav className="flex flex-col space-y-4">
+          <div className="lg:hidden bg-white shadow-xl border-t border-gray-200 mt-0 py-3 sm:py-4 px-3 sm:px-4 mb-0 max-h-[calc(100vh-70px)] sm:max-h-[calc(100vh-80px)] overflow-y-auto">
+            <nav className="flex flex-col space-y-2 sm:space-y-3">
               {items.map((item) => renderNavItem(item, true))}
-              <div className="flex flex-col space-y-2 pt-4 border-t">
+              <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
                 <Link
                   to="/request-demo"
-                  className="inline-flex items-center justify-center py-[0.425rem] px-[0.5rem] bg-[#F7FFF2] border-2 border-[#7DC244] text-[#7DC244] rounded-lg hover:bg-[#7DC244]/10 transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
+                  className="inline-flex items-center justify-center py-3 px-4 bg-[#F7FFF2] border-2 border-[#7DC244] text-[#7DC244] rounded-lg hover:bg-[#7DC244]/10 active:bg-[#7DC244]/20 transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Request Demo
                 </Link>
                 <Link
                   to="/contact-us"
-                  className="inline-flex items-center justify-center py-[0.425rem] px-[0.5rem] bg-[#7DC244] border-2 border-transparent text-white rounded-lg hover:bg-[#6BC04A] transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
+                  className="inline-flex items-center justify-center py-3 px-4 bg-[#7DC244] border-2 border-transparent text-white rounded-lg hover:bg-[#6BC04A] active:bg-[#5AA03A] transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Contact Us

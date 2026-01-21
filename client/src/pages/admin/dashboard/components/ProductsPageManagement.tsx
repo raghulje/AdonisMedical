@@ -6,8 +6,9 @@ import HfCArm1kPageManagement from './products/HfCArm1kPageManagement';
 import LineFrequencyPageManagement from './products/LineFrequencyPageManagement';
 import DigitalRadiographyPageManagement from './products/DigitalRadiographyPageManagement';
 import DreamSeriesPageManagement from './products/DreamSeriesPageManagement';
+import HospitalsServedManagement from './HospitalsServedManagement';
 
-type ProductSection = 'hf-mobile' | 'hf-fixed' | 'fpd-c-arm' | 'hf-c-arm-1k' | 'line-frequency' | 'digital-radiography' | 'dream-series';
+type ProductSection = 'hf-mobile' | 'hf-fixed' | 'fpd-c-arm' | 'hf-c-arm-1k' | 'line-frequency' | 'digital-radiography' | 'dream-series' | 'hospitals-served';
 
 export default function ProductsPageManagement() {
   const [activeSection, setActiveSection] = useState<ProductSection>('hf-mobile');
@@ -19,7 +20,8 @@ export default function ProductsPageManagement() {
     { id: 'hf-c-arm-1k' as ProductSection, label: '1K*1K High End HF C-ARM', icon: 'ri-vip-crown-line' },
     { id: 'line-frequency' as ProductSection, label: 'Line Frequency', icon: 'ri-pulse-line' },
     { id: 'digital-radiography' as ProductSection, label: 'Digital Radiography', icon: 'ri-image-line' },
-    { id: 'dream-series' as ProductSection, label: 'Dream Series', icon: 'ri-star-line' }
+    { id: 'dream-series' as ProductSection, label: 'Dream Series', icon: 'ri-star-line' },
+    { id: 'hospitals-served' as ProductSection, label: 'Hospitals Served', icon: 'ri-hospital-line' }
   ];
 
   return (
@@ -53,6 +55,7 @@ export default function ProductsPageManagement() {
         {activeSection === 'line-frequency' && <LineFrequencyPageManagement />}
         {activeSection === 'digital-radiography' && <DigitalRadiographyPageManagement />}
         {activeSection === 'dream-series' && <DreamSeriesPageManagement />}
+        {activeSection === 'hospitals-served' && <HospitalsServedManagement />}
       </div>
     </div>
   );

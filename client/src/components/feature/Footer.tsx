@@ -11,9 +11,9 @@ const Footer = () => {
 
   if (isLoading) {
     return (
-      <footer className="bg-[#F5F5F5] pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <footer className="bg-[#F5F5F5] pt-12 sm:pt-16 pb-6 sm:pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="space-y-4">
                 <div className="h-6 bg-gray-200 animate-pulse rounded w-32"></div>
@@ -67,9 +67,9 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-[#F5F5F5] pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+    <footer className="bg-[#F5F5F5] pt-12 sm:pt-16 pb-6 sm:pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* Logo and Social */}
           <div>
             <div className="flex items-center space-x-4 mb-6">
@@ -194,8 +194,8 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-300 pt-6">
-          <p className="text-sm text-gray-600 text-center">
+        <div className="border-t border-gray-300 pt-4 sm:pt-6">
+          <p className="text-xs sm:text-sm text-gray-600 text-center px-4">
             © Worldwide Copyright Reserved. ADONIS MEDICAL SYSTEMS PVT LTD
           </p>
         </div>
