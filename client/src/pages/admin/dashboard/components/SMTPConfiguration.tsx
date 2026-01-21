@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { api } from '../../../../utils/api';
 
 interface SMTPConfig {
   host: string;
@@ -9,35 +10,118 @@ interface SMTPConfig {
   fromName: string;
   encryption: 'none' | 'ssl' | 'tls';
   enabled: boolean;
+  contactFormEmail: string;
+  requestDemoEmail: string;
 }
 
 export default function SMTPConfiguration() {
   const [isEditing, setIsEditing] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
   const [smtpConfig, setSmtpConfig] = useState<SMTPConfig>({
     host: 'smtp.gmail.com',
     port: '587',
-    username: 'your-email@gmail.com',
+    username: '',
     password: '',
-    fromEmail: 'noreply@adonismedical.com',
+    fromEmail: '',
     fromName: 'Adonis Medical',
     encryption: 'tls',
-    enabled: true
+    enabled: true,
+    contactFormEmail: '',
+    requestDemoEmail: ''
   });
 
   const [testEmail, setTestEmail] = useState('');
 
-  const handleSave = () => {
-    console.log('Saving SMTP configuration:', smtpConfig);
-    setIsEditing(false);
-    setTestResult({ success: true, message: 'SMTP configuration saved successfully!' });
-    setTimeout(() => setTestResult(null), 5000);
+  // Fetch existing settings on load
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      setIsLoading(true);
+      const response = await api.get<any>('/email-settings');
+      if (response.success && response.data) {
+        const data = response.data as any;
+        // Map API response to component state
+        setSmtpConfig({
+          host: data.smtpHost || 'smtp.gmail.com',
+          port: String(data.smtpPort || 587),
+          username: data.smtpUser || '',
+          password: '', // Never show password
+          fromEmail: data.fromEmail || '',
+          fromName: data.fromName || 'Adonis Medical',
+          encryption: data.smtpSecure === 'ssl' ? 'ssl' : (data.smtpSecure === 'tls' ? 'tls' : (data.smtpPort === 465 ? 'ssl' : 'tls')),
+          enabled: data.isActive !== false,
+          contactFormEmail: data.contactFormEmail || '',
+          requestDemoEmail: data.requestDemoEmail || ''
+        });
+      }
+    } catch (error: any) {
+      console.error('Error fetching email settings:', error);
+      setTestResult({ success: false, message: error.message || 'Failed to load email settings' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!smtpConfig.host || !smtpConfig.port || !smtpConfig.username || !smtpConfig.fromEmail) {
+      setTestResult({ success: false, message: 'Please fill in all required fields' });
+      return;
+    }
+
+    setIsSaving(true);
+    setTestResult(null);
+
+    try {
+      // Map component state to API format
+      const apiData: any = {
+        smtpHost: smtpConfig.host,
+        smtpPort: parseInt(smtpConfig.port),
+        smtpSecure: smtpConfig.encryption,
+        smtpUser: smtpConfig.username,
+        fromEmail: smtpConfig.fromEmail,
+        fromName: smtpConfig.fromName,
+        contactFormEmail: smtpConfig.contactFormEmail,
+        requestDemoEmail: smtpConfig.requestDemoEmail,
+        isActive: smtpConfig.enabled
+      };
+
+      // Only include password if user entered a new one
+      if (smtpConfig.password && smtpConfig.password.trim() !== '') {
+        apiData.smtpPassword = smtpConfig.password;
+      }
+
+      const response = await api.put('/email-settings', apiData);
+      if (response.success) {
+        setIsEditing(false);
+        setTestResult({ success: true, message: 'SMTP configuration saved successfully!' });
+        // Clear password field after save
+        setSmtpConfig(prev => ({ ...prev, password: '' }));
+        // Refresh settings to get updated data
+        await fetchSettings();
+        setTimeout(() => setTestResult(null), 5000);
+      }
+    } catch (error: any) {
+      console.error('Error saving email settings:', error);
+      setTestResult({ 
+        success: false, 
+        message: error.message || 'Failed to save email settings' 
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
+    // Reload original settings
+    fetchSettings();
   };
 
   const handleTestConnection = async () => {
@@ -46,66 +130,44 @@ export default function SMTPConfiguration() {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(testEmail)) {
+      setTestResult({ success: false, message: 'Please enter a valid email address' });
+      return;
+    }
+
     setIsTesting(true);
     setTestResult(null);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsTesting(false);
+    try {
+      const response = await api.post('/email-settings/test', { testEmail });
+      if (response.success) {
+        setTestResult({
+          success: true,
+          message: response.message || `Test email sent successfully to ${testEmail}! Please check your inbox.`
+        });
+        setTestEmail('');
+      }
+    } catch (error: any) {
+      console.error('Error testing email connection:', error);
       setTestResult({
-        success: true,
-        message: `Test email sent successfully to ${testEmail}! Please check your inbox.`
+        success: false,
+        message: error.message || 'Failed to send test email. Please check your SMTP settings.'
       });
-    }, 2000);
-  };
-
-  const commonSMTPProviders = [
-    {
-      name: 'Gmail',
-      host: 'smtp.gmail.com',
-      port: '587',
-      encryption: 'tls' as const,
-      note: 'Use App Password for Gmail accounts with 2FA enabled'
-    },
-    {
-      name: 'Outlook/Office 365',
-      host: 'smtp.office365.com',
-      port: '587',
-      encryption: 'tls' as const,
-      note: 'Use your Microsoft account credentials'
-    },
-    {
-      name: 'Yahoo Mail',
-      host: 'smtp.mail.yahoo.com',
-      port: '587',
-      encryption: 'tls' as const,
-      note: 'Generate an app password in Yahoo account settings'
-    },
-    {
-      name: 'SendGrid',
-      host: 'smtp.sendgrid.net',
-      port: '587',
-      encryption: 'tls' as const,
-      note: 'Use "apikey" as username and your API key as password'
-    },
-    {
-      name: 'Mailgun',
-      host: 'smtp.mailgun.org',
-      port: '587',
-      encryption: 'tls' as const,
-      note: 'Use your Mailgun SMTP credentials'
+    } finally {
+      setIsTesting(false);
     }
-  ];
-
-  const applyProvider = (provider: typeof commonSMTPProviders[0]) => {
-    setSmtpConfig({
-      ...smtpConfig,
-      host: provider.host,
-      port: provider.port,
-      encryption: provider.encryption
-    });
-    setIsEditing(true);
   };
+
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <i className="ri-loader-4-line animate-spin text-4xl text-[#2563EB]"></i>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -134,9 +196,17 @@ export default function SMTPConfiguration() {
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-all duration-300 cursor-pointer whitespace-nowrap"
+                  disabled={isSaving}
+                  className="px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-all duration-300 cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Save Configuration
+                  {isSaving ? (
+                    <>
+                      <i className="ri-loader-4-line animate-spin mr-2"></i>
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Configuration'
+                  )}
                 </button>
               </>
             )}
@@ -267,6 +337,30 @@ export default function SMTPConfiguration() {
                   <p className="text-xs text-[#6B7280] mt-1">Name that will appear as sender</p>
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-[#374151] mb-2">Contact Form Email</label>
+                  <input
+                    type="email"
+                    value={smtpConfig.contactFormEmail}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, contactFormEmail: e.target.value })}
+                    className="w-full px-4 py-2 border border-[#D1D5DB] rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                    placeholder="contact@example.com"
+                  />
+                  <p className="text-xs text-[#6B7280] mt-1">Email where Contact Us form submissions will be sent</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#374151] mb-2">Request Demo Email</label>
+                  <input
+                    type="email"
+                    value={smtpConfig.requestDemoEmail}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, requestDemoEmail: e.target.value })}
+                    className="w-full px-4 py-2 border border-[#D1D5DB] rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                    placeholder="demo@example.com"
+                  />
+                  <p className="text-xs text-[#6B7280] mt-1">Email where Request Demo form submissions will be sent</p>
+                </div>
+
                 {/* Test Email Section */}
                 <div className="mt-6 p-4 bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg">
                   <h4 className="text-sm font-semibold text-[#1F2937] mb-3">Test Email Connection</h4>
@@ -351,42 +445,19 @@ export default function SMTPConfiguration() {
                     <span className="text-[#6B7280]">From Name:</span>
                     <span className="text-[#1F2937] font-medium">{smtpConfig.fromName}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#6B7280]">Contact Form Email:</span>
+                    <span className="text-[#1F2937] font-medium">{smtpConfig.contactFormEmail || 'Not set'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#6B7280]">Request Demo Email:</span>
+                    <span className="text-[#1F2937] font-medium">{smtpConfig.requestDemoEmail || 'Not set'}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         )}
-      </div>
-
-      {/* Common SMTP Providers */}
-      <div className="bg-white rounded-lg shadow-sm border border-[#E5E7EB] p-6">
-        <h2 className="text-xl font-bold text-[#1F2937] mb-4">Common SMTP Providers</h2>
-        <p className="text-sm text-[#6B7280] mb-6">Quick setup with popular email service providers</p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {commonSMTPProviders.map((provider) => (
-            <div key={provider.name} className="border border-[#E5E7EB] rounded-lg p-4 hover:shadow-md transition-all">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-[#1F2937]">{provider.name}</h3>
-                <button
-                  onClick={() => applyProvider(provider)}
-                  className="px-3 py-1 bg-[#2563EB] text-white text-xs rounded-lg hover:bg-[#1D4ED8] transition-all cursor-pointer whitespace-nowrap"
-                >
-                  Use This
-                </button>
-              </div>
-              <div className="space-y-1 text-xs text-[#6B7280] mb-3">
-                <p><strong>Host:</strong> {provider.host}</p>
-                <p><strong>Port:</strong> {provider.port}</p>
-                <p><strong>Encryption:</strong> {provider.encryption.toUpperCase()}</p>
-              </div>
-              <p className="text-xs text-[#6B7280] bg-[#F9FAFB] p-2 rounded">
-                <i className="ri-information-line mr-1"></i>
-                {provider.note}
-              </p>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Help & Documentation */}

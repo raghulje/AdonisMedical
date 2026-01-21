@@ -1,0 +1,77 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables (IMPORTANT: Never commit .env files!)
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+# Client and Server specific .env files
+client/.env
+client/.env.local
+client/.env.production
+client/.env.development
+server/.env
+server/.env.local
+server/.env.production
+server/.env.development
+
+# Production configuration files (server-specific, should not be tracked)
+server/config/config.json
+
+# Build outputs
+client/out/
+client/dist/
+*.log
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Database
+*.sql.backup
+*.db
+*.sqlite
+
+# Uploads (optional - uncomment if you don't want to commit uploads)
+# server/uploads/
+# client/uploads/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Production
+build/
+dist/
+
+# Docker
+docker-compose.yml
+docker-compose.*.yml
+docker-compose.*.yaml
+
+# Misc
+*.pem
+*.key

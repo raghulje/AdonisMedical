@@ -7,12 +7,17 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { initGA } from './utils/analytics';
 import { initAutoTracking } from './utils/autoTracking';
+import { initScrollDepthTracking, initTimeOnPageTracking } from './utils/enhancedAnalytics';
 
 // Initialize Google Analytics
 initGA();
 
 // Initialize automatic event tracking
 initAutoTracking();
+
+// Initialize enhanced engagement tracking (scroll depth, time on page)
+initScrollDepthTracking();
+initTimeOnPageTracking();
 
 // Initialize AOS
 AOS.init({

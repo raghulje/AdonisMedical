@@ -65,9 +65,13 @@ export default function PrivacyPolicyPage() {
           </div>
           
           <style>{`
+            body {
+              font-family: 'Montserrat', sans-serif !important;
+            }
             .rich-text-content {
               line-height: 1.8;
               color: #374151;
+              font-family: 'Montserrat', sans-serif !important;
             }
             .rich-text-content h1,
             .rich-text-content h2,
@@ -75,9 +79,10 @@ export default function PrivacyPolicyPage() {
             .rich-text-content h4,
             .rich-text-content h5,
             .rich-text-content h6 {
-              font-weight: bold;
-              margin-top: 2.5em;
-              margin-bottom: 1.5em;
+              font-family: 'Montserrat', sans-serif !important;
+              font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
               color: #1f2937;
               line-height: 1.4;
               page-break-after: avoid;
@@ -93,21 +98,42 @@ export default function PrivacyPolicyPage() {
             .rich-text-content h1 { 
               font-size: 2em; 
               font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
             }
             .rich-text-content h2 { 
               font-size: 1.75em; 
               font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
             }
             .rich-text-content h3 { 
               font-size: 1.5em; 
               font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
             }
             .rich-text-content h4 { 
               font-size: 1.25em; 
               font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
+            }
+            .rich-text-content h5 { 
+              font-size: 1.1em; 
+              font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
+            }
+            .rich-text-content h6 { 
+              font-size: 1em; 
+              font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
             }
             .rich-text-content p {
-              margin-bottom: 1.5em;
+              font-family: 'Montserrat', sans-serif !important;
+              margin-bottom: 1em;
               margin-top: 0.5em;
               line-height: 1.8;
               color: #374151;
@@ -117,11 +143,13 @@ export default function PrivacyPolicyPage() {
             }
             .rich-text-content strong,
             .rich-text-content b {
+              font-family: 'Montserrat', sans-serif !important;
               font-weight: 700;
               color: #1f2937;
             }
             .rich-text-content em,
             .rich-text-content i {
+              font-family: 'Montserrat', sans-serif !important;
               font-style: italic;
             }
             .rich-text-content ul,
@@ -131,6 +159,7 @@ export default function PrivacyPolicyPage() {
               padding-left: 1.5em;
             }
             .rich-text-content li {
+              font-family: 'Montserrat', sans-serif !important;
               margin-bottom: 0.5em;
               line-height: 1.8;
             }
