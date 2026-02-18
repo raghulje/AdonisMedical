@@ -46,19 +46,19 @@ export default function InvestorRelationsPage() {
         <Header />
       </div>
       {/* Hero Section */}
-      <section 
-        className="relative pt-32 pb-20 bg-cover bg-center"
+      <section
+        className="relative pt-32 pb-20 bg-cover bg-center flex items-center justify-center"
         style={{
           backgroundImage: `url(${heroImageUrl})`
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-12 text-center">
           <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-4" data-aos="fade-down">
             {content?.heroTitle || 'Investor Relations'}
           </h1>
           {content?.heroSubtitle && (
-            <p className="text-xl text-white/90" data-aos="fade-up" data-aos-delay="100">{content.heroSubtitle}</p>
+            <p className="text-xl text-white/90 mx-auto" data-aos="fade-up" data-aos-delay="100">{content.heroSubtitle}</p>
           )}
         </div>
       </section>
@@ -79,7 +79,7 @@ export default function InvestorRelationsPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {documents.length > 0 ? (
             documents.map((doc, idx) => (
-              <div 
+              <div
                 key={doc.id}
                 className="bg-white rounded-lg shadow-sm mb-6 overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1"
                 data-aos="fade-up"

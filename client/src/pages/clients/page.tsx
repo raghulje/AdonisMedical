@@ -28,22 +28,21 @@ export default function ClientsPage() {
         <Header />
       </div>
       {/* Hero Section */}
-      <div 
-        className="relative h-[500px] bg-cover bg-center flex items-center"
+      <div
+        className="relative h-[500px] bg-cover bg-center flex items-center justify-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${
-            pageContent?.heroImage 
-              ? getImageUrl(pageContent.heroImage) 
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${pageContent?.heroImage
+              ? getImageUrl(pageContent.heroImage)
               : getDefaultImageUrl('2024/10/image-51-2-1.jpg')
-          })`,
+            })`,
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full text-center">
           <h1 className="text-5xl md:text-6xl font-medium text-white mb-4" style={{ color: '#7DC244' }} data-aos="fade-down">
             {pageContent?.heroTitle || 'Clients'}
           </h1>
           {pageContent?.heroSubtitle && (
-            <p className="text-xl text-white font-light" data-aos="fade-up" data-aos-delay="100">
+            <p className="text-xl text-white font-light mx-auto" data-aos="fade-up" data-aos-delay="100">
               {pageContent.heroSubtitle}
             </p>
           )}
@@ -71,7 +70,7 @@ export default function ClientsPage() {
               {clients.filter(client => client.isActive).map((client, index) => {
                 // Only show clients that have logos OR allow showing placeholder if logo fails
                 const imageUrl = client.logo ? getImageUrl(client.logo) : null;
-                
+
                 return (
                   <div
                     key={client.id}

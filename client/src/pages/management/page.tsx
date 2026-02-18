@@ -29,7 +29,7 @@ export default function ManagementPage() {
       <section className="relative min-h-[400px] flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(${getDefaultImageUrl('2024/09/image-53-1.jpg')})` }}>
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/50"></div>
         <div className="relative z-10 text-center px-6 py-20">
-          <h1 className="text-5xl md:text-6xl font-medium text-white mb-4" data-aos="fade-down">Management</h1>
+          <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-4" data-aos="fade-down">Management</h1>
           <p className="text-xl md:text-2xl text-white/90" data-aos="fade-up" data-aos-delay="200">Our Leaders</p>
         </div>
       </section>
@@ -57,20 +57,20 @@ export default function ManagementPage() {
                   <div className="flex flex-col md:flex-row gap-8 mb-8">
                     <div className="flex-shrink-0" data-aos="zoom-in" data-aos-delay="100">
                       <div className="w-48 h-48 rounded-full overflow-hidden bg-gray-100 hover:scale-110 transition-transform duration-300">
-                        <img 
-                          alt={leader.fullName} 
-                          className="w-full h-full object-cover" 
+                        <img
+                          alt={leader.fullName}
+                          className="w-full h-full object-cover"
                           src={leader.image ? getImageUrl(leader.image) : fallbackImages[index % fallbackImages.length]}
                         />
                       </div>
                     </div>
                     <div className="flex-1 flex flex-col justify-center" data-aos="fade-left" data-aos-delay="200">
-                      <h2 className="text-3xl md:text-4xl font-medium text-gray-900 mb-2">
+                      <h2 className="text-3xl md:text-4xl font-medium text-[#7DC244] mb-2">
                         {leader.fullName.toUpperCase()}
                       </h2>
-                      <p className="text-lg text-gray-700 font-medium mb-1">{leader.position}</p>
+                      <p className="text-lg text-gray-900 font-medium mb-1">{leader.position}</p>
                       {leader.department && (
-                        <p className="text-base text-[#7DC244] font-medium">{leader.department}</p>
+                        <p className="text-base text-gray-900 font-medium">{leader.department}</p>
                       )}
                       {leader.email && (
                         <p className="text-sm text-gray-600 mt-2">
@@ -83,10 +83,10 @@ export default function ManagementPage() {
                       {leader.linkedinUrl && (
                         <p className="text-sm text-gray-600 mt-1">
                           <i className="ri-linkedin-box-fill mr-2"></i>
-                          <a 
-                            href={leader.linkedinUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            href={leader.linkedinUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="hover:text-[#7DC244] transition-colors"
                           >
                             LinkedIn Profile
@@ -96,9 +96,9 @@ export default function ManagementPage() {
                     </div>
                   </div>
                   {leader.bio && (
-                    <div 
-                      className="space-y-4 text-gray-700 leading-relaxed" 
-                      data-aos="fade-up" 
+                    <div
+                      className="space-y-4 text-gray-700 leading-relaxed"
+                      data-aos="fade-up"
                       data-aos-delay="300"
                       dangerouslySetInnerHTML={{ __html: leader.bio.replace(/\n/g, '<br/>') }}
                     />

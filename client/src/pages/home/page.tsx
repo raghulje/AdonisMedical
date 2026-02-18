@@ -8,15 +8,30 @@ import QualitySection from './components/QualitySection';
 import SpecialtiesSection from './components/SpecialtiesSection';
 import TestimonialsSection from './components/TestimonialsSection';
 import ContactUsSection from '../../components/reusable/ContactUsSection';
+import SEO from '../../components/seo/SEO';
+import { getSEOConfig, getOrganizationStructuredData, getWebSiteStructuredData } from '../../utils/seoConfig';
 
 const HomePage = () => {
+  const seoConfig = getSEOConfig('/');
+  
   useEffect(() => {
-    document.title = 'Adonis Medical Systems - Excellence In Technology, Dedication in Service';
+    window.scrollTo(0, 0);
   }, []);
 
   return (
-    <div className="pt-16 sm:pt-20">
-      <Header />
+    <>
+      <SEO
+        {...seoConfig}
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            getOrganizationStructuredData(),
+            getWebSiteStructuredData(),
+          ],
+        }}
+      />
+      <div className="pt-16 sm:pt-20">
+        <Header />
       <main>
         <HeroSection />
         <AboutSection />
@@ -27,7 +42,8 @@ const HomePage = () => {
         <ContactUsSection />
       </main>
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };
 

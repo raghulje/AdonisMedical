@@ -56,7 +56,7 @@ const Footer = () => {
   // Get icon class for social platform
   const getSocialIcon = (platform: string, iconClass: string | null) => {
     if (iconClass) return iconClass;
-    
+
     const platformLower = platform.toLowerCase();
     if (platformLower.includes('facebook')) return 'ri-facebook-fill';
     if (platformLower.includes('twitter') || platformLower.includes('x.com')) return 'ri-twitter-fill';
@@ -122,7 +122,7 @@ const Footer = () => {
           {/* Footer Sections */}
           {sections.map((section) => {
             const isContactSection = section.title.toLowerCase() === 'contact information';
-            
+
             return (
               <div key={section.id}>
                 <h5 className="text-lg font-semibold text-gray-900 mb-4">{section.title}</h5>
@@ -134,8 +134,8 @@ const Footer = () => {
                         {section.links.map((link) => (
                           <div key={link.id} className="flex items-start space-x-3">
                             {link.iconImage ? (
-                              <img 
-                                src={getImageUrl(link.iconImage)} 
+                              <img
+                                src={getImageUrl(link.iconImage)}
                                 alt={link.iconImage.altText || link.label}
                                 className="w-8 h-8 mt-1 flex-shrink-0 object-contain"
                               />
@@ -193,11 +193,19 @@ const Footer = () => {
           })}
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-300 pt-4 sm:pt-6">
-          <p className="text-xs sm:text-sm text-gray-600 text-center px-4">
+        {/* Copyright & Legal Links */}
+        <div className="border-t border-gray-300 pt-4 sm:pt-6 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <p className="text-xs sm:text-sm text-gray-600 text-center md:text-left">
             © Worldwide Copyright Reserved. ADONIS MEDICAL SYSTEMS PVT LTD
           </p>
+          <div className="flex space-x-6">
+            <Link to="/terms-and-conditions" className="text-xs sm:text-sm text-gray-600 hover:text-[#FF6B35] transition-colors font-medium">
+              Terms and Conditions
+            </Link>
+            <Link to="/privacy-policy" className="text-xs sm:text-sm text-gray-600 hover:text-[#FF6B35] transition-colors font-medium">
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </div>
 

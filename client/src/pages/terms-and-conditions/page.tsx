@@ -25,8 +25,8 @@ export default function TermsAndConditionsPage() {
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           {/* Page Title */}
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-left">
-            Terms And Condition :
+          <h1 className="text-3xl md:text-4xl font-medium text-[#7DC244] mb-8 text-center">
+            Terms And Condition
           </h1>
           <div className="prose prose-lg max-w-none">
             <div className="rich-text-content text-gray-700 leading-relaxed text-left">
@@ -95,7 +95,7 @@ export default function TermsAndConditionsPage() {
               </p>
             </div>
           </div>
-          
+
           <style>{`
             body {
               font-family: 'Montserrat', sans-serif !important;

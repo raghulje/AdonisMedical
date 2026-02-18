@@ -43,16 +43,16 @@ export default function QualityAssurancePage() {
     <div className="pt-20">
       <Header />
       {/* Hero Section */}
-      <section className="relative h-[400px] flex items-center bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
+      <section className="relative h-[400px] flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full text-center">
           {content?.heroTitle && (
-            <h1 className="text-4xl md:text-5xl font-medium text-[#7DC244] text-left" data-aos="fade-down">
+            <h1 className="text-4xl md:text-5xl font-medium text-[#7DC244] mx-auto" data-aos="fade-down">
               {content.heroTitle}
             </h1>
           )}
           {content?.heroSubtitle && (
-            <p className="text-xl text-white mt-4 text-left" data-aos="fade-up" data-aos-delay="100">{content.heroSubtitle}</p>
+            <p className="text-xl text-white mt-4 mx-auto" data-aos="fade-up" data-aos-delay="100">{content.heroSubtitle}</p>
           )}
         </div>
       </section>

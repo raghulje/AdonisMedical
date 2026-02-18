@@ -6,6 +6,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useProductionFacility } from '../../hooks';
 import { getImageUrl, getDefaultImageUrl } from '../../utils/imageUrl';
+import HospitalsServedSection from '../../components/product/HospitalsServedSection';
 
 export default function ProductionFacilityPage() {
   const { content, features, loading, featuresLoading } = useProductionFacility();
@@ -39,21 +40,18 @@ export default function ProductionFacilityPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="pt-20">
-        <Header />
-      </div>
-      {/* Hero Section */}
-      <section className="relative h-[400px] flex items-center bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
+    <div className="min-h-screen bg-white pt-20">
+      <Header />
+      <section className="relative h-[500px] flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full text-center">
           {content?.heroTitle && (
-            <h1 className="text-4xl md:text-5xl font-medium text-[#7DC244] text-left" data-aos="fade-down">
+            <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-4" data-aos="fade-down">
               {content.heroTitle}
             </h1>
           )}
           {content?.heroSubtitle && (
-            <p className="text-xl text-white mt-4 text-left" data-aos="fade-up" data-aos-delay="100">{content.heroSubtitle}</p>
+            <p className="text-xl text-white mt-4 mx-auto" data-aos="fade-up" data-aos-delay="100">{content.heroSubtitle}</p>
           )}
         </div>
       </section>
@@ -158,7 +156,7 @@ export default function ProductionFacilityPage() {
                             background: 'linear-gradient(151deg, rgba(125, 194, 68, 1) 0%, rgba(238, 106, 49, 1) 100%)'
                           }}
                         >
-                          <div className="bg-[#F0F5ED] p-6 md:p-2 h-full">
+                          <div className="bg-[#F0F5ED] p-6 md:p-8 h-full">
                             <p className="text-lg md:text-xl text-gray-900 font-bold leading-snug">
                               {content.highlightedBoxText}
                             </p>
@@ -278,6 +276,9 @@ export default function ProductionFacilityPage() {
           </div>
         </section>
       )}
+
+      {/* Hospitals Served Section */}
+      <HospitalsServedSection />
 
       {/* Contact Section */}
       <ContactUsSection />

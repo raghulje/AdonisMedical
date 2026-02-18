@@ -1,17 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { api } from '../../../../utils/api';
 
 interface ActivityLog {
-  id: string;
-  user: string;
-  userEmail: string;
+  id: number;
+  user?: {
+    id: number;
+    username: string;
+    email: string;
+    fullName: string;
+  };
   action: 'create' | 'update' | 'delete' | 'restore' | 'login' | 'logout';
-  page: string;
-  section: string;
-  field?: string;
-  oldValue?: string;
-  newValue?: string;
-  timestamp: Date;
-  ipAddress: string;
+  page: string | null;
+  section: string | null;
+  field?: string | null;
+  oldValue?: string | null;
+  newValue?: string | null;
+  description?: string | null;
+  createdAt: string;
+  ipAddress: string | null;
 }
 
 export default function ActivityLogsPage() {
@@ -19,82 +25,63 @@ export default function ActivityLogsPage() {
   const [filterPage, setFilterPage] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalActions: 0,
+    updates: 0,
+    deletions: 0,
+    creates: 0,
+    restores: 0,
+    logins: 0
+  });
 
-  // Mock data - In production, fetch from your database
-  const [logs] = useState<ActivityLog[]>([
-    {
-      id: '1',
-      user: 'Admin User',
-      userEmail: 'raghul.je@refex.co.in',
-      action: 'update',
-      page: 'Home',
-      section: 'Hero Section',
-      field: 'Title',
-      oldValue: 'Welcome to Adonis Medical',
-      newValue: 'Affordable Diagnostic Imaging Solutions',
-      timestamp: new Date('2025-01-15T10:30:00'),
-      ipAddress: '192.168.1.100'
-    },
-    {
-      id: '2',
-      user: 'Admin User',
-      userEmail: 'raghul.je@refex.co.in',
-      action: 'login',
-      page: 'Admin',
-      section: 'Authentication',
-      timestamp: new Date('2025-01-15T09:00:00'),
-      ipAddress: '192.168.1.100'
-    },
-    {
-      id: '3',
-      user: 'Editor User',
-      userEmail: 'editor@adonismedical.com',
-      action: 'create',
-      page: 'Products',
-      section: 'Product List',
-      field: 'New Product',
-      newValue: 'HF Mobile X-Ray System',
-      timestamp: new Date('2025-01-14T15:45:00'),
-      ipAddress: '192.168.1.101'
-    },
-    {
-      id: '4',
-      user: 'Admin User',
-      userEmail: 'raghul.je@refex.co.in',
-      action: 'delete',
-      page: 'Awards',
-      section: 'Awards List',
-      field: 'Award Item',
-      oldValue: 'Best Innovation Award 2023',
-      timestamp: new Date('2025-01-14T14:20:00'),
-      ipAddress: '192.168.1.100'
-    },
-    {
-      id: '5',
-      user: 'Admin User',
-      userEmail: 'raghul.je@refex.co.in',
-      action: 'restore',
-      page: 'Awards',
-      section: 'Awards List',
-      field: 'Award Item',
-      newValue: 'Best Innovation Award 2023',
-      timestamp: new Date('2025-01-14T14:25:00'),
-      ipAddress: '192.168.1.100'
-    },
-    {
-      id: '6',
-      user: 'Editor User',
-      userEmail: 'editor@adonismedical.com',
-      action: 'update',
-      page: 'About',
-      section: 'Company Overview',
-      field: 'Description',
-      oldValue: 'We are a leading manufacturer...',
-      newValue: 'Adonis Medical Systems, a professionally managed...',
-      timestamp: new Date('2025-01-13T11:30:00'),
-      ipAddress: '192.168.1.101'
+  useEffect(() => {
+    fetchLogs();
+    fetchStats();
+  }, [filterAction, filterPage, searchQuery, dateRange]);
+
+  const fetchLogs = async () => {
+    try {
+      setLoading(true);
+      const params: any = {
+        limit: 100,
+        offset: 0
+      };
+      if (filterAction !== 'all') params.action = filterAction;
+      if (filterPage !== 'all') params.page = filterPage;
+      if (searchQuery) params.search = searchQuery;
+      if (dateRange.start) params.startDate = dateRange.start;
+      if (dateRange.end) params.endDate = dateRange.end;
+
+      const response = await api.get(`/activity-logs?${new URLSearchParams(params)}`);
+      if (response.success && response.data) {
+        setLogs((response.data as any).logs || []);
+      }
+    } catch (error: any) {
+      console.error('Error fetching logs:', error);
+      setLogs([]);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  const fetchStats = async () => {
+    try {
+      const params: any = {};
+      if (dateRange.start) params.startDate = dateRange.start;
+      if (dateRange.end) params.endDate = dateRange.end;
+
+      const response = await api.get(`/activity-logs/stats?${new URLSearchParams(params)}`);
+      if (response.success && response.data) {
+        setStats(response.data as any);
+      }
+    } catch (error: any) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
+  // Legacy mock data removed - now using real API
 
   const actionColors = {
     create: 'bg-green-100 text-green-800',
@@ -114,41 +101,31 @@ export default function ActivityLogsPage() {
     logout: 'ri-logout-box-line'
   };
 
-  const filteredLogs = logs.filter(log => {
-    const matchesAction = filterAction === 'all' || log.action === filterAction;
-    const matchesPage = filterPage === 'all' || log.page === filterPage;
-    const matchesSearch = searchQuery === '' || 
-      log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.userEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.page.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.section.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesAction && matchesPage && matchesSearch;
-  });
+  const filteredLogs = logs; // Already filtered by API
 
-  const exportLogs = () => {
-    const csv = [
-      ['Timestamp', 'User', 'Email', 'Action', 'Page', 'Section', 'Field', 'Old Value', 'New Value', 'IP Address'],
-      ...filteredLogs.map(log => [
-        log.timestamp.toISOString(),
-        log.user,
-        log.userEmail,
-        log.action,
-        log.page,
-        log.section,
-        log.field || '',
-        log.oldValue || '',
-        log.newValue || '',
-        log.ipAddress
-      ])
-    ].map(row => row.join(',')).join('\\n');
+  const exportLogs = async () => {
+    try {
+      const params: any = {};
+      if (filterAction !== 'all') params.action = filterAction;
+      if (filterPage !== 'all') params.page = filterPage;
+      if (dateRange.start) params.startDate = dateRange.start;
+      if (dateRange.end) params.endDate = dateRange.end;
 
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `activity-logs-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3002/api/v1'}/activity-logs/export?${new URLSearchParams(params)}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        }
+      });
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `activity-logs-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    } catch (error: any) {
+      alert('Error exporting logs: ' + error.message);
+    }
   };
 
   return (
@@ -261,53 +238,66 @@ export default function ActivityLogsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {log.timestamp.toLocaleString()}
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{log.user}</div>
-                    <div className="text-xs text-gray-500">{log.userEmail}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${actionColors[log.action]}`}>
-                      <i className={`${actionIcons[log.action]} mr-1`}></i>
-                      {log.action.charAt(0).toUpperCase() + log.action.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.page}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.section}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {log.field && (
-                      <div className="space-y-1">
-                        <div className="font-medium">{log.field}</div>
-                        {log.oldValue && (
-                          <div className="text-xs text-red-600">
-                            <span className="font-medium">From:</span> {log.oldValue.substring(0, 50)}{log.oldValue.length > 50 ? '...' : ''}
-                          </div>
-                        )}
-                        {log.newValue && (
-                          <div className="text-xs text-green-600">
-                            <span className="font-medium">To:</span> {log.newValue.substring(0, 50)}{log.newValue.length > 50 ? '...' : ''}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.ipAddress}</td>
                 </tr>
-              ))}
+              ) : filteredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                    No activity logs found
+                  </td>
+                </tr>
+              ) : (
+                filteredLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {new Date(log.createdAt).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{log.user?.fullName || log.user?.username || 'System'}</div>
+                      <div className="text-xs text-gray-500">{log.user?.email || 'N/A'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${actionColors[log.action]}`}>
+                        <i className={`${actionIcons[log.action]} mr-1`}></i>
+                        {log.action.charAt(0).toUpperCase() + log.action.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.page || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.section || 'N/A'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {log.field && (
+                        <div className="space-y-1">
+                          <div className="font-medium">{log.field}</div>
+                          {log.oldValue && (
+                            <div className="text-xs text-red-600">
+                              <span className="font-medium">From:</span> {String(log.oldValue).substring(0, 50)}{String(log.oldValue).length > 50 ? '...' : ''}
+                            </div>
+                          )}
+                          {log.newValue && (
+                            <div className="text-xs text-green-600">
+                              <span className="font-medium">To:</span> {String(log.newValue).substring(0, 50)}{String(log.newValue).length > 50 ? '...' : ''}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {!log.field && log.description && (
+                        <div className="text-xs text-gray-500">{log.description}</div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.ipAddress || 'N/A'}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
-        {filteredLogs.length === 0 && (
-          <div className="text-center py-12">
-            <i className="ri-file-list-3-line text-6xl text-gray-300 mb-4"></i>
-            <p className="text-gray-500">No activity logs found</p>
-          </div>
-        )}
       </div>
 
       {/* Stats */}
@@ -316,7 +306,7 @@ export default function ActivityLogsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Actions</p>
-              <p className="text-2xl font-medium text-gray-900 mt-1">{logs.length}</p>
+              <p className="text-2xl font-medium text-gray-900 mt-1">{stats.totalActions}</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <i className="ri-bar-chart-line text-2xl text-blue-600"></i>
@@ -329,7 +319,7 @@ export default function ActivityLogsPage() {
             <div>
               <p className="text-sm text-gray-600">Updates</p>
               <p className="text-2xl font-medium text-gray-900 mt-1">
-                {logs.filter(l => l.action === 'update').length}
+                {stats.updates}
               </p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -343,7 +333,7 @@ export default function ActivityLogsPage() {
             <div>
               <p className="text-sm text-gray-600">Deletions</p>
               <p className="text-2xl font-medium text-gray-900 mt-1">
-                {logs.filter(l => l.action === 'delete').length}
+                {stats.deletions}
               </p>
             </div>
             <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -357,7 +347,7 @@ export default function ActivityLogsPage() {
             <div>
               <p className="text-sm text-gray-600">Logins</p>
               <p className="text-2xl font-medium text-gray-900 mt-1">
-                {logs.filter(l => l.action === 'login').length}
+                {stats.logins}
               </p>
             </div>
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">

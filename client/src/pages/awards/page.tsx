@@ -27,23 +27,22 @@ export default function AwardsPage() {
     <div className="pt-20">
       <Header />
       {/* Hero Section */}
-      <section 
+      <section
         className="relative h-[400px] flex items-center bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${
-            pageContent?.heroImage 
-              ? getImageUrl(pageContent.heroImage) 
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${pageContent?.heroImage
+              ? getImageUrl(pageContent.heroImage)
               : getDefaultImageUrl('2024/10/image-1-1.jpg')
-          })`
+            })`
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12 w-full">
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-12 w-full text-center">
           <h1 className="text-5xl md:text-6xl font-medium text-[#7DC244] mb-6" data-aos="fade-down">
             {pageContent?.heroTitle || 'Awards'}
           </h1>
           {pageContent?.heroSubtitle && (
-            <p className="text-xl text-white font-light" data-aos="fade-up" data-aos-delay="100">
+            <p className="text-xl text-white font-light mx-auto" data-aos="fade-up" data-aos-delay="100">
               {pageContent.heroSubtitle}
             </p>
           )}
@@ -67,10 +66,10 @@ export default function AwardsPage() {
               {awards.map((award, index) => {
                 const imageUrl = award.image ? getImageUrl(award.image) : null;
                 const placeholderImage = getDefaultImageUrl('2025/04/Award01-1.jpg');
-                
+
                 return (
-                  <div 
-                    key={award.id} 
+                  <div
+                    key={award.id}
                     className="cursor-pointer group"
                     data-aos="zoom-in"
                     data-aos-delay={index * 50}

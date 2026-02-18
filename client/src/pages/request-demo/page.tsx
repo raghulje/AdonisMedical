@@ -37,7 +37,7 @@ const RequestDemoPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate required fields
     if (!formData.name || !formData.hospitalName || !formData.email || !formData.mobile || !formData.product || !formData.date) {
       setSubmitStatus('error');
@@ -89,9 +89,9 @@ const RequestDemoPage = () => {
   return (
     <div className="pt-20">
       <Header />
-      
+
       {/* Main Content Section */}
-      <div 
+      <div
         className="min-h-screen py-16 relative"
         style={{
           backgroundImage: content?.backgroundImage ? `url(${getImageUrl(content.backgroundImage)})` : `url(${getDefaultImageUrl('2024/09/Frame-75-1.png')})`,
@@ -103,10 +103,10 @@ const RequestDemoPage = () => {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           {/* Title */}
-          <div className="mb-12" data-aos="fade-down">
+          <div className="mb-12 text-center" data-aos="fade-down">
             <h1 className="text-5xl font-medium text-[#7DC244]">{content?.heroTitle || 'Request a Demo'}</h1>
             {content?.heroSubtitle && (
-              <p className="text-gray-600 text-lg mt-4 max-w-2xl">
+              <p className="text-gray-600 text-lg mt-4 max-w-2xl mx-auto">
                 {content.heroSubtitle}
               </p>
             )}
@@ -143,8 +143,8 @@ const RequestDemoPage = () => {
                     <div key={feature.id} className="flex flex-col items-start" data-aos="zoom-in" data-aos-delay={(index + 1) * 100}>
                       <div className="w-12 h-12 flex items-center justify-center mb-4 transition-all duration-500 hover:scale-125 hover:rotate-12">
                         {feature.iconImage ? (
-                          <img 
-                            src={getImageUrl(feature.iconImage)} 
+                          <img
+                            src={getImageUrl(feature.iconImage)}
                             alt={feature.iconImage.altText || feature.title}
                             className="w-12 h-12 object-contain"
                           />
@@ -312,9 +312,9 @@ const RequestDemoPage = () => {
                   </div>
                   <span className="text-sm text-gray-700">I'm not a robot</span>
                   <div className="ml-auto">
-                    <img 
-                      src="https://www.gstatic.com/recaptcha/api2/logo_48.png" 
-                      alt="reCAPTCHA" 
+                    <img
+                      src="https://www.gstatic.com/recaptcha/api2/logo_48.png"
+                      alt="reCAPTCHA"
                       className="h-8"
                     />
                   </div>
@@ -348,7 +348,7 @@ const RequestDemoPage = () => {
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

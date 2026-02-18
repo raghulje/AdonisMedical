@@ -92,6 +92,11 @@ app.use("/api/v1/products/line-frequency", require("./routes/products/lineFreque
 app.use("/api/v1/products/digital-radiography", require("./routes/products/digitalRadiography"));
 app.use("/api/v1/products/dream-series", require("./routes/products/dreamSeries"));
 
+// Activity logs, version history, and recycle bin routes (requires authentication)
+app.use("/api/v1/activity-logs", require("./routes/activityLogs"));
+app.use("/api/v1/version-history", require("./routes/versionHistory"));
+app.use("/api/v1/recycle-bin", require("./routes/recycleBin"));
+
 // Image upload endpoint
 const uploadImage = require('./middlewares/uploadImage');
 const uploadDocument = require('./middlewares/uploadDocument');

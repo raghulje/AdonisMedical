@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         references: { model: 'media', key: 'id' }
       },
+      backgroundImageId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: 'media', key: 'id' }
+      },
     },
     {
       tableName: "home_contact_section",
@@ -24,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
 
   HomeContactSection.associate = function (models) {
     HomeContactSection.belongsTo(models.Media, { foreignKey: 'imageId', as: 'image' });
+    HomeContactSection.belongsTo(models.Media, { foreignKey: 'backgroundImageId', as: 'backgroundImage' });
   };
 
   return HomeContactSection;

@@ -33,6 +33,7 @@ interface ProductPageContent {
   deploymentInfo: string | null;
   shortDescription: string | null;
   fullDescription: string | null;
+  description?: string | null; // Added for SEO consistency
   mainImage?: {
     filePath: string;
     altText: string;
@@ -64,14 +65,19 @@ export const useProduct = (productSlug: string) => {
 
         // Fetch all data in parallel
         const [contentRes, imagesRes, featuresRes, variantsRes] = await Promise.all([
-          api.get<ProductPageContent>(`/products/${productSlug}`).catch(() => ({ success: false, data: null })),
+          api.get<any>(`/products/${productSlug}`).catch(() => ({ success: false, data: null })),
           api.get<ProductImage[]>(`/products/${productSlug}/images`).catch(() => ({ success: false, data: [] })),
           api.get<ProductFeature[]>(`/products/${productSlug}/features`).catch(() => ({ success: false, data: [] })),
           api.get<ProductVariant[]>(`/products/${productSlug}/variants`).catch(() => ({ success: false, data: [] }))
         ]);
 
+        const contentData = contentRes.success && contentRes.data ? contentRes.data : null;
+        if (contentData && !contentData.description) {
+          contentData.description = contentData.shortDescription;
+        }
+
         setData({
-          content: contentRes.success && contentRes.data ? contentRes.data as ProductPageContent : null,
+          content: contentData,
           images: imagesRes.success && imagesRes.data ? (imagesRes.data as ProductImage[]).sort((a, b) => a.orderIndex - b.orderIndex) : [],
           features: featuresRes.success && featuresRes.data ? (featuresRes.data as ProductFeature[]).sort((a, b) => a.orderIndex - b.orderIndex) : [],
           variants: variantsRes.success && variantsRes.data ? (variantsRes.data as ProductVariant[]).filter(v => v.isActive).sort((a, b) => a.orderIndex - b.orderIndex) : []

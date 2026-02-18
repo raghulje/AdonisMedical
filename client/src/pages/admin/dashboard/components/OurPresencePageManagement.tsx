@@ -206,9 +206,7 @@ export default function OurPresencePageManagement() {
                 </FormField>
                 <div className="md:col-span-2">
                   <FormField label="Sales & Service Content" hint="Separate paragraphs with a blank line (press Enter twice)">
-                    <textarea value={pageContent.salesServiceContent || ''} onChange={(e) => setPageContent({ ...pageContent, salesServiceContent: e.target.value || null })} rows={6} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="First paragraph here...
-
-Second paragraph here..." />
+                    <textarea value={pageContent.salesServiceContent || ''} onChange={(e) => setPageContent({ ...pageContent, salesServiceContent: e.target.value || null })} rows={6} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="First paragraph here...\n\nSecond paragraph here..." />
                   </FormField>
                 </div>
                 <div className="md:col-span-2">

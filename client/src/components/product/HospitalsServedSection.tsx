@@ -20,11 +20,11 @@ export default function HospitalsServedSection() {
   const backgroundImageUrl = settings?.backgroundImage ? getImageUrl(settings.backgroundImage) : null;
   const sectionStyle = backgroundImageUrl
     ? {
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }
+      backgroundImage: `url(${backgroundImageUrl})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }
     : { backgroundColor: '#F5F5DC' };
 
   if (loading) {
@@ -43,11 +43,11 @@ export default function HospitalsServedSection() {
   const displayHospitals = hospitals.length > 0
     ? hospitals
     : [
-        { id: 1, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 0 },
-        { id: 2, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 1 },
-        { id: 3, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 2 },
-        { id: 4, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 3 }
-      ];
+      { id: 1, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 0 },
+      { id: 2, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 1 },
+      { id: 3, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 2 },
+      { id: 4, hospitalName: 'Hospital Name', cityState: 'City name, State name', orderIndex: 3 }
+    ];
 
   return (
     <section className="py-11" style={sectionStyle}>
@@ -55,7 +55,8 @@ export default function HospitalsServedSection() {
         <h2 className="text-4xl font-medium text-[#7DC244] text-center mb-12" data-aos="fade-up">
           Hospitals Served
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Hide specifically the grid part as requested, for future use */}
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {displayHospitals.map((hospital, idx) => (
             <div
               key={hospital.id}
@@ -76,7 +77,7 @@ export default function HospitalsServedSection() {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   );

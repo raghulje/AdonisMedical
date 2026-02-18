@@ -38,14 +38,14 @@ export default function OurPresencePage() {
         <Header />
       </div>
       {/* Hero Section */}
-      <section className="relative min-h-[75vh] pt-32 flex items-center justify-start bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
+      <section className="relative min-h-[75vh] pt-32 flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(${heroImageUrl})` }}>
         <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/20 to-black/25"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-          <h1 className="text-5xl font-medium mb-3 text-white">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-center">
+          <h1 className="text-5xl font-medium mb-3 text-[#7DC244]">
             {content?.heroTitle || 'Our Presence'}
           </h1>
           {content?.heroSubtitle && (
-            <p className="text-xl text-white/90">{content.heroSubtitle}</p>
+            <p className="text-xl text-white/90 mx-auto">{content.heroSubtitle}</p>
           )}
         </div>
       </section>
@@ -54,7 +54,7 @@ export default function OurPresencePage() {
       {/* Map Section with Rounded Top Corners */}
       <section className="relative -mt-16 pb-0">
         <div className="w-full">
-          <div 
+          <div
             className="bg-white rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] px-0 pt-8 md:pt-12 lg:pt-16 pb-0"
             style={mapBackgroundImageUrl ? {
               backgroundImage: `url(${mapBackgroundImageUrl})`,
