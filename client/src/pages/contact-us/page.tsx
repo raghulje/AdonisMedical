@@ -83,11 +83,16 @@ export default function ContactUsPage() {
             <h1 className="text-5xl font-medium mb-4" style={{ color: '#7DC244' }} data-aos="fade-down">
               {content?.heroTitle || 'Contact Us'}
             </h1>
-            {(content?.heroSubtitle || content?.introText) && (
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-                {content.heroSubtitle || content.introText}
-              </p>
-            )}
+            {(content?.heroSubtitle || content?.introText) && (() => {
+              const subtitle = content.heroSubtitle || content.introText || '';
+              // Preserve CMS newlines; if none, split after "?" for the two-sentence layout
+              const formattedSubtitle = subtitle.includes('\n') ? subtitle : subtitle.replace(/^(.+\?)\s+/, '$1\n');
+              return (
+                <p className="text-gray-600 text-lg max-w-2xl mx-auto whitespace-pre-line" data-aos="fade-up" data-aos-delay="100">
+                  {formattedSubtitle}
+                </p>
+              );
+            })()}
           </div>
         </div>
 

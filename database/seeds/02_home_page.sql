@@ -39,7 +39,7 @@ INSERT INTO home_stats (icon_class, number, label, order_index) VALUES
 -- ============================================
 
 INSERT INTO home_quality_section (id, heading, description, background_image_id, cta_text, cta_url) VALUES
-(1, 'Quality Assurance', 'Certified to the highest national and international standards, our equipment delivers flawless performance backed by rigorous in-house testing.', NULL, 'Explore our quality assurance solutions', '/quality-assurance');
+(1, 'Quality Assurance', 'Certified to the highest national and international standards, our equipment delivers flawless performance backed by rigorous in-house testing.', NULL, 'Explore our Quality Assurance Solutions', '/quality-assurance');
 
 -- Note: Update background_image_id after inserting images
 -- Background image URL: https://www.adonismedical.com/wp-content/uploads/2024/10/Frame-9-1-1.jpg

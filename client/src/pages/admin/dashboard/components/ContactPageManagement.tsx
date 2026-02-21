@@ -89,12 +89,12 @@ export default function ContactPageManagement() {
             </FormField>
 
             <FormField label="Hero Subtitle">
-              <input
-                type="text"
+              <textarea
+                rows={3}
                 value={content.heroSubtitle || ''}
                 onChange={(e) => setContent({ ...content, heroSubtitle: e.target.value || null })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Get in touch with us"
+                placeholder="First line: Have a question or need more information? Press Enter for second line: Submit your enquiry and our team will get back to you with the details you need."
               />
             </FormField>
 

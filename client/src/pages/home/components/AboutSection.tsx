@@ -110,7 +110,7 @@ const AboutSection = () => {
                             {/* Number and Label - Stacked vertically */}
                             <div className="flex-1 min-w-0">
                               <h3 className="text-3xl md:text-4xl font-medium text-gray-900 leading-tight mb-1">{stat.number}</h3>
-                              <p className="text-sm md:text-base text-gray-800 font-normal leading-tight lg:whitespace-nowrap">{stat.label}</p>
+                              <p className="text-sm md:text-base text-gray-800 font-normal leading-tight whitespace-nowrap">{stat.label}</p>
                             </div>
                           </div>
                           {/* Gradient Line - Below number/label, left-aligned with text, 70-80% width */}

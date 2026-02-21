@@ -6,8 +6,7 @@ exports.getSection = async (req, res) => {
         const section = await HomeContactSection.findOne({
             where: { id: 1 },
             include: [
-                { model: Media, as: 'image' },
-                { model: Media, as: 'backgroundImage' }
+                { model: Media, as: 'image' }
             ]
         });
         if (!section) {

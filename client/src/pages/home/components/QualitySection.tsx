@@ -7,6 +7,9 @@ const QualitySection = () => {
   const backgroundImage = quality?.backgroundImage ? getImageUrl(quality.backgroundImage) : (quality?.image ? getImageUrl(quality.image) : getDefaultImageUrl('2024/10/Frame-9-1-1.jpg'));
   const title = quality?.heading || quality?.title || 'Quality Assurance';
   const content = quality?.description || quality?.content || 'Certified to the highest national and international standards, our equipment delivers flawless performance backed by rigorous in-house testing.';
+  const ctaLabel = (quality?.ctaText && quality.ctaText !== 'Explore our quality assurance solutions')
+    ? quality.ctaText
+    : 'Explore our Quality Assurance Solutions';
 
   if (loading) {
     return (
@@ -35,10 +38,10 @@ const QualitySection = () => {
           </p>
           <div data-aos="fade-in" data-aos-delay="200">
             <a
-              href="/quality-assurance"
+              href={quality?.ctaUrl || '/quality-assurance'}
               className="inline-block px-8 py-3 bg-[#2879B6] text-white text-sm font-medium rounded-md hover:bg-[#1f5f8f] transition-all duration-300 hover:shadow-lg whitespace-nowrap"
             >
-              Explore our quality assurance solutions
+              {ctaLabel}
             </a>
           </div>
         </div>
