@@ -69,7 +69,18 @@ export default function ReusableContactManagement() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await api.put('/reusable-contact-section', content);
+      const payload = {
+        heading: content.heading || null,
+        companyName: content.companyName || null,
+        address: content.address || null,
+        phone: content.phone || null,
+        email: content.email || null,
+        imageId: content.imageId ?? null,
+        backgroundImageId: content.backgroundImageId ?? null,
+        phoneIconId: content.phoneIconId ?? null,
+        emailIconId: content.emailIconId ?? null,
+      };
+      const response = await api.put('/reusable-contact-section', payload);
       if (response.success) {
         alert('Reusable Contact Section saved successfully!');
         fetchContent();
@@ -149,8 +160,8 @@ export default function ReusableContactManagement() {
                   />
                 </FormField>
                 <ImageSelector
-                  value={content.phoneIconId}
-                  onChange={(id) => setContent({ ...content, phoneIconId: id as number })}
+                  value={content.phoneIconId ?? null}
+                  onChange={(id) => setContent({ ...content, phoneIconId: id ?? null })}
                   label="Phone Icon"
                   currentImage={content.phoneIcon ? {
                     filePath: content.phoneIcon.filePath,
@@ -170,8 +181,8 @@ export default function ReusableContactManagement() {
                   />
                 </FormField>
                 <ImageSelector
-                  value={content.emailIconId}
-                  onChange={(id) => setContent({ ...content, emailIconId: id as number })}
+                  value={content.emailIconId ?? null}
+                  onChange={(id) => setContent({ ...content, emailIconId: id ?? null })}
                   label="Email Icon"
                   currentImage={content.emailIcon ? {
                     filePath: content.emailIcon.filePath,
@@ -184,9 +195,13 @@ export default function ReusableContactManagement() {
             <div className="border-t pt-6 space-y-6">
               <div>
                 <ImageSelector
-                  value={content.backgroundImageId}
-                  onChange={(id) => setContent({ ...content, backgroundImageId: id as number })}
+                  value={content.backgroundImageId ?? null}
+                  onChange={(id) => setContent({ ...content, backgroundImageId: id ?? null })}
                   label="Background Image (PNG)"
+                  currentImage={content.backgroundImage ? {
+                    filePath: content.backgroundImage.filePath,
+                    fileName: content.backgroundImage.altText
+                  } : null}
                 />
                 <p className="text-sm text-gray-500 mt-2">
                   <i className="ri-information-line mr-1"></i>
@@ -196,9 +211,13 @@ export default function ReusableContactManagement() {
 
               <div>
                 <ImageSelector
-                  value={content.imageId}
-                  onChange={(id) => setContent({ ...content, imageId: id as number })}
+                  value={content.imageId ?? null}
+                  onChange={(id) => setContent({ ...content, imageId: id ?? null })}
                   label="Contact Section Image"
+                  currentImage={content.image ? {
+                    filePath: content.image.filePath,
+                    fileName: content.image.altText
+                  } : null}
                 />
                 <p className="text-sm text-gray-500 mt-2">
                   <i className="ri-information-line mr-1"></i>

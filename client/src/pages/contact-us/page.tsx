@@ -4,7 +4,7 @@ import Header from '../../components/feature/Header';
 import Footer from '../../components/feature/Footer';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useContactUs } from '../../hooks';
+import { useContactUs, useReusableContact } from '../../hooks';
 import { api } from '../../utils/api';
 import SEO from '../../components/seo/SEO';
 import { getSEOConfig } from '../../utils/seoConfig';
@@ -12,6 +12,7 @@ import { getSEOConfig } from '../../utils/seoConfig';
 export default function ContactUsPage() {
   const navigate = useNavigate();
   const { content, loading } = useContactUs();
+  const { content: contactInfo } = useReusableContact();
   const seoConfig = getSEOConfig('/contact-us');
   const [formData, setFormData] = useState({
     name: '',
@@ -100,36 +101,42 @@ export default function ContactUsPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8 pb-16">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 hover:shadow-2xl" data-aos="zoom-in">
             <div className="grid md:grid-cols-2 gap-0">
-              {/* Left Side - Company Info */}
+              {/* Left Side - Company Info - from Reusable Contact CMS */}
               <div className="bg-[#E8F5E9] p-8 md:p-12">
                 <h5 className="text-xl font-bold text-gray-800 mb-4" data-aos="fade-right" data-aos-delay="100">
-                  ADONIS MEDICAL SYSTEMS PVT LTD
+                  {contactInfo?.companyName || 'ADONIS MEDICAL SYSTEMS PVT LTD'}
                 </h5>
-                <p className="text-gray-700 mb-6" data-aos="fade-right" data-aos-delay="150">
-                  E-70, PHASE- VIII, INDUSTRIAL AREA,<br />
-                  MOHALI, 160071.
-                </p>
+                <p
+                  className="text-gray-700 mb-6"
+                  data-aos="fade-right"
+                  data-aos-delay="150"
+                  dangerouslySetInnerHTML={{ __html: (contactInfo?.address || 'E-70, PHASE- VIII, INDUSTRIAL AREA,\nMOHALI, 160071.').replace(/\n/g, '<br />') }}
+                />
 
                 <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-right" data-aos-delay="200">
-                    <i className="ri-phone-fill text-2xl transition-all duration-500 hover:scale-125 hover:rotate-12" style={{ color: '#7DC244' }}></i>
-                    <a href="tel:+919872003273" className="text-gray-700 hover:text-[#7DC244] transition-colors">
-                      9872003273
-                    </a>
-                  </div>
-                  <div className="flex items-center gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-right" data-aos-delay="250">
-                    <i className="ri-mail-fill text-2xl transition-all duration-500 hover:scale-125 hover:rotate-12" style={{ color: '#7DC244' }}></i>
-                    <a href="mailto:support@adonismedical.com" className="text-gray-700 hover:text-[#7DC244] transition-colors break-all">
-                      support@adonismedical.com
-                    </a>
-                  </div>
+                  {contactInfo?.phone && (
+                    <div className="flex items-center gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-right" data-aos-delay="200">
+                      <i className="ri-phone-fill text-2xl transition-all duration-500 hover:scale-125 hover:rotate-12" style={{ color: '#7DC244' }}></i>
+                      <a href={`tel:${contactInfo.phone.replace(/\D/g, '')}`} className="text-gray-700 hover:text-[#7DC244] transition-colors">
+                        {contactInfo.phone}
+                      </a>
+                    </div>
+                  )}
+                  {contactInfo?.email && (
+                    <div className="flex items-center gap-3 transition-all duration-300 hover:translate-x-2" data-aos="fade-right" data-aos-delay="250">
+                      <i className="ri-mail-fill text-2xl transition-all duration-500 hover:scale-125 hover:rotate-12" style={{ color: '#7DC244' }}></i>
+                      <a href={`mailto:${contactInfo.email}`} className="text-gray-700 hover:text-[#7DC244] transition-colors break-all">
+                        {contactInfo.email}
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Google Map */}
                 <div className="rounded-lg overflow-hidden shadow-md h-64 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]" data-aos="fade-right" data-aos-delay="300">
                   <iframe
-                    src="https://maps.google.com/maps?q=ADONIS%20MEDICAL%20SYSTEMS%20PVT%20LTD%20E-70%2C%20PHASE-%20VIII%2C%20INDUSTRIAL%20AREA%2C%20MOHALI.%20160071&t=m&z=10&output=embed&iwloc=near"
-                    title="ADONIS MEDICAL SYSTEMS PVT LTD Location"
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(contactInfo?.address?.replace(/\n/g, ' ')?.trim() || 'ADONIS MEDICAL SYSTEMS PVT LTD E-70, PHASE- VIII, INDUSTRIAL AREA, MOHALI. 160071')}&t=m&z=10&output=embed&iwloc=near`}
+                    title={contactInfo?.companyName || 'Company Location'}
                     className="w-full h-full border-0"
                     loading="lazy"
                   ></iframe>
