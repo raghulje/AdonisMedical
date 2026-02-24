@@ -68,33 +68,36 @@ export default function SpecialtiesPage() {
                   const linkUrl = card.internalLink || '/products';
 
                   return (
-                    <div
+                    <a
                       key={card.id}
-                      className="bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                      href={linkUrl}
+                      className="group flex flex-col h-full bg-gradient-to-br from-[#F5F7FA] to-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-200/30"
                       data-aos="fade-up"
                       data-aos-delay={(index + 1) * 100}
                       style={bgImageUrl ? { backgroundImage: `url(${bgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
                     >
-                      <div className="relative h-64 overflow-hidden">
-                        {cardImageUrl && (
-                          <img
-                            alt={card.name}
-                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                            src={cardImageUrl}
-                          />
-                        )}
+                      <div className="pt-3 px-3 flex-grow">
+                        <div className="bg-white h-64 flex items-center justify-center overflow-hidden border border-gray-100 shadow-sm transition-all duration-500 group-hover:shadow-md">
+                          {cardImageUrl ? (
+                            <img
+                              alt={card.name}
+                              className="w-[92%] h-[92%] object-contain transition-transform duration-700 group-hover:scale-105"
+                              src={cardImageUrl}
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                              <i className="ri-image-line text-4xl text-gray-300"></i>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="p-6 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 hover:text-blue-500">{card.name}</h3>
-                        <a
-                          href={linkUrl}
-                          className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-[#1f5f8f] hover:shadow-lg cursor-pointer relative overflow-hidden"
-                        >
-                          <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 hover:translate-x-1"></i>
-                          <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                        </a>
+                      <div className="px-3 py-4 min-h-[4rem] flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-[#2879B6]">{card.name}</h3>
+                        <span className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg flex-shrink-0">
+                          <i className="ri-arrow-right-line text-white text-xl transition-transform duration-300 group-hover:translate-x-1"></i>
+                        </span>
                       </div>
-                    </div>
+                    </a>
                   );
                 })}
               </div>
@@ -111,33 +114,36 @@ export default function SpecialtiesPage() {
                     const cardWidth = 'w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.334rem)]';
 
                     return (
-                      <div
+                      <a
                         key={card.id}
-                        className={`${cardWidth} bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2`}
+                        href={linkUrl}
+                        className={`group flex flex-col h-full bg-gradient-to-br from-[#F5F7FA] to-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-200/30 ${cardWidth}`}
                         data-aos="fade-up"
                         data-aos-delay={(index + 4) * 100}
                         style={bgImageUrl ? { backgroundImage: `url(${bgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
                       >
-                        <div className="relative h-64 overflow-hidden">
-                          {cardImageUrl && (
-                            <img
-                              alt={card.name}
-                              className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                              src={cardImageUrl}
-                            />
-                          )}
+                        <div className="pt-3 px-3 flex-grow">
+                          <div className="bg-white h-64 flex items-center justify-center overflow-hidden border border-gray-100 shadow-sm transition-all duration-500 group-hover:shadow-md">
+                            {cardImageUrl ? (
+                              <img
+                                alt={card.name}
+                                className="w-[92%] h-[92%] object-contain transition-transform duration-700 group-hover:scale-105"
+                                src={cardImageUrl}
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                                <i className="ri-image-line text-4xl text-gray-300"></i>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="p-6 flex items-center justify-between">
-                          <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 hover:text-[#2879B6]">{card.name}</h3>
-                          <a
-                            href={linkUrl}
-                            className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-[#1f5f8f] hover:shadow-lg cursor-pointer relative overflow-hidden"
-                          >
-                            <i className="ri-arrow-right-line text-white text-xl relative z-10 transition-transform duration-300 hover:translate-x-1"></i>
-                            <div className="absolute inset-0 bg-[#1f5f8f] transform scale-x-0 hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                          </a>
+                        <div className="px-3 py-4 min-h-[4rem] flex items-center justify-between">
+                          <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-[#2879B6]">{card.name}</h3>
+                          <span className="w-12 h-12 bg-[#2879B6] rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#1f5f8f] group-hover:shadow-lg flex-shrink-0">
+                            <i className="ri-arrow-right-line text-white text-xl transition-transform duration-300 group-hover:translate-x-1"></i>
+                          </span>
                         </div>
-                      </div>
+                      </a>
                     );
                   })}
                 </div>

@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
 
             {/* Title and Action Button */}
-            <div className="p-3 pt-0 flex items-center justify-center">
+            <div className="px-3 py-4 min-h-[4rem] flex items-center justify-center">
                 <h3 className="text-xl font-medium text-gray-800 transition-colors duration-300 group-hover:text-[#2879B6] text-center">
                     {name}
                 </h3>
