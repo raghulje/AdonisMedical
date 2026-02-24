@@ -22,14 +22,8 @@ export default function QualityAssurancePage() {
   const heroImageUrl = content?.heroImage ? getImageUrl(content.heroImage) : getDefaultImageUrl('2024/10/Frame-9-1-1.jpg');
   const mainImageUrl = content?.mainImage ? getImageUrl(content.mainImage) : getDefaultImageUrl('2024/10/Frame-32-3-1-1.jpg');
 
-  // Filter out ISO and limit to 4 certifications for the numbered list
-  const filteredCertifications = certifications
-    .filter(cert => {
-      const name = (cert.name || '').toUpperCase();
-      const abbreviation = (cert.abbreviation || '').toUpperCase();
-      return !name.includes('ISO') && !abbreviation.includes('ISO');
-    })
-    .slice(0, 4);
+  // First 4 certifications for the numbered list (includes ISO and all others)
+  const filteredCertifications = certifications.slice(0, 4);
 
   if (loading) {
     return (
@@ -89,10 +83,10 @@ export default function QualityAssurancePage() {
 
               {/* Certification Logos */}
               {certifications.length > 0 && (
-                <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12 mb-24">
+                <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 mb-24">
                   {certifications.map((cert, idx) => (
                     <div key={cert.id} className="group flex flex-col items-center gap-4" data-aos="fade-up" data-aos-delay={idx * 100}>
-                      <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-[#F3F4F6] flex items-center justify-center p-6 transition-all duration-300 transform group-hover:scale-110 group-hover:bg-white group-hover:shadow-lg border border-transparent group-hover:border-gray-100">
+                      <div className="w-40 h-40 md:w-52 md:h-52 rounded-full bg-[#F3F4F6] flex items-center justify-center p-8 transition-all duration-300 transform group-hover:scale-110 group-hover:bg-white group-hover:shadow-lg border border-transparent group-hover:border-gray-100">
                         {cert.logo ? (
                           <img
                             alt={cert.logo.altText || cert.name}
