@@ -83,6 +83,10 @@ app.use("/api/v1/faqs", require("./routes/faqs"));
 app.use("/api/v1/contact-submissions", require("./routes/contactSubmissions"));
 app.use("/api/v1/demo-requests", require("./routes/demoRequests"));
 
+// Contact form alias (same handler as contact-submissions, for Kissflow flow)
+const contactSubmissionController = require("./controllers/contactSubmissionController");
+app.post("/api/contact-form", contactSubmissionController.create);
+
 // Product routes (7 products)
 app.use("/api/v1/products/hf-mobile", require("./routes/products/hfMobile"));
 app.use("/api/v1/products/hf-fixed", require("./routes/products/hfFixed"));

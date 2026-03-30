@@ -1,5 +1,9 @@
 const { ContactSubmission, EmailSettings } = require('../models');
 const status = require('../helpers/response');
+const { getRequestMeta, phoneToDigitsOnly } = require('../helpers/requestMeta');
+const { sendToKissflowWebhook } = require('../helpers/kissflowWebhook');
+
+const WEBSITE_NAME = 'adonis';
 
 // Helper function to send email
 const sendEmail = async (to, subject, htmlContent, textContent) => {
@@ -39,16 +43,22 @@ const sendEmail = async (to, subject, htmlContent, textContent) => {
 // Create a new contact submission
 exports.create = async (req, res) => {
   try {
+    // Validate request body
+    const { name, email, mobile, message, source, company } = req.body || {};
+    if (!name || !email || !mobile) {
+      return status.badRequestResponse(res, 'Name, email and mobile are required');
+    }
+
     // Get client IP and user agent
     const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for']?.split(',')[0];
     const userAgent = req.headers['user-agent'];
 
     const submission = await ContactSubmission.create({
-      name: req.body.name,
-      email: req.body.email,
-      mobile: req.body.mobile,
-      message: req.body.message || null,
-      source: req.body.source || 'contact-us',
+      name,
+      email,
+      mobile,
+      message: message || null,
+      source: source || 'contact-us',
       ipAddress: ipAddress || null,
       userAgent: userAgent || null,
       status: 'new'
@@ -86,6 +96,20 @@ exports.create = async (req, res) => {
       console.error('Error sending contact form email:', emailError);
       // Don't fail the request if email fails
     }
+
+    // Kissflow webhook: fire-and-forget (queued, non-blocking)
+    const meta = getRequestMeta(req);
+    const phoneDigits = phoneToDigitsOnly(req.body.mobile ?? req.body.phone);
+    const webhookData = {
+      name,
+      email,
+      phone: phoneDigits,
+      Phone_Number: phoneDigits,
+      company: company ?? '',
+      message: message ?? '',
+      ...meta
+    };
+    sendToKissflowWebhook(WEBSITE_NAME, 'Contact form', webhookData);
 
     return status.createdResponse(res, "Contact submission received successfully", submission);
   } catch (error) {
