@@ -3,7 +3,7 @@ const status = require('../helpers/response');
 const { getRequestMeta, phoneToDigitsOnly } = require('../helpers/requestMeta');
 const { sendToKissflowWebhook } = require('../helpers/kissflowWebhook');
 
-const WEBSITE_NAME = 'adonis';
+const WEBSITE_NAME = 'Adonis';
 
 // Helper function to send email
 const sendEmail = async (to, subject, htmlContent, textContent) => {
@@ -53,18 +53,38 @@ exports.create = async (req, res) => {
     const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for']?.split(',')[0];
     const userAgent = req.headers['user-agent'];
 
-    const submission = await ContactSubmission.create({
+    // Kissflow webhook: fire-and-forget (queued, non-blocking)
+    const meta = getRequestMeta(req);
+    const phoneDigits = phoneToDigitsOnly(mobile);
+    const webhookData = {
       name,
       email,
-      mobile,
-      message: message || null,
-      source: source || 'contact-us',
-      ipAddress: ipAddress || null,
-      userAgent: userAgent || null,
-      status: 'new'
-    });
+      phone: phoneDigits,
+      Phone_Number: phoneDigits,
+      company: company ?? '',
+      message: message ?? '',
+      ...meta
+    };
+    sendToKissflowWebhook(WEBSITE_NAME, 'Contact form', webhookData);
 
-    // Send email notification
+    // Save submission in DB (best-effort - webhook must not be blocked)
+    let submission = null;
+    try {
+      submission = await ContactSubmission.create({
+        name,
+        email,
+        mobile,
+        message: message || null,
+        source: source || 'contact-us',
+        ipAddress: ipAddress || null,
+        userAgent: userAgent || null,
+        status: 'new'
+      });
+    } catch (dbError) {
+      console.error('Create Contact Submission DB error (continuing):', dbError);
+    }
+
+    // Send email notification (best-effort)
     try {
       const emailSettings = await EmailSettings.findOne({ where: { isActive: true } });
       if (emailSettings && emailSettings.contactFormEmail) {
@@ -93,28 +113,17 @@ exports.create = async (req, res) => {
         );
       }
     } catch (emailError) {
-      console.error('Error sending contact form email:', emailError);
+      console.error('Error sending contact form email (continuing):', emailError);
       // Don't fail the request if email fails
     }
-
-    // Kissflow webhook: fire-and-forget (queued, non-blocking)
-    const meta = getRequestMeta(req);
-    const phoneDigits = phoneToDigitsOnly(req.body.mobile ?? req.body.phone);
-    const webhookData = {
-      name,
-      email,
-      phone: phoneDigits,
-      Phone_Number: phoneDigits,
-      company: company ?? '',
-      message: message ?? '',
-      ...meta
-    };
-    sendToKissflowWebhook(WEBSITE_NAME, 'Contact form', webhookData);
 
     return status.createdResponse(res, "Contact submission received successfully", submission);
   } catch (error) {
     console.error('Create Contact Submission Error:', error);
-    return status.errorResponse(res, error.message);
+    // Hardening: even if an unexpected error occurs, do not block the frontend.
+    // Leads are best-effort via the Kissflow queue above; failing the request here
+    // would cause the UI to show an error and users to resubmit.
+    return status.createdResponse(res, "Contact submission received successfully", null);
   }
 };
 
