@@ -2,24 +2,52 @@ import { useState } from 'react';
 import { useReusableContact } from '../../hooks';
 import { getImageUrl } from '../../utils/imageUrl';
 import { api } from '../../utils/api';
+import {
+  DEFAULT_COUNTRY_DIAL_CODE,
+  getMobileLocalMaxLength,
+  INDIA_DIAL_CODE,
+  PHONE_COUNTRY_OPTIONS
+} from '../../utils/phoneCountryCodes';
+import {
+  buildInternationalMobile,
+  validateContactForm
+} from '../../utils/contactFormValidation';
 
 const ContactUsSection = () => {
   const { content, loading } = useReusableContact();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    mobile: '',
+    mobileLocal: '',
     message: ''
   });
+  const [countryDialCode, setCountryDialCode] = useState(DEFAULT_COUNTRY_DIAL_CODE);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'message' | 'mobile', string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaChecked, setCaptchaChecked] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    const next =
+      name === 'mobileLocal'
+        ? value.replace(/\D/g, '').slice(0, getMobileLocalMaxLength(countryDialCode))
+        : value;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: next
     });
+    if (name === 'name' && fieldErrors.name && next.trim().length >= 3) {
+      setFieldErrors((prev) => ({ ...prev, name: undefined }));
+    }
+  };
+
+  const handleNameBlur = () => {
+    const t = formData.name.trim();
+    if (t.length > 0 && t.length < 3) {
+      setFieldErrors((prev) => ({ ...prev, name: 'Name must be at least 3 characters' }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,26 +60,48 @@ const ContactUsSection = () => {
 
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setApiError(null);
+    setFieldErrors({});
+
+    const validation = validateContactForm({
+      name: formData.name,
+      email: formData.email,
+      message: formData.message,
+      countryDialCode,
+      mobileLocal: formData.mobileLocal
+    });
+    if (!validation.valid) {
+      setFieldErrors(validation.errors);
+      setIsSubmitting(false);
+      return;
+    }
+
+    const fullMobile = buildInternationalMobile(countryDialCode, formData.mobileLocal);
 
     try {
       const response = await api.post('/contact-submissions', {
-        name: formData.name,
-        email: formData.email,
-        mobile: formData.mobile,
-        message: formData.message || '',
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        message: formData.message.trim(),
+        countryDialCode,
+        mobileLocal: formData.mobileLocal.replace(/\D/g, ''),
+        mobile: fullMobile,
         source: 'reusable-contact-section'
       });
 
       if (response.success) {
         setSubmitStatus('success');
-        setFormData({ name: '', email: '', mobile: '', message: '' });
+        setFormData({ name: '', email: '', mobileLocal: '', message: '' });
         setCaptchaChecked(false);
       } else {
         setSubmitStatus('error');
+        setApiError('Something went wrong. Please try again.');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Form submission error:', error);
       setSubmitStatus('error');
+      const msg = error instanceof Error ? error.message : 'Please check your details and try again.';
+      setApiError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -90,91 +140,160 @@ const ContactUsSection = () => {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div data-aos="fade-up" data-aos-delay="100" className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="ri-user-3-line text-gray-400 text-xl"></i>
-                </div>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400"
-                  placeholder="Name"
-                />
-              </div>
-
-              <div data-aos="fade-up" data-aos-delay="200" className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="ri-mail-line text-gray-400 text-xl"></i>
-                </div>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400"
-                  placeholder="Email Id"
-                />
-              </div>
-
-              <div data-aos="fade-up" data-aos-delay="300" className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="ri-phone-line text-gray-400 text-xl"></i>
-                </div>
-                <input
-                  type="tel"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400"
-                  placeholder="Mobile"
-                />
-              </div>
-
-              <div data-aos="fade-up" data-aos-delay="400" className="relative">
-                <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
-                  <i className="ri-send-plane-line text-gray-400 text-xl"></i>
-                </div>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows={4}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400"
-                  placeholder="Message"
-                ></textarea>
-              </div>
-
-              {/* Pseudo Captcha */}
-              <div data-aos="fade-up" data-aos-delay="500" className="inline-flex items-center gap-4 p-3 pr-8 border border-gray-200 rounded shadow-[0_0_4px_rgba(0,0,0,0.1)] bg-[#f9f9f9]">
-                <div className="flex items-center justify-center w-8 h-8">
+              <div data-aos="fade-up" data-aos-delay="100">
+                <label htmlFor="reusable-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i className="ri-user-3-line text-gray-400 text-xl"></i>
+                  </div>
                   <input
-                    type="checkbox"
-                    id="reusable-captcha"
-                    checked={captchaChecked}
-                    onChange={(e) => setCaptchaChecked(e.target.checked)}
-                    className="w-6 h-6 border-2 border-gray-300 rounded-sm cursor-pointer focus:ring-0 checked:bg-[#0066CC]"
+                    id="reusable-name"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    onBlur={handleNameBlur}
+                    required
+                    minLength={3}
+                    autoComplete="name"
+                    className={`w-full pl-12 pr-4 py-3 border rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400 ${fieldErrors.name ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="Name (min. 3 characters)"
                   />
                 </div>
-                <label htmlFor="reusable-captcha" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+                {fieldErrors.name && <p className="text-sm text-red-600 mt-1">{fieldErrors.name}</p>}
+              </div>
+
+              <div data-aos="fade-up" data-aos-delay="200">
+                <label htmlFor="reusable-email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Id <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i className="ri-mail-line text-gray-400 text-xl"></i>
+                  </div>
+                  <input
+                    id="reusable-email"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    autoComplete="email"
+                    className={`w-full pl-12 pr-4 py-3 border rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400 ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="Email Id"
+                  />
+                </div>
+                {fieldErrors.email && <p className="text-sm text-red-600 mt-1">{fieldErrors.email}</p>}
+              </div>
+
+              <div data-aos="fade-up" data-aos-delay="300">
+                <span className="block text-sm font-medium text-gray-700 mb-1">
+                  Mobile <span className="text-red-500">*</span>
+                </span>
+                <div className="flex flex-col sm:flex-row gap-2 items-stretch">
+                  <select
+                    value={countryDialCode}
+                    onChange={(e) => {
+                      const next = e.target.value;
+                      setCountryDialCode(next);
+                      setFormData((prev) => ({
+                        ...prev,
+                        mobileLocal:
+                          getMobileLocalMaxLength(next) < prev.mobileLocal.length
+                            ? prev.mobileLocal.slice(0, getMobileLocalMaxLength(next))
+                            : prev.mobileLocal
+                      }));
+                    }}
+                    className="w-full sm:min-w-[14rem] sm:max-w-[min(100%,18rem)] shrink-0 pl-3 pr-2 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent bg-white text-sm text-gray-800"
+                    aria-label="Country or region"
+                  >
+                    {PHONE_COUNTRY_OPTIONS.map((o) => (
+                      <option key={`${o.label}-${o.dialCode}`} value={o.dialCode}>
+                        {o.flag} {o.label} ({o.dialCode})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="relative flex-1 min-w-0">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i className="ri-phone-line text-gray-400 text-xl"></i>
+                    </div>
+                    <input
+                      id="reusable-mobile-local"
+                      type="tel"
+                      name="mobileLocal"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      autoComplete="tel-national"
+                      maxLength={getMobileLocalMaxLength(countryDialCode)}
+                      value={formData.mobileLocal}
+                      onChange={handleChange}
+                      required
+                      className={`w-full pl-12 pr-4 py-3 border rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400 ${fieldErrors.mobile ? 'border-red-500' : 'border-gray-300'}`}
+                      placeholder={
+                        countryDialCode === INDIA_DIAL_CODE
+                          ? '10-digit mobile number'
+                          : 'Digits only (no spaces or letters)'
+                      }
+                    />
+                  </div>
+                </div>
+                {fieldErrors.mobile && <p className="text-sm text-red-600 mt-1">{fieldErrors.mobile}</p>}
+              </div>
+
+              <div data-aos="fade-up" data-aos-delay="400">
+                <label htmlFor="reusable-message" className="block text-sm font-medium text-gray-700 mb-1">
+                  Message <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                    <i className="ri-send-plane-line text-gray-400 text-xl"></i>
+                  </div>
+                  <textarea
+                    id="reusable-message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    maxLength={500}
+                    rows={4}
+                    className={`w-full pl-12 pr-4 py-3 border rounded-md focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all duration-300 placeholder-gray-400 ${fieldErrors.message ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="Message (max 500 characters)"
+                  ></textarea>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">{formData.message.length}/500 characters</p>
+                {fieldErrors.message && <p className="text-sm text-red-600 mt-1">{fieldErrors.message}</p>}
+              </div>
+
+              {/* Pseudo Captcha — keep outside AOS so clicks work; native checkbox + z-index */}
+              <div className="relative z-[100] flex flex-wrap items-center gap-3 sm:gap-4 p-3 pr-4 border border-gray-200 rounded-lg bg-[#f9f9f9] shadow-sm pointer-events-auto">
+                <input
+                  type="checkbox"
+                  id="reusable-captcha"
+                  checked={captchaChecked}
+                  onChange={(e) => {
+                    setCaptchaChecked(e.target.checked);
+                    if (e.target.checked) {
+                      setSubmitStatus(null);
+                      setApiError(null);
+                    }
+                  }}
+                  className="h-5 w-5 shrink-0 cursor-pointer accent-[#0066CC] rounded border-gray-300"
+                />
+                <label
+                  htmlFor="reusable-captcha"
+                  className="text-sm font-medium text-gray-700 cursor-pointer select-none flex-1 min-w-0"
+                >
                   I'm not a robot
                 </label>
-                <div className="flex flex-col items-center justify-center ml-4 text-[10px] text-gray-500 leading-tight">
+                <div className="flex flex-col items-center justify-center text-[10px] text-gray-500 leading-tight sm:ml-auto">
                   <img
                     src="https://www.gstatic.com/recaptcha/api2/logo_48.png"
-                    alt="reCAPTCHA"
-                    className="w-8 h-8 mb-0.5 opacity-80"
+                    alt=""
+                    className="w-8 h-8 mb-0.5 opacity-80 pointer-events-none"
                   />
                   <span>reCAPTCHA</span>
-                  <div className="flex gap-1">
-                    <span className="hover:underline cursor-pointer">Privacy</span>
-                    <span>-</span>
-                    <span className="hover:underline cursor-pointer">Terms</span>
-                  </div>
                 </div>
               </div>
 
@@ -186,7 +305,7 @@ const ContactUsSection = () => {
 
               {submitStatus === 'error' && (
                 <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
-                  Sorry, there was an error sending your message. Please try again.
+                  {apiError || 'Sorry, there was an error sending your message. Please try again.'}
                 </div>
               )}
 
