@@ -16,6 +16,16 @@ import { useEmailValidation } from '../../hooks/enquiry/useEmailValidation';
 import { usePhoneValidation } from '../../hooks/enquiry/usePhoneValidation';
 import { checkEnquiry, createEnquiry, HttpError } from '../../hooks/enquiry/enquiryApi';
 
+const PRODUCT_OPTIONS = [
+  'HF Mobile',
+  'HF Fixed',
+  'FPD-C-Arm',
+  '1K*1K High End HF C-ARM',
+  'Line Frequency X-Ray Systems',
+  'Digital Radiography',
+  'Dream Series-Ceiling Suspended',
+] as const;
+
 export default function ContactUsPage() {
   const { content, loading } = useContactUs();
   const { content: contactInfo } = useReusableContact();
@@ -24,12 +34,13 @@ export default function ContactUsPage() {
     name: '',
     email: '',
     phone: '',
+    product: '',
     mobileLocal: '',
     message: ''
   });
   const [countryDialCode, setCountryDialCode] = useState(DEFAULT_COUNTRY_DIAL_CODE);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'message' | 'mobile', string>>>({});
-  const [touched, setTouched] = useState<Partial<Record<'name' | 'email' | 'phone' | 'message', boolean>>>({});
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'message' | 'mobile' | 'product', string>>>({});
+  const [touched, setTouched] = useState<Partial<Record<'name' | 'email' | 'phone' | 'product' | 'message', boolean>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -37,6 +48,7 @@ export default function ContactUsPage() {
 
   const emailValidation = useEmailValidation(formData.email, true);
   const phoneValidation = usePhoneValidation(formData.phone, true);
+  const productError = !String(formData.product || '').trim() ? 'Product is required' : null;
   const messageError =
     !formData.message.trim()
       ? 'Message is required'
@@ -51,6 +63,7 @@ export default function ContactUsPage() {
     }
     if (field === 'email') setFieldErrors((prev) => ({ ...prev, email: emailValidation.validate() as any }));
     if (field === 'phone') setFieldErrors((prev) => ({ ...prev, mobile: phoneValidation.validate() || undefined }));
+    if (field === 'product') setFieldErrors((prev) => ({ ...prev, product: productError || undefined }));
     if (field === 'message') setFieldErrors((prev) => ({ ...prev, message: messageError || undefined }));
   };
 
@@ -77,10 +90,11 @@ export default function ContactUsPage() {
     if (emailErr) nextErrors.email = emailErr as any;
     const phoneErr = phoneValidation.validate();
     if (phoneErr) nextErrors.mobile = phoneErr;
+    if (productError) nextErrors.product = productError;
     if (messageError) nextErrors.message = messageError;
     if (Object.keys(nextErrors).length) {
       setFieldErrors(nextErrors);
-      setTouched({ name: true, email: true, phone: true, message: true });
+      setTouched({ name: true, email: true, phone: true, product: true, message: true });
       setIsSubmitting(false);
       return;
     }
@@ -116,6 +130,7 @@ export default function ContactUsPage() {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
+        product: formData.product,
         message: formData.message.trim(),
         source: 'adonis-contact-us',
       });
@@ -131,6 +146,7 @@ export default function ContactUsPage() {
         name: formData.name.trim(),
         email: formData.email.trim(),
         message: formData.message.trim(),
+        product: formData.product,
         countryDialCode,
         mobileLocal: formData.mobileLocal.replace(/\D/g, ''),
         mobile: formData.phone.trim(),
@@ -139,7 +155,7 @@ export default function ContactUsPage() {
 
       if (response.success) {
         setSubmitStatus('success');
-        setFormData({ name: '', email: '', phone: '', mobileLocal: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', product: '', mobileLocal: '', message: '' });
         startCooldown();
       } else {
         setSubmitStatus('error');
@@ -155,7 +171,7 @@ export default function ContactUsPage() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     const key = (name === 'phone' ? 'phone' : name) as keyof typeof touched;
@@ -329,6 +345,40 @@ export default function ContactUsPage() {
                       </div>
                     </div>
                     {fieldErrors.mobile && <p className="text-sm text-red-600 mt-1">{fieldErrors.mobile}</p>}
+                  </div>
+
+                  <div data-aos="fade-left" data-aos-delay="225">
+                    <label htmlFor="product" className="block text-sm font-medium text-gray-700 mb-2">
+                      Product <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <i className="ri-product-hunt-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-all duration-300 hover:scale-125" aria-hidden />
+                      <select
+                        id="product"
+                        name="product"
+                        value={formData.product}
+                        onChange={handleChange}
+                        onBlur={() => validateAndSet('product')}
+                        required
+                        className={`w-full pl-12 pr-10 py-3 border rounded-lg focus:ring-2 focus:ring-[#7DC244] focus:border-transparent outline-none transition-all duration-300 hover:border-[#7DC244] appearance-none bg-white cursor-pointer ${fieldErrors.product ? 'border-red-500' : 'border-gray-300'}`}
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                          backgroundPosition: 'right 0.75rem center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '1.25em 1.25em',
+                        }}
+                      >
+                        <option value="" disabled>
+                          Please Select
+                        </option>
+                        {PRODUCT_OPTIONS.map((p) => (
+                          <option key={p} value={p}>
+                            {p}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {fieldErrors.product && <p className="text-sm text-red-600 mt-1">{fieldErrors.product}</p>}
                   </div>
 
                   <div data-aos="fade-left" data-aos-delay="250">
