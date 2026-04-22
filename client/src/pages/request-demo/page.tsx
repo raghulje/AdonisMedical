@@ -6,6 +6,12 @@ import 'aos/dist/aos.css';
 import { useRequestDemo } from '../../hooks';
 import { api } from '../../utils/api';
 import { getImageUrl, getDefaultImageUrl } from '../../utils/imageUrl';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import { useCooldownTimer } from '../../hooks/enquiry/useCooldownTimer';
+import { useEmailValidation } from '../../hooks/enquiry/useEmailValidation';
+import { usePhoneValidation } from '../../hooks/enquiry/usePhoneValidation';
+import { checkEnquiry, createEnquiry, HttpError } from '../../hooks/enquiry/enquiryApi';
 
 const RequestDemoPage = () => {
   const { content, loading } = useRequestDemo();
@@ -20,6 +26,27 @@ const RequestDemoPage = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'mobile' | 'message', string>>>({});
+  const [touched, setTouched] = useState<Partial<Record<'name' | 'email' | 'mobile' | 'message', boolean>>>({});
+  const { isCoolingDown, secondsLeft, startCooldown } = useCooldownTimer(10);
+
+  const emailValidation = useEmailValidation(formData.email, true);
+  const phoneValidation = usePhoneValidation(formData.mobile, true);
+  const messageError =
+    !formData.message.trim()
+      ? 'Message is required'
+      : formData.message.trim().length < 50
+        ? 'Message must be at least 50 characters'
+        : null;
+
+  const validateAndSet = (field: keyof typeof touched) => {
+    const next: Partial<Record<'name' | 'email' | 'mobile' | 'message', string>> = {};
+    if (field === 'name') next.name = !formData.name.trim() ? 'Name is required' : formData.name.trim().length < 2 ? 'Name must be at least 2 characters' : undefined;
+    if (field === 'email') next.email = emailValidation.validate() || undefined;
+    if (field === 'mobile') next.mobile = phoneValidation.validate() || undefined;
+    if (field === 'message') next.message = messageError || undefined;
+    setFieldErrors((prev) => ({ ...prev, ...next }));
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,13 +60,32 @@ const RequestDemoPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    const key = name as keyof typeof touched;
+    if (key in touched) {
+      setTouched((prev) => ({ ...prev, [key]: true }));
+      if (touched[key]) validateAndSet(key);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isCoolingDown) return;
 
     // Validate required fields
-    if (!formData.name || !formData.hospitalName || !formData.email || !formData.mobile || !formData.product || !formData.date) {
+    if (!formData.name || !formData.hospitalName || !formData.email || !formData.mobile || !formData.product || !formData.date || !formData.message) {
+      setSubmitStatus('error');
+      return;
+    }
+
+    const nextErrors: typeof fieldErrors = {};
+    if (formData.name.trim().length < 2) nextErrors.name = 'Name must be at least 2 characters';
+    const emailErr = emailValidation.validate();
+    if (emailErr) nextErrors.email = emailErr;
+    const phoneErr = phoneValidation.validate();
+    if (phoneErr) nextErrors.mobile = phoneErr;
+    if (messageError) nextErrors.message = messageError;
+    if (Object.keys(nextErrors).length) {
+      setFieldErrors(nextErrors);
       setSubmitStatus('error');
       return;
     }
@@ -54,6 +100,38 @@ const RequestDemoPage = () => {
     });
 
     try {
+      // Duplicate check (skip if endpoint not present)
+      try {
+        const dup = await checkEnquiry({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.mobile.trim(),
+        });
+        if (dup?.exists) {
+          setFieldErrors((prev) => ({ ...prev, mobile: 'This phone number is already registered' }));
+          setIsSubmitting(false);
+          return;
+        }
+      } catch (err) {
+        if (!(err instanceof HttpError && err.status === 404)) throw err;
+      }
+
+      // Preferred API (non-blocking if missing)
+      try {
+        await createEnquiry({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.mobile.trim(),
+          hospitalName: formData.hospitalName,
+          product: formData.product,
+          preferredDate: formData.date,
+          message: formData.message || '',
+          source: 'adonis-request-demo',
+        });
+      } catch (err) {
+        if (!(err instanceof HttpError && err.status === 404)) throw err;
+      }
+
       const response = await api.post('/demo-requests', {
         name: formData.name,
         hospitalName: formData.hospitalName,
@@ -75,6 +153,7 @@ const RequestDemoPage = () => {
           date: '',
           message: ''
         });
+        startCooldown();
       } else {
         setSubmitStatus('error');
       }
@@ -177,11 +256,16 @@ const RequestDemoPage = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
+                    onBlur={() => {
+                      setTouched((prev) => ({ ...prev, name: true }));
+                      validateAndSet('name');
+                    }}
                     required
                     maxLength={400}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:border-transparent transition-all duration-300 hover:border-[#7DC244]"
+                    className={`w-full px-4 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:border-transparent transition-all duration-300 hover:border-[#7DC244] ${fieldErrors.name ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder=""
                   />
+                  {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>}
                 </div>
 
                 {/* Hospital Name */}
@@ -215,11 +299,16 @@ const RequestDemoPage = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
+                    onBlur={() => {
+                      setTouched((prev) => ({ ...prev, email: true }));
+                      validateAndSet('email');
+                    }}
                     required
                     maxLength={400}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:border-transparent transition-all duration-300 hover:border-[#7DC244]"
+                    className={`w-full px-4 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:border-transparent transition-all duration-300 hover:border-[#7DC244] ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder=""
                   />
+                  {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
                 </div>
 
                 {/* Mobile */}
@@ -228,17 +317,28 @@ const RequestDemoPage = () => {
                     <i className="ri-phone-line text-gray-400 text-sm transition-all duration-300 hover:scale-125"></i>
                     <span className="text-sm">Mobile</span>
                   </label>
-                  <input
-                    type="tel"
-                    id="mobile"
-                    name="mobile"
-                    value={formData.mobile}
-                    onChange={handleChange}
-                    required
-                    maxLength={400}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:border-transparent transition-all duration-300 hover:border-[#7DC244]"
-                    placeholder=""
-                  />
+                  <div className={`w-full px-2 py-1 border rounded-md focus-within:ring-2 focus-within:ring-[#7DC244] focus-within:border-transparent transition-all duration-300 hover:border-[#7DC244] ${fieldErrors.mobile ? 'border-red-500' : 'border-gray-300'}`}>
+                    <PhoneInput
+                      country="in"
+                      value={formData.mobile.replace(/^\+/, '')}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, mobile: value ? `+${value}` : '' }))}
+                      inputProps={{
+                        name: 'mobile',
+                        id: 'mobile',
+                        required: true,
+                        autoComplete: 'tel',
+                        onBlur: () => {
+                          setTouched((prev) => ({ ...prev, mobile: true }));
+                          validateAndSet('mobile');
+                        }
+                      }}
+                      containerClass="w-full"
+                      inputClass="!w-full !border-0 !shadow-none focus:!outline-none"
+                      buttonClass="!bg-transparent !border-0"
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+                  {fieldErrors.mobile && <p className="text-xs text-red-500 mt-1">{fieldErrors.mobile}</p>}
                 </div>
 
                 {/* Product and Date Row */}
@@ -298,26 +398,17 @@ const RequestDemoPage = () => {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
+                  onBlur={() => {
+                    setTouched((prev) => ({ ...prev, message: true }));
+                    validateAndSet('message');
+                  }}
+                  required
                     rows={3}
                     maxLength={500}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:border-transparent resize-none transition-all duration-300 hover:border-[#7DC244]"
+                  className={`w-full px-4 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7DC244] focus:border-transparent resize-none transition-all duration-300 hover:border-[#7DC244] ${fieldErrors.message ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder=""
                   />
-                </div>
-
-                {/* reCAPTCHA placeholder */}
-                <div className="flex items-center gap-3 p-3 border border-gray-300 rounded-md bg-gray-50 transition-all duration-300 hover:border-[#7DC244]" data-aos="fade-up" data-aos-delay="450">
-                  <div className="w-6 h-6 border-2 border-gray-400 rounded flex items-center justify-center cursor-pointer hover:border-[#7DC244] transition-all duration-300 hover:scale-110">
-                    <i className="ri-check-line text-[#7DC244] text-sm hidden"></i>
-                  </div>
-                  <span className="text-sm text-gray-700">I'm not a robot</span>
-                  <div className="ml-auto">
-                    <img
-                      src="https://www.gstatic.com/recaptcha/api2/logo_48.png"
-                      alt="reCAPTCHA"
-                      className="h-8"
-                    />
-                  </div>
+                {fieldErrors.message && <p className="text-xs text-red-500 mt-1">{fieldErrors.message}</p>}
                 </div>
 
                 {/* Submit Status Messages */}
@@ -337,7 +428,7 @@ const RequestDemoPage = () => {
                 <div data-aos="fade-up" data-aos-delay="500">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isCoolingDown}
                     className="w-full bg-[#2879B6] hover:bg-[#1e5a8a] text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                   >
                     {isSubmitting ? 'Submitting...' : 'Request a demo'}
