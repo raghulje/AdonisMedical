@@ -36,6 +36,39 @@ const sendEmail = async (to, subject, htmlContent, textContent) => {
   }
 };
 
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const buildDemoAutoReply = ({ name, product, preferredDate }) => {
+  const safeName = escapeHtml(name || 'there');
+  const safeProduct = escapeHtml(product || '');
+  const safeDate = escapeHtml(preferredDate || '');
+
+  const subject = 'We received your demo request - Adonis Medical Systems';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #111827;">
+      <h2 style="margin: 0 0 12px 0; font-size: 20px; color: #2563EB;">Thanks for requesting a demo</h2>
+      <p style="margin: 0 0 12px 0; line-height: 1.6;">Hi ${safeName},</p>
+      <p style="margin: 0 0 12px 0; line-height: 1.6;">
+        We’ve received your demo request. Our team will contact you shortly to confirm the schedule.
+      </p>
+      ${safeProduct ? `<p style="margin: 0 0 10px 0; line-height: 1.6;"><strong>Product:</strong> ${safeProduct}</p>` : ''}
+      ${safeDate ? `<p style="margin: 0 0 10px 0; line-height: 1.6;"><strong>Preferred date:</strong> ${safeDate}</p>` : ''}
+      <p style="margin: 18px 0 0 0; font-size: 12px; color: #6B7280; line-height: 1.6;">
+        Regards,<br/>Adonis Medical Systems
+      </p>
+    </div>
+  `;
+  const text = `Hi ${name || 'there'},\n\nWe’ve received your demo request. Our team will contact you shortly to confirm the schedule.\n${product ? `\nProduct: ${product}` : ''}${preferredDate ? `\nPreferred date: ${preferredDate}` : ''}\n\nRegards,\nAdonis Medical Systems`;
+
+  return { subject, html, text };
+};
+
 // Create a new demo request
 exports.create = async (req, res) => {
   try {
@@ -89,6 +122,27 @@ exports.create = async (req, res) => {
     } catch (emailError) {
       console.error('Error sending demo request email:', emailError);
       // Don't fail the request if email fails
+    }
+
+    // Send auto-reply to user (best-effort)
+    try {
+      const userEmail = req.body.email;
+      if (userEmail) {
+        setImmediate(async () => {
+          try {
+            const { subject, html, text } = buildDemoAutoReply({
+              name: req.body.name,
+              product: req.body.product,
+              preferredDate: req.body.preferredDate || req.body.date,
+            });
+            await sendEmail(userEmail, subject, html, text);
+          } catch (autoReplyErr) {
+            console.warn('Demo auto-reply failed (continuing):', autoReplyErr?.message || autoReplyErr);
+          }
+        });
+      }
+    } catch (autoReplyWrapErr) {
+      console.warn('Demo auto-reply scheduling failed (continuing):', autoReplyWrapErr?.message || autoReplyWrapErr);
     }
 
     return status.createdResponse(res, "Demo request received successfully", demoRequest);

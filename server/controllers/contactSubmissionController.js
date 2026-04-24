@@ -41,6 +41,51 @@ const sendEmail = async (to, subject, htmlContent, textContent) => {
   }
 };
 
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const buildAutoReply = ({ name, email, phone, product, message }) => {
+  const safeName = escapeHtml(name || 'there');
+  const safeProduct = escapeHtml(product || '');
+  const safeEmail = escapeHtml(email || '');
+  const safePhone = escapeHtml(phone || '');
+  const safeMessage = escapeHtml(message || '');
+
+  const subject = 'We received your enquiry - Adonis Medical Systems';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #111827;">
+      <h2 style="margin: 0 0 12px 0; font-size: 20px; color: #2563EB;">Thanks for reaching out</h2>
+      <p style="margin: 0 0 12px 0; line-height: 1.6;">Hi ${safeName},</p>
+      <p style="margin: 0 0 12px 0; line-height: 1.6;">
+        We’ve received your enquiry and our team will get back to you shortly.
+      </p>
+      <div style="margin-top: 12px; padding: 14px 16px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px;">
+        <p style="margin: 0 0 6px 0; line-height: 1.6;"><strong>Name:</strong> ${safeName}</p>
+        ${safeEmail ? `<p style="margin: 0 0 6px 0; line-height: 1.6;"><strong>Email:</strong> ${safeEmail}</p>` : ''}
+        ${safePhone ? `<p style="margin: 0 0 6px 0; line-height: 1.6;"><strong>Contact:</strong> ${safePhone}</p>` : ''}
+        ${safeProduct ? `<p style="margin: 0 0 6px 0; line-height: 1.6;"><strong>Product:</strong> ${safeProduct}</p>` : ''}
+        ${safeMessage ? `<p style="margin: 0; line-height: 1.6; white-space: pre-wrap;"><strong>Message:</strong><br/>${safeMessage}</p>` : ''}
+      </div>
+      <div style="margin-top: 18px; padding: 14px 16px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px;">
+        <p style="margin: 0; font-size: 13px; color: #374151; line-height: 1.6;">
+          If you didn’t submit this request, you can ignore this email.
+        </p>
+      </div>
+      <p style="margin: 18px 0 0 0; font-size: 12px; color: #6B7280; line-height: 1.6;">
+        Regards,<br/>Adonis Medical Systems
+      </p>
+    </div>
+  `;
+  const text = `Hi ${name || 'there'},\n\nWe’ve received your enquiry and our team will get back to you shortly.\n\nYour enquiry details:\n${name ? `- Name: ${name}\n` : ''}${email ? `- Email: ${email}\n` : ''}${phone ? `- Contact: ${phone}\n` : ''}${product ? `- Product: ${product}\n` : ''}${message ? `- Message: ${message}\n` : ''}\nRegards,\nAdonis Medical Systems`;
+
+  return { subject, html, text };
+};
+
 // Create a new contact submission
 exports.create = async (req, res) => {
   try {
@@ -61,9 +106,7 @@ exports.create = async (req, res) => {
     const webhookData = {
       name,
       email,
-      phone: phoneDigits,
       Phone_Number: phoneDigits,
-      ...(product ? { product } : {}),
       ...(product ? { Product: product } : {}),
       company: company ?? '',
       message,
@@ -121,6 +164,28 @@ exports.create = async (req, res) => {
     } catch (emailError) {
       console.error('Error sending contact form email (continuing):', emailError);
       // Don't fail the request if email fails
+    }
+
+    // Send auto-reply to user (best-effort; do not block response)
+    try {
+      if (email) {
+        setImmediate(async () => {
+          try {
+            const { subject, html, text } = buildAutoReply({
+              name,
+              email,
+              phone: mobile,
+              product,
+              message,
+            });
+            await sendEmail(email, subject, html, text);
+          } catch (autoReplyErr) {
+            console.warn('Auto-reply failed (continuing):', autoReplyErr?.message || autoReplyErr);
+          }
+        });
+      }
+    } catch (autoReplyWrapErr) {
+      console.warn('Auto-reply scheduling failed (continuing):', autoReplyWrapErr?.message || autoReplyWrapErr);
     }
 
     return status.createdResponse(res, "Contact submission received successfully", submission);
