@@ -312,7 +312,7 @@ const RequestDemoPage = () => {
                 </div>
 
                 {/* Mobile */}
-                <div data-aos="fade-up" data-aos-delay="250">
+                <div data-aos="fade-up" data-aos-delay="250" className="relative z-[500]">
                   <label htmlFor="mobile" className="flex items-center gap-2 text-gray-600 mb-2">
                     <i className="ri-phone-line text-gray-400 text-sm transition-all duration-300 hover:scale-125"></i>
                     <span className="text-sm">Mobile</span>
@@ -332,6 +332,8 @@ const RequestDemoPage = () => {
                           validateAndSet('mobile');
                         }
                       }}
+                      containerStyle={{ position: 'relative', zIndex: 200 }}
+                      dropdownStyle={{ zIndex: 9999 }}
                       containerClass="w-full"
                       inputClass="!w-full !border-0 !shadow-none focus:!outline-none"
                       buttonClass="!bg-transparent !border-0"
@@ -388,7 +390,7 @@ const RequestDemoPage = () => {
                 </div>
 
                 {/* Message */}
-                <div data-aos="fade-up" data-aos-delay="400">
+                <div data-aos="fade-up" data-aos-delay="400" className="relative z-[0]">
                   <label htmlFor="message" className="flex items-center gap-2 text-gray-600 mb-2">
                     <i className="ri-message-3-line text-gray-400 text-sm transition-all duration-300 hover:scale-125"></i>
                     <span className="text-sm">Message</span>
