@@ -233,7 +233,7 @@ const ContactUsSection = () => {
                 {fieldErrors.email && <p className="text-sm text-red-600 mt-1">{fieldErrors.email}</p>}
               </div>
 
-              <div data-aos="fade-up" data-aos-delay="300">
+              <div data-aos="fade-up" data-aos-delay="300" className="relative z-[500]">
                 <span className="block text-sm font-medium text-gray-700 mb-1">
                   Mobile <span className="text-red-500">*</span>
                 </span>
