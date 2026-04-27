@@ -273,7 +273,7 @@ const ContactUsSection = () => {
                 {fieldErrors.mobile && <p className="text-sm text-red-600 mt-1">{fieldErrors.mobile}</p>}
               </div>
 
-              <div data-aos="fade-up" data-aos-delay="400">
+              <div data-aos="fade-up" data-aos-delay="400" className="relative z-[0]">
                 <label htmlFor="reusable-message" className="block text-sm font-medium text-gray-700 mb-1">
                   Message <span className="text-red-500">*</span>
                 </label>
