@@ -237,11 +237,11 @@ const ContactUsSection = () => {
                 <span className="block text-sm font-medium text-gray-700 mb-1">
                   Mobile <span className="text-red-500">*</span>
                 </span>
-                <div className="relative">
+                <div className="relative z-[200]">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                     <i className="ri-phone-line text-gray-400 text-xl"></i>
                   </div>
-                  <div className={`w-full pl-10 pr-2 py-1.5 border rounded-md focus-within:ring-2 focus-within:ring-[#0066CC] focus-within:border-transparent transition-all duration-300 text-sm ${fieldErrors.mobile ? 'border-red-500' : 'border-gray-300'}`}>
+                  <div className={`w-full pl-10 pr-2 py-2.5 border rounded-md bg-white focus-within:ring-2 focus-within:ring-[#0066CC] focus-within:border-transparent transition-all duration-300 text-sm ${fieldErrors.mobile ? 'border-red-500' : 'border-gray-300'}`}>
                     <PhoneInput
                       country="in"
                       value={formData.phone.replace(/^\+/, '')}
@@ -260,6 +260,8 @@ const ContactUsSection = () => {
                         }
                       }}
                       inputProps={{ name: 'phone', required: true, autoComplete: 'tel', onBlur: () => validateAndSet('phone') }}
+                      containerStyle={{ position: 'relative', zIndex: 200 }}
+                      dropdownStyle={{ zIndex: 9999 }}
                       containerClass="w-full"
                       inputClass="!w-full !border-0 !shadow-none focus:!outline-none !bg-transparent !pl-12"
                       buttonClass="!bg-transparent !border-0"
