@@ -11,6 +11,7 @@ import { DEFAULT_COUNTRY_DIAL_CODE } from '../../utils/phoneCountryCodes';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { Combobox } from '@headlessui/react';
 import { useCooldownTimer } from '../../hooks/enquiry/useCooldownTimer';
 import { useEmailValidation } from '../../hooks/enquiry/useEmailValidation';
 import { usePhoneValidation } from '../../hooks/enquiry/usePhoneValidation';
@@ -25,6 +26,72 @@ const PRODUCT_OPTIONS = [
   'Digital Radiography',
   'Dream Series-Ceiling Suspended',
 ] as const;
+
+const TOP_CITY_OPTIONS = [
+  'Mumbai, Maharashtra',
+  'Delhi, Delhi',
+  'Bengaluru, Karnataka',
+  'Chennai, Tamil Nadu',
+  'Hyderabad, Telangana',
+  'Kolkata, West Bengal',
+  'Pune, Maharashtra',
+  'Ahmedabad, Gujarat',
+  'Jaipur, Rajasthan',
+  'Surat, Gujarat',
+  'Lucknow, Uttar Pradesh',
+  'Kanpur, Uttar Pradesh',
+  'Nagpur, Maharashtra',
+  'Indore, Madhya Pradesh',
+  'Bhopal, Madhya Pradesh',
+  'Patna, Bihar',
+  'Ludhiana, Punjab',
+  'Agra, Uttar Pradesh',
+  'Visakhapatnam, Andhra Pradesh',
+  'Coimbatore, Tamil Nadu',
+] as const;
+
+function normalizeCityQuery(value: string) {
+  return value
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9, ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function levenshteinDistance(a: string, b: string) {
+  if (a === b) return 0;
+  if (!a) return b.length;
+  if (!b) return a.length;
+
+  const m = a.length;
+  const n = b.length;
+  const dp = new Array<number>(n + 1);
+
+  for (let j = 0; j <= n; j++) dp[j] = j;
+  for (let i = 1; i <= m; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j];
+      const cost = a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1;
+      dp[j] = Math.min(dp[j] + 1, dp[j - 1] + 1, prev + cost);
+      prev = tmp;
+    }
+  }
+  return dp[n];
+}
+
+function isSubsequence(needle: string, haystack: string) {
+  let i = 0;
+  let j = 0;
+  while (i < needle.length && j < haystack.length) {
+    if (needle.charCodeAt(i) === haystack.charCodeAt(j)) i++;
+    j++;
+  }
+  return i === needle.length;
+}
 
 function SubmissionSuccessOverlay({ onDone }: { onDone: () => void }) {
   useEffect(() => {
@@ -85,6 +152,7 @@ export default function ContactUsPage() {
     name: '',
     email: '',
     phone: '',
+    city: '',
     product: '',
     mobileLocal: '',
     message: ''
@@ -97,6 +165,9 @@ export default function ContactUsPage() {
   const [apiError, setApiError] = useState<string | null>(null);
   const { isCoolingDown, secondsLeft, startCooldown } = useCooldownTimer(10);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
+  const [indiaCityOptions, setIndiaCityOptions] = useState<string[]>([]);
+  const [isCityListLoading, setIsCityListLoading] = useState(true);
+  const [cityQuery, setCityQuery] = useState('');
 
   const emailValidation = useEmailValidation(formData.email, true);
   const phoneValidation = usePhoneValidation(formData.phone, true);
@@ -126,6 +197,29 @@ export default function ContactUsPage() {
       once: true,
       easing: 'ease-out-cubic'
     });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadIndiaCities = async () => {
+      try {
+        const res = await fetch('/api/geo/india-cities');
+        if (!res.ok) throw new Error(`Failed to fetch cities (${res.status})`);
+        const payload = await res.json();
+        const cities = Array.isArray(payload?.data) ? payload.data : [];
+        if (!cancelled) setIndiaCityOptions(cities);
+      } catch (error) {
+        console.warn('Failed to load India city list from geo endpoint', error);
+      } finally {
+        if (!cancelled) setIsCityListLoading(false);
+      }
+    };
+
+    loadIndiaCities();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -182,6 +276,7 @@ export default function ContactUsPage() {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
+        city: formData.city,
         product: formData.product,
         message: formData.message.trim(),
         source: 'adonis-contact-us',
@@ -202,13 +297,14 @@ export default function ContactUsPage() {
         countryDialCode,
         mobileLocal: formData.mobileLocal.replace(/\D/g, ''),
         mobile: formData.phone.trim(),
+        city: formData.city,
         source: 'contact-us'
       });
 
       if (response.success) {
         setSubmitStatus('success');
         setShowSuccessOverlay(true);
-        setFormData({ name: '', email: '', phone: '', product: '', mobileLocal: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', city: '', product: '', mobileLocal: '', message: '' });
         startCooldown();
       } else {
         setSubmitStatus('error');
@@ -238,6 +334,54 @@ export default function ContactUsPage() {
       setFieldErrors((prev) => ({ ...prev, name: 'Name must be at least 2 characters' }));
     }
   };
+
+  const cityOptions = indiaCityOptions;
+  const filteredCityOptions = (() => {
+    const q = normalizeCityQuery(cityQuery);
+    if (!q) {
+      const top = TOP_CITY_OPTIONS.filter((c) => cityOptions.includes(c));
+      const topSet = new Set(top);
+      const rest = cityOptions.filter((c) => !topSet.has(c));
+      return [...top, ...rest].slice(0, 250);
+    }
+
+    const tokens = q.split(' ').filter(Boolean);
+    const maxEdits = q.length >= 7 ? 3 : 2;
+    const scored: Array<{ label: string; score: number }> = [];
+
+    for (const label of cityOptions) {
+      const normLabel = normalizeCityQuery(label);
+      const [cityPart = '', statePart = ''] = normLabel.split(',').map((s) => s.trim());
+      let score = 0;
+
+      if (normLabel.startsWith(q)) score += 120;
+      if (cityPart.startsWith(q)) score += 160;
+      if (cityPart.includes(q)) score += 90;
+      if (normLabel.includes(q)) score += 70;
+
+      for (const t of tokens) {
+        if (!t) continue;
+        if (cityPart.startsWith(t)) score += 45;
+        else if (cityPart.includes(t)) score += 18;
+        if (statePart.startsWith(t)) score += 22;
+        else if (statePart.includes(t)) score += 10;
+      }
+
+      if (q.length >= 4 && isSubsequence(q.replace(/[^a-z0-9]/g, ''), cityPart.replace(/[^a-z0-9]/g, ''))) {
+        score += 40;
+      }
+
+      if (q.length >= 4) {
+        const dist = levenshteinDistance(q, cityPart.slice(0, Math.max(q.length + 2, 8)));
+        if (dist <= maxEdits) score += (maxEdits - dist + 1) * 14;
+      }
+
+      if (score > 0) scored.push({ label, score });
+    }
+
+    scored.sort((a, b) => b.score - a.score || a.label.localeCompare(b.label, 'en', { sensitivity: 'base' }));
+    return scored.slice(0, 250).map((x) => x.label);
+  })();
 
   return (
     <>
@@ -408,7 +552,76 @@ export default function ContactUsPage() {
                     {fieldErrors.mobile && <p className="text-sm text-red-600 mt-1">{fieldErrors.mobile}</p>}
                   </div>
 
-                  <div data-aos="fade-left" data-aos-delay="225">
+                  <div className="relative z-[300]" data-aos="fade-left" data-aos-delay="215">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      City <span className="text-red-500">*</span>
+                    </label>
+                    <Combobox
+                      value={formData.city}
+                      onChange={(value) => {
+                        setFormData((prev) => ({ ...prev, city: value || '' }));
+                        setCityQuery('');
+                      }}
+                    >
+                      <div className="relative">
+                        <Combobox.Input
+                          className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DC244] focus:border-transparent outline-none transition-all duration-300 hover:border-[#7DC244] bg-white"
+                          placeholder="Type to search city..."
+                          displayValue={(value: string) => value}
+                          onChange={(event) => setCityQuery(event.target.value)}
+                          onBlur={() => {
+                            const typed = cityQuery.trim();
+                            if (typed && cityOptions.includes(typed)) {
+                              setFormData((prev) => ({ ...prev, city: typed }));
+                            }
+                            setCityQuery('');
+                          }}
+                        />
+                        <input type="hidden" name="city" value={formData.city} required />
+
+                        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-3">
+                          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </Combobox.Button>
+                        {(formData.city || cityQuery) && (
+                          <button
+                            type="button"
+                            aria-label="Clear city"
+                            onClick={() => {
+                              setFormData((prev) => ({ ...prev, city: '' }));
+                              setCityQuery('');
+                            }}
+                            className="absolute inset-y-0 right-10 flex items-center pr-1 text-gray-400 hover:text-gray-600"
+                          >
+                            <span className="text-2xl font-semibold leading-none">×</span>
+                          </button>
+                        )}
+
+                        <Combobox.Options className="absolute z-[400] mt-2 max-h-64 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 text-sm shadow-lg focus:outline-none">
+                          {isCityListLoading ? (
+                            <div className="px-4 py-2 text-gray-500">Loading cities...</div>
+                          ) : filteredCityOptions.length === 0 ? (
+                            <div className="px-4 py-2 text-gray-500">No cities found.</div>
+                          ) : (
+                            filteredCityOptions.map((label) => (
+                              <Combobox.Option
+                                key={label}
+                                value={label}
+                                className={({ active }) =>
+                                  `cursor-pointer select-none px-4 py-2 ${active ? 'bg-[#7DC244] text-white' : 'text-gray-900'}`
+                                }
+                              >
+                                {label}
+                              </Combobox.Option>
+                            ))
+                          )}
+                        </Combobox.Options>
+                      </div>
+                    </Combobox>
+                  </div>
+
+                  <div className="relative z-10" data-aos="fade-left" data-aos-delay="225">
                     <label htmlFor="product" className="block text-sm font-medium text-gray-700 mb-2">
                       Product <span className="text-red-500">*</span>
                     </label>

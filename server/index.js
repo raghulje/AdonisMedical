@@ -78,6 +78,7 @@ app.use("/api/v1/request-demo", require("./routes/requestDemo"));
 app.use("/api/v1/email-settings", require("./routes/emailSettings"));
 app.use("/api/v1/terms-privacy", require("./routes/termsAndPrivacy"));
 app.use("/api/v1/faqs", require("./routes/faqs"));
+app.use("/api/geo", require("./routes/geo"));
 
 // Form submission routes
 app.use("/api/v1/contact-submissions", require("./routes/contactSubmissions"));

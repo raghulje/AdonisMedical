@@ -94,7 +94,7 @@ exports.create = async (req, res) => {
       return status.badRequestResponse(res, validated.message);
     }
     const { name, email, mobile, message } = validated;
-    const { source, company, product } = req.body || {};
+    const { source, company, product, city } = req.body || {};
 
     // Get client IP and user agent
     const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for']?.split(',')[0];
@@ -108,6 +108,7 @@ exports.create = async (req, res) => {
       email,
       Phone_Number: phoneDigits,
       ...(product ? { Product: product } : {}),
+      ...(city ? { city } : {}),
       company: company ?? '',
       message,
       ...(validated.countryDialCode ? { countryDialCode: validated.countryDialCode } : {}),
@@ -144,6 +145,7 @@ exports.create = async (req, res) => {
               <p><strong>Email:</strong> ${email}</p>
               <p><strong>Mobile:</strong> ${mobile}</p>
               ${product ? `<p><strong>Product:</strong> ${product}</p>` : ''}
+              ${city ? `<p><strong>City:</strong> ${city}</p>` : ''}
               <p><strong>Message:</strong><br>${message.replace(/\n/g, '<br>')}</p>
               <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 12px;">
                 <strong>Submitted:</strong> ${new Date().toLocaleString()}<br>
@@ -152,7 +154,7 @@ exports.create = async (req, res) => {
             </div>
           </div>
         `;
-        const textContent = `New Contact Form Submission\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\n${product ? `Product: ${product}\n` : ''}Message: ${message}\n\nSubmitted: ${new Date().toLocaleString()}\nSource: ${req.body.source || 'contact-us'}`;
+        const textContent = `New Contact Form Submission\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\n${product ? `Product: ${product}\n` : ''}${city ? `City: ${city}\n` : ''}Message: ${message}\n\nSubmitted: ${new Date().toLocaleString()}\nSource: ${req.body.source || 'contact-us'}`;
         
         await sendEmail(
           emailSettings.contactFormEmail,
