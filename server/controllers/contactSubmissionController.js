@@ -3,6 +3,11 @@ const status = require('../helpers/response');
 const { getRequestMeta, phoneToDigitsOnly } = require('../helpers/requestMeta');
 const { sendToKissflowWebhook } = require('../helpers/kissflowWebhook');
 const { validateContactSubmission } = require('../helpers/contactFormValidation');
+const {
+  evaluateContactSpam,
+  markAcceptedSubmission,
+  logIgnoredSpam,
+} = require('../helpers/contactFormSpamProtection');
 
 const WEBSITE_NAME = 'Adonis';
 const AGENT_ID = '6a048552285bce8bb13c28cd';
@@ -101,6 +106,7 @@ const buildAutoReply = ({ name, email, phone, product, message }) => {
 };
 
 // Create a new contact submission
+// Used by both POST /api/v1/contact-submissions and POST /api/contact-form
 exports.create = async (req, res) => {
   try {
     const validated = validateContactSubmission(req.body);
@@ -110,11 +116,18 @@ exports.create = async (req, res) => {
     const { name, email, mobile, message } = validated;
     const { source, company, product, city } = req.body || {};
 
+    // Server-side spam / probe protection (silent success — do not tip off bots)
+    const spamCheck = evaluateContactSpam(req.body || {}, { name, email, mobile, message });
+    if (spamCheck.blocked) {
+      logIgnoredSpam(spamCheck.reason, { source: source || 'contact-us' });
+      return status.createdResponse(res, 'Contact submission received successfully', null);
+    }
+
     // Get client IP and user agent
     const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for']?.split(',')[0];
     const userAgent = req.headers['user-agent'];
 
-    // Kissflow webhook: fire-and-forget (queued, non-blocking)
+    // Kissflow webhook: fire-and-forget (queued, non-blocking) — valid submissions only
     const meta = getRequestMeta(req);
     const phoneDigits = phoneToDigitsOnly(mobile);
     const { cityname, statename } = splitCityAndState(city);
@@ -133,6 +146,7 @@ exports.create = async (req, res) => {
       ...meta
     };
     sendToKissflowWebhook(WEBSITE_NAME, 'Contact form', webhookData);
+    markAcceptedSubmission(email);
 
     // Save submission in DB (best-effort - webhook must not be blocked)
     let submission = null;
